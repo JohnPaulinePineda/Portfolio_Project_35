@@ -789,7 +789,7 @@ featurePlot(x = PME.Numeric,
 
 </details>
 
-###  1.3.5 Model Development
+###  1.3.5 Feature Selection
 |
 |
 
@@ -802,7 +802,7 @@ featurePlot(x = PME.Numeric,
 
 </details>
 
-###  1.3.6 Model Selection
+###  1.3.6 Model Development
 |
 |
 
@@ -815,7 +815,7 @@ featurePlot(x = PME.Numeric,
 
 </details>
 
-###  1.3.7 Model Performance Estimation
+###  1.3.7 Model Selection
 |
 |
 
@@ -828,7 +828,7 @@ featurePlot(x = PME.Numeric,
 
 </details>
 
-###  1.3.8 Model Performance Validation
+###  1.3.8 Model Performance Estimation
 |
 |
 
@@ -841,13 +841,26 @@ featurePlot(x = PME.Numeric,
 
 </details>
 
-###  1.3.9 Model Post-Hoc Analysis
+###  1.3.9 Model Performance Validation
 |
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
 ```{r section_1.3.9, warning=FALSE, message=FALSE}
+
+
+```
+
+</details>
+
+###  1.3.10 Model Post-Hoc Analysis
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.10, warning=FALSE, message=FALSE}
 
 
 ```
