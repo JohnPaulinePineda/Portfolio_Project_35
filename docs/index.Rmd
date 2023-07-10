@@ -563,25 +563,66 @@ if (DPA_LinearlyDependentCount > 0) {
 
 ```
 
-```{r section_1.3.3.6, warning=FALSE, message=FALSE}
+```{r section_1.3.3.6, warning=FALSE, message=FALSE, fig.width=15, fig.height=2}
 ##################################
 # Shape Transformation
 ##################################
+
+##################################
+# Investigating the shape for the numeric predictors
+##################################
+
+for (i in 1:ncol(DPA.Predictors.Numeric)) {
+  Median <- format(round(median(DPA.Predictors.Numeric[,i],na.rm = TRUE),2), nsmall=2)
+  Mean <- format(round(mean(DPA.Predictors.Numeric[,i],na.rm = TRUE),2), nsmall=2)
+  Skewness <- format(round(skewness(DPA.Predictors.Numeric[,i],na.rm = TRUE),2), nsmall=2)
+  print(
+  ggplot(DPA.Predictors.Numeric, aes(x=DPA.Predictors.Numeric[,i])) +
+  geom_histogram(binwidth=1,color="black", fill="white") +
+  geom_vline(aes(xintercept=mean(DPA.Predictors.Numeric[,i])),
+            color="blue", size=1) +
+    geom_vline(aes(xintercept=median(DPA.Predictors.Numeric[,i])),
+            color="red", size=1) +
+  theme_bw() +
+  ylab("Count") +
+  xlab(names(DPA.Predictors.Numeric)[i]) +
+  labs(title=names(DPA.Predictors.Numeric)[i],
+       subtitle=paste0("Median = ", Median,
+                       ", Mean = ", Mean,
+                       ", Skewness = ", Skewness)))
+}
+
 
 ##################################
 # Applying a Box-Cox transformation
 ##################################
 DPA_BoxCox <- preProcess(DPA.Predictors.Numeric, method = c("BoxCox"))
 DPA_BoxCoxTransformed <- predict(DPA_BoxCox, DPA.Predictors.Numeric)
+
+for (i in 1:ncol(DPA_BoxCoxTransformed)) {
+  Median <- format(round(median(DPA_BoxCoxTransformed[,i],na.rm = TRUE),2), nsmall=2)
+  Mean <- format(round(mean(DPA_BoxCoxTransformed[,i],na.rm = TRUE),2), nsmall=2)
+  Skewness <- format(round(skewness(DPA_BoxCoxTransformed[,i],na.rm = TRUE),2), nsmall=2)
+  print(
+  ggplot(DPA_BoxCoxTransformed, aes(x=DPA_BoxCoxTransformed[,i])) +
+  geom_histogram(binwidth=1,color="black", fill="white") +
+  geom_vline(aes(xintercept=mean(DPA_BoxCoxTransformed[,i])),
+            color="blue", size=1) +
+    geom_vline(aes(xintercept=median(DPA_BoxCoxTransformed[,i])),
+            color="red", size=1) +
+  theme_bw() +
+  ylab("Count") +
+  xlab(names(DPA_BoxCoxTransformed)[i]) +
+  labs(title=names(DPA_BoxCoxTransformed)[i],
+       subtitle=paste0("Median = ", Median,
+                       ", Mean = ", Mean,
+                       ", Skewness = ", Skewness)))
+}
+
 DPA_BoxCoxTransformed <- cbind(DPA_BoxCoxTransformed,DPA[,c("COUNTRY",
                                                             "YEAR",
                                                             "GENDER",
                                                             "LIFEXP")])
-
-##################################
-# Gathering descriptive statistics
-##################################
-(DPA_BoxCoxTransformedSkimmed <- skim(DPA_BoxCoxTransformed))
 
 ```
 
@@ -612,6 +653,7 @@ PMA <- DPA_BoxCoxTransformed[,!names(DPA_BoxCoxTransformed) %in% c("YEAR","GNI",
 # Loading dataset
 ##################################
 PME <- PMA
+PME.Numeric <- PME[,sapply(PME, is.numeric), drop = FALSE]
 
 ##################################
 # Listing all Predictors
@@ -625,6 +667,12 @@ PME.Predictors.Numeric <- PME.Predictors[,sapply(PME.Predictors, is.numeric), dr
 ncol(PME.Predictors.Numeric)
 
 ##################################
+# Listing all numeric Predictors
+##################################
+PME.Predictors.Factor <- PME.Predictors[,sapply(PME.Predictors, is.factor), drop = FALSE]
+ncol(PME.Predictors.Factor)
+
+##################################
 # Formulating the scatter plot
 ##################################
 featurePlot(x = PME.Predictors.Numeric, 
@@ -633,6 +681,17 @@ featurePlot(x = PME.Predictors.Numeric,
             type = c("p", "smooth"),
             span = .5,
             layout = c(5, ceiling(ncol(PME.Predictors.Numeric)/5)))
+
+##################################
+# Formulating the box plot
+##################################
+featurePlot(x = PME.Numeric, 
+            y = PME$GENDER,
+            plot = "box",
+            scales = list(x = list(relation="free", rot = 90), 
+                          y = list(relation="free")),
+            adjust = 1.5,
+            layout = c(4, 4))
 
 ```
 
