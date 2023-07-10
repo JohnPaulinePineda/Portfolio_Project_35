@@ -1,0 +1,65 @@
+---
+title: "Supervised Learning : Characterizing Life Expectancy Drivers Across Countries Using Model-Agnostic Interpretation Methods for Black-Box Models"
+author: "John Pauline Pineda"
+date: "July 15, 2023"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+    theme: readable
+    highlight: tango
+    css: doc.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
+```
+# **1. Table of Contents**
+|
+| Description
+|
+##  1.1 Title
+|
+###  1.1.1 Sub-Title
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.1, warning=FALSE, message=FALSE}
+
+
+```
+
+</details>
+
+# **2. References**
+|
+| **[Book]** [Explanatory Model Analysis: Explore, Explain, and Examine Predictive Models With examples in R and Python](https://ema.drwhy.ai/) by Przemyslaw Biecek and Tomasz Burzykowski
+| **[Book]** [Explainable Machine Learning: A Guide for Making Black Box Models Explainable](https://christophm.github.io/interpretable-ml-book/) by Christoph Molnar
+| **[Book]** [Explainable AI: Interpreting, Explaining and Visualizing Deep Learning](https://link.springer.com/book/10.1007/978-3-030-28954-6) by Wojciech Samek, Gregoire Montavon, Andrea Vedaldi, Lars Kai Hansen and Klaus-Robert Muller
+| **[R Package]** [DALEX](https://cran.r-project.org/web/packages/DALEX/index.html) by Przemyslaw Biecek, Szymon Maksymiuk and Hubert Baniecki
+| **[R Package]** [iml](https://cran.r-project.org/web/packages/iml/index.html) by Christoph Molnar
+| **[R Package]** [ALEPlot](https://cran.r-project.org/web/packages/DALEX/index.html) by Dan Apley
+| **[R Package]** [randomForest](https://cran.r-project.org/web/packages/DALEX/index.html) by Leo Breiman, Adele Cutler, Andy Liaw and Matthew Wiener
+| **[R Package]** [auditor](https://cran.r-project.org/web/packages/DALEX/index.html) by Alicja Gosiewska, Przemyslaw Biecek, Hubert Baniecki and Tomasz Mikołajczyk
+| **[R Package]** [fastshap](https://cran.r-project.org/web/packages/DALEX/index.html) by Brandon Greenwell
+| **[R Package]** [rms](https://cran.r-project.org/web/packages/DALEX/index.html) by Frank Harrell
+| **[R Package]** [EIX](https://cran.r-project.org/web/packages/DALEX/index.html) by Szymon Maksymiuk, Ewelina Karbowiak and Przemyslaw Biecek
+| **[R Package]** [parsnip](https://cran.r-project.org/web/packages/DALEX/index.html) by Max Kuhn and Davis Vaughan 
+| **[R Package]** [h2o](https://cran.r-project.org/web/packages/DALEX/index.html) by Tomas Fryda, Erin LeDell, Navdeep Gill, Spencer Aiello, Anqi Fu, Arno Candel, Cliff Click, Tom Kraljevic, Tomas Nykodym, Patrick Aboyoun, Michal Kurka, Michal Malohlava, Sebastien Poirier and Wendy Wong
+| **[R Package]** [tidymodels](https://cran.r-project.org/web/packages/DALEX/index.html) by Max Kuhn and Hadley Wickham 
+| **[R Package]** [e1071](https://cran.r-project.org/web/packages/DALEX/index.html) by David Meyer, Evgenia Dimitriadou, Kurt Hornik, Andreas Weingessel and Friedrich Leisch
+| **[R Package]** [lime](https://cran.r-project.org/web/packages/DALEX/index.html) by Emil Hvitfeldt, Thomas Lin Pedersen and Michael Benesty
+| **[R Package]** [gbm](https://cran.r-project.org/web/packages/DALEX/index.html) by Brandon Greenwell, Bradley Boehmke, Jay Cunningham and GBM Developers
+| **[R Package]** [ExplainPrediction](https://cran.r-project.org/web/packages/DALEX/index.html) by Marko Robnik-Sikonja
+| **[R Package]** [localModel](https://cran.r-project.org/web/packages/localModel/index.html) by Przemyslaw Biecek and Mateusz Staniak
+| **[Article]** [Interpretation Methods for Black-Box Machine Learning Models in Insurance Rating-Type Applications ](https://support.sas.com/resources/papers/proceedings20/5116-2020.pdf) by Gabe Taylor, Sunish Menon, Huimin Ru, Ray Wright, Xin Hunt and Ralph Abbey
+| **[Article]** [4 Model-Agnostic Interpretability Techniques for Complex Models ](https://blogs.sas.com/content/subconsciousmusings/2020/05/07/model-agnostic-interpretability/) by Funda Gunes
+| **[Article]** [How Can We Provide Post-Hoc Explanations for Black-Box AI Models? ](https://aisingapore.github.io/ai-practitioner-handbook/book/6-modelling/post-hoc-explanation.html) by Joy Lin
+| **[Publication]** [A Survey of Methods for Explaining Black Box Models](https://dl.acm.org/doi/10.1145/3236009) by Riccardo Guidotti, Anna Monreale, Salvatore Ruggieri, Franco Turini, Fosca Giannotti and Dino Pedreschi (ACM Computing Surveys)
+| **[Publication]** [iml: An R package for Interpretable Machine Learning](https://doi.org/10.21105/joss.00786) by Christoph Molnar (Journal of Open Source Software)
+|
+|
+|
+|
