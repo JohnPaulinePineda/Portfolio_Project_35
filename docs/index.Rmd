@@ -52,6 +52,8 @@ library(randomForest)
 library(e1071)
 library(gbm)
 library(skimr)
+library(corrplot)
+library(lares)
 
 ##################################
 # Loading source and
@@ -331,7 +333,7 @@ if (length(names(DQA.Predictors.Numeric))==0) {
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
-```{r section_1.3.3, warning=FALSE, message=FALSE}
+```{r section_1.3.3.1, warning=FALSE, message=FALSE}
 ##################################
 # Loading dataset
 ##################################
@@ -341,12 +343,236 @@ DPA <- LED
 # Gathering descriptive statistics
 ##################################
 (DPA_Skimmed <- skim(DPA))
+```
+
+```{r section_1.3.3.2, warning=FALSE, message=FALSE, fig.width=15, fig.height=2}
+##################################
+# Outlier Treatment
+##################################
+
+##################################
+# Listing all predictors
+##################################
+DPA.Predictors <- DPA[,!names(DPA) %in% c("Yield")]
+##################################
+# Listing all Predictors
+##################################
+DPA.Predictors <- DPA[,!names(DPA) %in% c("COUNTRY","YEAR","LIFEXP")]
+
+##################################
+# Listing all numeric predictors
+##################################
+DPA.Predictors.Numeric <- DPA.Predictors[,sapply(DPA.Predictors, is.numeric)]
+
+##################################
+# Identifying outliers for the numeric predictors
+##################################
+OutlierCountList <- c()
+
+for (i in 1:ncol(DPA.Predictors.Numeric)) {
+  Outliers <- boxplot.stats(DPA.Predictors.Numeric[,i])$out
+  OutlierCount <- length(Outliers)
+  OutlierCountList <- append(OutlierCountList,OutlierCount)
+  OutlierIndices <- which(DPA.Predictors.Numeric[,i] %in% c(Outliers))
+  print(
+  ggplot(DPA.Predictors.Numeric, aes(x=DPA.Predictors.Numeric[,i])) +
+  geom_boxplot() +
+  theme_bw() +
+  theme(axis.text.y=element_blank(), 
+        axis.ticks.y=element_blank()) +
+  xlab(names(DPA.Predictors.Numeric)[i]) +
+  labs(title=names(DPA.Predictors.Numeric)[i],
+       subtitle=paste0(OutlierCount, " Outlier(s) Detected")))
+}
+
+
+```
+
+```{r section_1.3.3.3, warning=FALSE, message=FALSE}
+##################################
+# Zero and Near-Zero Variance
+##################################
+
+##################################
+# Identifying columns with low variance
+###################################
+DPA_LowVariance <- nearZeroVar(DPA,
+                               freqCut = 80/20,
+                               uniqueCut = 10,
+                               saveMetrics= TRUE)
+(DPA_LowVariance[DPA_LowVariance$nzv,])
+
+if ((nrow(DPA_LowVariance[DPA_LowVariance$nzv,]))==0){
+  
+  print("No low variance predictors noted.")
+  
+} else {
+
+  print(paste0("Low variance observed for ",
+               (nrow(DPA_LowVariance[DPA_LowVariance$nzv,])),
+               " numeric variable(s) with First.Second.Mode.Ratio>4 and Unique.Count.Ratio<0.10."))
+  
+  DPA_LowVarianceForRemoval <- (nrow(DPA_LowVariance[DPA_LowVariance$nzv,]))
+  
+  print(paste0("Low variance can be resolved by removing ",
+               (nrow(DPA_LowVariance[DPA_LowVariance$nzv,])),
+               " numeric variable(s)."))
+  
+  for (j in 1:DPA_LowVarianceForRemoval) {
+  DPA_LowVarianceRemovedVariable <- rownames(DPA_LowVariance[DPA_LowVariance$nzv,])[j]
+  print(paste0("Variable ",
+               j,
+               " for removal: ",
+               DPA_LowVarianceRemovedVariable))
+  }
+  
+  DPA %>%
+  skim() %>%
+  dplyr::filter(skim_variable %in% rownames(DPA_LowVariance[DPA_LowVariance$nzv,]))
+
+}
+
+```
+
+```{r section_1.3.3.4, warning=FALSE, message=FALSE}
+##################################
+# Collinearity
+##################################
+
+##################################
+# Visualizing pairwise correlation between predictors
+##################################
+DPA_CorrelationTest <- cor.mtest(DPA.Predictors.Numeric,
+                       method = "pearson",
+                       conf.level = .95)
+
+corrplot(cor(DPA.Predictors.Numeric,
+             method = "pearson",
+             use="pairwise.complete.obs"), 
+         method = "circle",
+         type = "upper", 
+         order = "original", 
+         tl.col = "black", 
+         tl.cex = 0.75,
+         tl.srt = 90, 
+         sig.level = 0.05, 
+         p.mat = DPA_CorrelationTest$p,
+         insig = "blank")
+
+##################################
+# Identifying the highly correlated variables
+##################################
+DPA_Correlation <-  cor(DPA.Predictors.Numeric, 
+                        method = "pearson",
+                        use="pairwise.complete.obs")
+(DPA_HighlyCorrelatedCount <- sum(abs(DPA_Correlation[upper.tri(DPA_Correlation)]) > 0.95))
+
+if (DPA_HighlyCorrelatedCount == 0) {
+  print("No highly correlated predictors noted.")
+} else {
+  print(paste0("High correlation observed for ",
+               (DPA_HighlyCorrelatedCount),
+               " pairs of numeric variable(s) with Correlation.Coefficient>0.95."))
+  
+  (DPA_HighlyCorrelatedPairs <- corr_cross(DPA.Predictors.Numeric,
+  max_pvalue = 0.05, 
+  top = DPA_HighlyCorrelatedCount,
+  rm.na = TRUE,
+  grid = FALSE
+))
+  
+}
+
+if (DPA_HighlyCorrelatedCount > 0) {
+  DPA_HighlyCorrelated <- findCorrelation(DPA_Correlation, cutoff = 0.95)
+  
+  (DPA_HighlyCorrelatedForRemoval <- length(DPA_HighlyCorrelated))
+  
+  print(paste0("High correlation can be resolved by removing ",
+               (DPA_HighlyCorrelatedForRemoval),
+               " numeric variable(s)."))
+  
+  for (j in 1:DPA_HighlyCorrelatedForRemoval) {
+  DPA_HighlyCorrelatedRemovedVariable <- colnames(DPA.Predictors.Numeric)[DPA_HighlyCorrelated[j]]
+  print(paste0("Variable ",
+               j,
+               " for removal: ",
+               DPA_HighlyCorrelatedRemovedVariable))
+  }
+  
+}
+
+```
+
+```{r section_1.3.3.5, warning=FALSE, message=FALSE}
+##################################
+# Linear Dependencies
+##################################
+
+##################################
+# Finding linear dependencies
+##################################
+DPA_LinearlyDependent <- findLinearCombos(DPA.Predictors.Numeric)
+
+##################################
+# Identifying the linearly dependent variables
+##################################
+DPA_LinearlyDependent <- findLinearCombos(DPA.Predictors.Numeric)
+
+(DPA_LinearlyDependentCount <- length(DPA_LinearlyDependent$linearCombos))
+
+if (DPA_LinearlyDependentCount == 0) {
+  print("No linearly dependent predictors noted.")
+} else {
+  print(paste0("Linear dependency observed for ",
+               (DPA_LinearlyDependentCount),
+               " subset(s) of numeric variable(s)."))
+  
+  for (i in 1:DPA_LinearlyDependentCount) {
+    DPA_LinearlyDependentSubset <- colnames(DPA.Predictors.Numeric)[DPA_LinearlyDependent$linearCombos[[i]]]
+    print(paste0("Linear dependent variable(s) for subset ",
+                 i,
+                 " include: ",
+                 DPA_LinearlyDependentSubset))
+  }
+  
+}
+
+##################################
+# Identifying the linearly dependent variables for removal
+##################################
+
+if (DPA_LinearlyDependentCount > 0) {
+  DPA_LinearlyDependent <- findLinearCombos(DPA.Predictors.Numeric)
+  
+  DPA_LinearlyDependentForRemoval <- length(DPA_LinearlyDependent$remove)
+  
+  print(paste0("Linear dependency can be resolved by removing ",
+               (DPA_LinearlyDependentForRemoval),
+               " numeric variable(s)."))
+  
+  for (j in 1:DPA_LinearlyDependentForRemoval) {
+  DPA_LinearlyDependentRemovedVariable <- colnames(DPA.Predictors.Numeric)[DPA_LinearlyDependent$remove[j]]
+  print(paste0("Variable ",
+               j,
+               " for removal: ",
+               DPA_LinearlyDependentRemovedVariable))
+  }
+
+}
+
+```
+
+```{r section_1.3.3.6, warning=FALSE, message=FALSE}
+##################################
+# Shape Transformation
+##################################
 
 ```
 
 </details>
 
-###  1.3.4 Model Development
+###  1.3.4 Data Exploration
 |
 |
 
@@ -359,7 +585,7 @@ DPA <- LED
 
 </details>
 
-###  1.3.5 Model Selection
+###  1.3.5 Model Development
 |
 |
 
@@ -372,7 +598,7 @@ DPA <- LED
 
 </details>
 
-###  1.3.6 Model Performance Estimation
+###  1.3.6 Model Selection
 |
 |
 
@@ -385,7 +611,7 @@ DPA <- LED
 
 </details>
 
-###  1.3.7 Model Performance Validation
+###  1.3.7 Model Performance Estimation
 |
 |
 
@@ -398,13 +624,26 @@ DPA <- LED
 
 </details>
 
-###  1.3.8 Model Post-Hoc Analysis
+###  1.3.8 Model Performance Validation
 |
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
 ```{r section_1.3.8, warning=FALSE, message=FALSE}
+
+
+```
+
+</details>
+
+###  1.3.9 Model Post-Hoc Analysis
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.9, warning=FALSE, message=FALSE}
 
 
 ```
@@ -435,6 +674,8 @@ DPA <- LED
 | **[R Package]** [ExplainPrediction](https://cran.r-project.org/web/packages/ExplainPrediction/index.html) by Marko Robnik-Sikonja
 | **[R Package]** [localModel](https://cran.r-project.org/web/packages/localModel/index.html) by Przemyslaw Biecek and Mateusz Staniak
 | **[R Package]** [skimr](https://cran.r-project.org/web/packages/skimr/skimr.pdf) by  Elin Waring
+| **[R Package]** [corrplot](https://cran.r-project.org/web/packages/corrplot/corrplot.pdf) by Taiyun Wei
+| **[R Package]** [lares](https://cran.rstudio.com/web/packages/lares/lares.pdf) by Bernardo Lares
 | **[Article]** [Interpretation Methods for Black-Box Machine Learning Models in Insurance Rating-Type Applications ](https://support.sas.com/resources/papers/proceedings20/5116-2020.pdf) by Gabe Taylor, Sunish Menon, Huimin Ru, Ray Wright, Xin Hunt and Ralph Abbey
 | **[Article]** [4 Model-Agnostic Interpretability Techniques for Complex Models ](https://blogs.sas.com/content/subconsciousmusings/2020/05/07/model-agnostic-interpretability/) by Funda Gunes
 | **[Article]** [How Can We Provide Post-Hoc Explanations for Black-Box AI Models? ](https://aisingapore.github.io/ai-practitioner-handbook/book/6-modelling/post-hoc-explanation.html) by Joy Lin
