@@ -576,14 +576,14 @@ corrplot(cor(DPA.Predictors.Numeric,
 DPA_Correlation <-  cor(DPA.Predictors.Numeric, 
                         method = "pearson",
                         use="pairwise.complete.obs")
-(DPA_HighlyCorrelatedCount <- sum(abs(DPA_Correlation[upper.tri(DPA_Correlation)]) > 0.95))
+(DPA_HighlyCorrelatedCount <- sum(abs(DPA_Correlation[upper.tri(DPA_Correlation)]) > 0.75))
 
 if (DPA_HighlyCorrelatedCount == 0) {
   print("No highly correlated predictors noted.")
 } else {
   print(paste0("High correlation observed for ",
                (DPA_HighlyCorrelatedCount),
-               " pairs of numeric variable(s) with Correlation.Coefficient>0.95."))
+               " pairs of numeric variable(s) with Correlation.Coefficient>0.75."))
   
   (DPA_HighlyCorrelatedPairs <- corr_cross(DPA.Predictors.Numeric,
   max_pvalue = 0.05, 
@@ -595,7 +595,7 @@ if (DPA_HighlyCorrelatedCount == 0) {
 }
 
 if (DPA_HighlyCorrelatedCount > 0) {
-  DPA_HighlyCorrelated <- findCorrelation(DPA_Correlation, cutoff = 0.95)
+  DPA_HighlyCorrelated <- findCorrelation(DPA_Correlation, cutoff = 0.75)
   
   (DPA_HighlyCorrelatedForRemoval <- length(DPA_HighlyCorrelated))
   
@@ -717,7 +717,13 @@ DPA_BoxCoxTransformed <- cbind(DPA_BoxCoxTransformed,DPA[,c("COUNTRY",
 # Creating the pre-modelling
 # train set
 ##################################
-PMA <- DPA_BoxCoxTransformed[,!names(DPA_BoxCoxTransformed) %in% c("YEAR","GNI","DPTIMM","RURPOP")]
+PMA <- DPA_BoxCoxTransformed[,!names(DPA_BoxCoxTransformed) %in% c("YEAR",
+                                                                   "GNI",
+                                                                   "DPTIMM",
+                                                                   "MEAIMM",
+                                                                   "RURPOP",
+                                                                   "SANSER",
+                                                                   "RTIMOR")]
 
 ##################################
 # Gathering descriptive statistics
@@ -766,7 +772,7 @@ featurePlot(x = PME.Predictors.Numeric,
             plot = "scatter",
             type = c("p", "smooth"),
             span = .5,
-            layout = c(5, ceiling(ncol(PME.Predictors.Numeric)/5)))
+            layout = c(4, 3))
 
 ##################################
 # Formulating the box plot
