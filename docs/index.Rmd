@@ -54,6 +54,7 @@ library(gbm)
 library(skimr)
 library(corrplot)
 library(lares)
+library(dplyr)
 
 ##################################
 # Loading source and
@@ -351,10 +352,6 @@ DPA <- LED
 ##################################
 
 ##################################
-# Listing all predictors
-##################################
-DPA.Predictors <- DPA[,!names(DPA) %in% c("Yield")]
-##################################
 # Listing all Predictors
 ##################################
 DPA.Predictors <- DPA[,!names(DPA) %in% c("COUNTRY","YEAR","LIFEXP")]
@@ -385,6 +382,120 @@ for (i in 1:ncol(DPA.Predictors.Numeric)) {
        subtitle=paste0(OutlierCount, " Outlier(s) Detected")))
 }
 
+##################################
+# Formulating the histogram
+# for the numeric predictors
+##################################
+
+for (i in 1:ncol(DPA.Predictors.Numeric)) {
+  Median <- format(round(median(DPA.Predictors.Numeric[,i],na.rm = TRUE),2), nsmall=2)
+  Mean <- format(round(mean(DPA.Predictors.Numeric[,i],na.rm = TRUE),2), nsmall=2)
+  Skewness <- format(round(skewness(DPA.Predictors.Numeric[,i],na.rm = TRUE),2), nsmall=2)
+  print(
+  ggplot(DPA.Predictors.Numeric, aes(x=DPA.Predictors.Numeric[,i])) +
+  geom_histogram(binwidth=1,color="black", fill="white") +
+  geom_vline(aes(xintercept=mean(DPA.Predictors.Numeric[,i])),
+            color="blue", size=1) +
+    geom_vline(aes(xintercept=median(DPA.Predictors.Numeric[,i])),
+            color="red", size=1) +
+  theme_bw() +
+  ylab("Count") +
+  xlab(names(DPA.Predictors.Numeric)[i]) +
+  labs(title=names(DPA.Predictors.Numeric)[i],
+       subtitle=paste0("Median = ", Median,
+                       ", Mean = ", Mean,
+                       ", Skewness = ", Skewness)))
+}
+
+##################################
+# Investigating distributional anomalies
+# observed for several predictors 
+##################################
+(INFMOR_Unique <- DPA %>%
+  group_by(INFMOR) %>%
+  summarize(Distinct_INFMOR = n_distinct(COUNTRY)) %>%
+  arrange(desc(Distinct_INFMOR)) %>%
+  slice(1:5))
+(INFMOR_Unique_Country <- DPA[round(DPA$INFMOR,digits=1)==30.2,c("COUNTRY")])
+
+DPA %>%
+  group_by(CLTECH) %>%
+  summarize(Distinct_CLTECH = n_distinct(COUNTRY)) %>%
+  arrange(desc(Distinct_CLTECH)) %>%
+  slice(1:5)
+(CLTECH_Unique_Country <- DPA[round(DPA$CLTECH,digits=1)==60.6,c("COUNTRY")])
+
+DPA %>%
+  group_by(RTIMOR) %>%
+  summarize(Distinct_RTIMOR = n_distinct(COUNTRY)) %>%
+  arrange(desc(Distinct_RTIMOR)) %>%
+  slice(1:5)
+(RTIMOR_Unique_Country <- DPA[round(DPA$RTIMOR,digits=1)==18.2,c("COUNTRY")])
+
+DPA %>%
+  group_by(DPTIMM) %>%
+  summarize(Distinct_DPTIMM = n_distinct(COUNTRY)) %>%
+  arrange(desc(Distinct_DPTIMM)) %>%
+  slice(1:5)
+(DPTIMM_Unique_Country <- DPA[round(DPA$DPTIMM,digits=1)==85.7,c("COUNTRY")])
+
+DPA %>%
+  group_by(HEPIMM) %>%
+  summarize(Distinct_HEPIMM = n_distinct(COUNTRY)) %>%
+  arrange(desc(Distinct_HEPIMM)) %>%
+  slice(1:5)
+(HEPIMM_Unique_Country <- DPA[round(DPA$HEPIMM,digits=1)==81.3,c("COUNTRY")])
+
+DPA %>%
+  group_by(MEAIMM) %>%
+  summarize(Distinct_MEAIMM = n_distinct(COUNTRY)) %>%
+  arrange(desc(Distinct_MEAIMM)) %>%
+  slice(1:5)
+(MEAIMM_Unique_Country <- DPA[round(DPA$MEAIMM,digits=1)==84.9,c("COUNTRY")])
+
+DPA %>%
+  group_by(HOSBED) %>%
+  summarize(Distinct_HOSBED = n_distinct(COUNTRY)) %>%
+  arrange(desc(Distinct_HOSBED)) %>%
+  slice(1:5)
+(HOSBED_Unique_Country <- DPA[round(DPA$HOSBED,digits=1)==3.0,c("COUNTRY")])
+
+DPA %>%
+  group_by(NCOMOR) %>%
+  summarize(Distinct_NCOMOR = n_distinct(COUNTRY)) %>%
+  arrange(desc(Distinct_NCOMOR)) %>%
+  slice(1:5)
+(NCOMOR_Unique_Country <- DPA[round(DPA$NCOMOR,digits=1)==22.1,c("COUNTRY")])
+
+DPA %>%
+  group_by(SUIRAT) %>%
+  summarize(Distinct_SUIRAT = n_distinct(COUNTRY)) %>%
+  arrange(desc(Distinct_SUIRAT)) %>%
+  slice(1:5)
+(SUIRAT_Unique_Country <- DPA[round(DPA$SUIRAT,digits=1)==10.6,c("COUNTRY")])
+
+(AnomalousVariables_Unique_Country <- MEAIMM_Unique_Country)
+
+##################################
+# Removing associated rows associated
+# with anomalous variables
+##################################
+dim(DPA)
+
+DPA <- DPA[!(DPA$COUNTRY %in% AnomalousVariables_Unique_Country),]
+dim(DPA)
+
+##################################
+# Listing all Predictors
+# for the updated data
+##################################
+DPA.Predictors <- DPA[,!names(DPA) %in% c("COUNTRY","YEAR","LIFEXP")]
+
+##################################
+# Listing all numeric predictors
+# for the updated data
+##################################
+DPA.Predictors.Numeric <- DPA.Predictors[,sapply(DPA.Predictors, is.numeric)]
 
 ```
 
@@ -567,31 +678,6 @@ if (DPA_LinearlyDependentCount > 0) {
 ##################################
 # Shape Transformation
 ##################################
-
-##################################
-# Investigating the shape for the numeric predictors
-##################################
-
-for (i in 1:ncol(DPA.Predictors.Numeric)) {
-  Median <- format(round(median(DPA.Predictors.Numeric[,i],na.rm = TRUE),2), nsmall=2)
-  Mean <- format(round(mean(DPA.Predictors.Numeric[,i],na.rm = TRUE),2), nsmall=2)
-  Skewness <- format(round(skewness(DPA.Predictors.Numeric[,i],na.rm = TRUE),2), nsmall=2)
-  print(
-  ggplot(DPA.Predictors.Numeric, aes(x=DPA.Predictors.Numeric[,i])) +
-  geom_histogram(binwidth=1,color="black", fill="white") +
-  geom_vline(aes(xintercept=mean(DPA.Predictors.Numeric[,i])),
-            color="blue", size=1) +
-    geom_vline(aes(xintercept=median(DPA.Predictors.Numeric[,i])),
-            color="red", size=1) +
-  theme_bw() +
-  ylab("Count") +
-  xlab(names(DPA.Predictors.Numeric)[i]) +
-  labs(title=names(DPA.Predictors.Numeric)[i],
-       subtitle=paste0("Median = ", Median,
-                       ", Mean = ", Mean,
-                       ", Skewness = ", Skewness)))
-}
-
 
 ##################################
 # Applying a Box-Cox transformation
