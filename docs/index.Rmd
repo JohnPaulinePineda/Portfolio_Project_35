@@ -51,6 +51,7 @@ library(caret)
 library(randomForest)
 library(e1071)
 library(gbm)
+library(skimr)
 
 ##################################
 # Loading source and
@@ -95,7 +96,6 @@ PDA <- LED
   row.names=NULL)
 )
 
-
 ```
 
 </details>
@@ -107,7 +107,219 @@ PDA <- LED
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
 ```{r section_1.3.2, warning=FALSE, message=FALSE}
+##################################
+# Loading dataset
+##################################
+DQA <- LED
 
+##################################
+# Formulating an overall data quality assessment summary
+##################################
+(DQA.Summary <- data.frame(
+  Column.Index=c(1:length(names(DQA))),
+  Column.Name= names(DQA),
+  Column.Type=sapply(DQA, function(x) class(x)),
+  Row.Count=sapply(DQA, function(x) nrow(DQA)),
+  NA.Count=sapply(DQA,function(x)sum(is.na(x))),
+  Fill.Rate=sapply(DQA,function(x)format(round((sum(!is.na(x))/nrow(DQA)),3),nsmall=3)),
+  row.names=NULL)
+)
+
+##################################
+# Listing all Predictors
+##################################
+DQA.Predictors <- DQA[,!names(DQA) %in% c("COUNTRY","YEAR","LIFEXP")]
+
+##################################
+# Listing all numeric Predictors
+##################################
+DQA.Predictors.Numeric <- DQA.Predictors[,sapply(DQA.Predictors, is.numeric), drop = FALSE]
+
+if (length(names(DQA.Predictors.Numeric))>0) {
+    print(paste0("There is (are) ",
+               (length(names(DQA.Predictors.Numeric))),
+               " numeric descriptor variable(s)."))
+} else {
+  print("There are no numeric descriptor variables.")
+}
+
+##################################
+# Listing all factor Predictors
+##################################
+DQA.Predictors.Factor <- DQA.Predictors[,sapply(DQA.Predictors, is.factor), drop = FALSE]
+
+if (length(names(DQA.Predictors.Factor))>0) {
+    print(paste0("There is (are) ",
+               (length(names(DQA.Predictors.Factor))),
+               " factor descriptor variable(s)."))
+} else {
+  print("There are no factor descriptor variables.")
+}
+
+##################################
+# Formulating a data quality assessment summary for factor Predictors
+##################################
+if (length(names(DQA.Predictors.Factor))>0) {
+
+  ##################################
+  # Formulating a function to determine the first mode
+  ##################################
+  FirstModes <- function(x) {
+    ux <- unique(na.omit(x))
+    tab <- tabulate(match(x, ux))
+    ux[tab == max(tab)]
+  }
+
+  ##################################
+  # Formulating a function to determine the second mode
+  ##################################
+  SecondModes <- function(x) {
+    ux <- unique(na.omit(x))
+    tab <- tabulate(match(x, ux))
+    fm = ux[tab == max(tab)]
+    sm = x[!(x %in% fm)]
+    usm <- unique(sm)
+    tabsm <- tabulate(match(sm, usm))
+    ifelse(is.na(usm[tabsm == max(tabsm)])==TRUE,
+           return("x"),
+           return(usm[tabsm == max(tabsm)]))
+  }
+
+  (DQA.Predictors.Factor.Summary <- data.frame(
+  Column.Name= names(DQA.Predictors.Factor),
+  Column.Type=sapply(DQA.Predictors.Factor, function(x) class(x)),
+  Unique.Count=sapply(DQA.Predictors.Factor, function(x) length(unique(x))),
+  First.Mode.Value=sapply(DQA.Predictors.Factor, function(x) as.character(FirstModes(x)[1])),
+  Second.Mode.Value=sapply(DQA.Predictors.Factor, function(x) as.character(SecondModes(x)[1])),
+  First.Mode.Count=sapply(DQA.Predictors.Factor, function(x) sum(na.omit(x) == FirstModes(x)[1])),
+  Second.Mode.Count=sapply(DQA.Predictors.Factor, function(x) sum(na.omit(x) == SecondModes(x)[1])),
+  Unique.Count.Ratio=sapply(DQA.Predictors.Factor, function(x) format(round((length(unique(x))/nrow(DQA.Predictors.Factor)),3), nsmall=3)),
+  First.Second.Mode.Ratio=sapply(DQA.Predictors.Factor, function(x) format(round((sum(na.omit(x) == FirstModes(x)[1])/sum(na.omit(x) == SecondModes(x)[1])),3), nsmall=3)),
+  row.names=NULL)
+  )
+
+}
+
+##################################
+# Formulating a data quality assessment summary for numeric Predictors
+##################################
+if (length(names(DQA.Predictors.Numeric))>0) {
+
+  ##################################
+  # Formulating a function to determine the first mode
+  ##################################
+  FirstModes <- function(x) {
+    ux <- unique(na.omit(x))
+    tab <- tabulate(match(x, ux))
+    ux[tab == max(tab)]
+  }
+
+  ##################################
+  # Formulating a function to determine the second mode
+  ##################################
+  SecondModes <- function(x) {
+    ux <- unique(na.omit(x))
+    tab <- tabulate(match(x, ux))
+    fm = ux[tab == max(tab)]
+    sm = na.omit(x)[!(na.omit(x) %in% fm)]
+    usm <- unique(sm)
+    tabsm <- tabulate(match(sm, usm))
+    ifelse(is.na(usm[tabsm == max(tabsm)])==TRUE,
+           return(0.00001),
+           return(usm[tabsm == max(tabsm)]))
+  }
+
+  (DQA.Predictors.Numeric.Summary <- data.frame(
+  Column.Name= names(DQA.Predictors.Numeric),
+  Column.Type=sapply(DQA.Predictors.Numeric, function(x) class(x)),
+  Unique.Count=sapply(DQA.Predictors.Numeric, function(x) length(unique(x))),
+  Unique.Count.Ratio=sapply(DQA.Predictors.Numeric, function(x) format(round((length(unique(x))/nrow(DQA.Predictors.Numeric)),3), nsmall=3)),
+  First.Mode.Value=sapply(DQA.Predictors.Numeric, function(x) format(round((FirstModes(x)[1]),3),nsmall=3)),
+  Second.Mode.Value=sapply(DQA.Predictors.Numeric, function(x) format(round((SecondModes(x)[1]),3),nsmall=3)),
+  First.Mode.Count=sapply(DQA.Predictors.Numeric, function(x) sum(na.omit(x) == FirstModes(x)[1])),
+  Second.Mode.Count=sapply(DQA.Predictors.Numeric, function(x) sum(na.omit(x) == SecondModes(x)[1])),
+  First.Second.Mode.Ratio=sapply(DQA.Predictors.Numeric, function(x) format(round((sum(na.omit(x) == FirstModes(x)[1])/sum(na.omit(x) == SecondModes(x)[1])),3), nsmall=3)),
+  Minimum=sapply(DQA.Predictors.Numeric, function(x) format(round(min(x,na.rm = TRUE),3), nsmall=3)),
+  Mean=sapply(DQA.Predictors.Numeric, function(x) format(round(mean(x,na.rm = TRUE),3), nsmall=3)),
+  Median=sapply(DQA.Predictors.Numeric, function(x) format(round(median(x,na.rm = TRUE),3), nsmall=3)),
+  Maximum=sapply(DQA.Predictors.Numeric, function(x) format(round(max(x,na.rm = TRUE),3), nsmall=3)),
+  Skewness=sapply(DQA.Predictors.Numeric, function(x) format(round(skewness(x,na.rm = TRUE),3), nsmall=3)),
+  Kurtosis=sapply(DQA.Predictors.Numeric, function(x) format(round(kurtosis(x,na.rm = TRUE),3), nsmall=3)),
+  Percentile25th=sapply(DQA.Predictors.Numeric, function(x) format(round(quantile(x,probs=0.25,na.rm = TRUE),3), nsmall=3)),
+  Percentile75th=sapply(DQA.Predictors.Numeric, function(x) format(round(quantile(x,probs=0.75,na.rm = TRUE),3), nsmall=3)),
+  row.names=NULL)
+  )
+
+}
+
+##################################
+# Identifying potential data quality issues
+##################################
+
+##################################
+# Checking for missing observations
+##################################
+if ((nrow(DQA.Summary[DQA.Summary$NA.Count>0,]))>0){
+  print(paste0("Missing observations noted for ",
+               (nrow(DQA.Summary[DQA.Summary$NA.Count>0,])),
+               " variable(s) with NA.Count>0 and Fill.Rate<1.0."))
+  DQA.Summary[DQA.Summary$NA.Count>0,]
+} else {
+  print("No missing observations noted.")
+}
+
+##################################
+# Checking for zero or near-zero variance Predictors
+##################################
+if (length(names(DQA.Predictors.Factor))==0) {
+  print("No factor Predictors noted.")
+} else if (nrow(DQA.Predictors.Factor.Summary[as.numeric(as.character(DQA.Predictors.Factor.Summary$First.Second.Mode.Ratio))>5,])>0){
+  print(paste0("Low variance observed for ",
+               (nrow(DQA.Predictors.Factor.Summary[as.numeric(as.character(DQA.Predictors.Factor.Summary$First.Second.Mode.Ratio))>5,])),
+               " factor variable(s) with First.Second.Mode.Ratio>5."))
+  DQA.Predictors.Factor.Summary[as.numeric(as.character(DQA.Predictors.Factor.Summary$First.Second.Mode.Ratio))>5,]
+} else {
+  print("No low variance factor Predictors due to high first-second mode ratio noted.")
+}
+
+if (length(names(DQA.Predictors.Numeric))==0) {
+  print("No numeric Predictors noted.")
+} else if (nrow(DQA.Predictors.Numeric.Summary[as.numeric(as.character(DQA.Predictors.Numeric.Summary$First.Second.Mode.Ratio))>5,])>0){
+  print(paste0("Low variance observed for ",
+               (nrow(DQA.Predictors.Numeric.Summary[as.numeric(as.character(DQA.Predictors.Numeric.Summary$First.Second.Mode.Ratio))>5,])),
+               " numeric variable(s) with First.Second.Mode.Ratio>5."))
+  DQA.Predictors.Numeric.Summary[as.numeric(as.character(DQA.Predictors.Numeric.Summary$First.Second.Mode.Ratio))>5,]
+} else {
+  print("No low variance numeric Predictors due to high first-second mode ratio noted.")
+}
+
+if (length(names(DQA.Predictors.Numeric))==0) {
+  print("No numeric Predictors noted.")
+} else if (nrow(DQA.Predictors.Numeric.Summary[as.numeric(as.character(DQA.Predictors.Numeric.Summary$Unique.Count.Ratio))<0.01,])>0){
+  print(paste0("Low variance observed for ",
+               (nrow(DQA.Predictors.Numeric.Summary[as.numeric(as.character(DQA.Predictors.Numeric.Summary$Unique.Count.Ratio))<0.01,])),
+               " numeric variable(s) with Unique.Count.Ratio<0.01."))
+  DQA.Predictors.Numeric.Summary[as.numeric(as.character(DQA.Predictors.Numeric.Summary$Unique.Count.Ratio))<0.01,]
+} else {
+  print("No low variance numeric Predictors due to low unique count ratio noted.")
+}
+
+##################################
+# Checking for skewed Predictors
+##################################
+if (length(names(DQA.Predictors.Numeric))==0) {
+  print("No numeric Predictors noted.")
+} else if (nrow(DQA.Predictors.Numeric.Summary[as.numeric(as.character(DQA.Predictors.Numeric.Summary$Skewness))>3 |
+                                               as.numeric(as.character(DQA.Predictors.Numeric.Summary$Skewness))<(-3),])>0){
+  print(paste0("High skewness observed for ",
+  (nrow(DQA.Predictors.Numeric.Summary[as.numeric(as.character(DQA.Predictors.Numeric.Summary$Skewness))>3 |
+                                               as.numeric(as.character(DQA.Predictors.Numeric.Summary$Skewness))<(-3),])),
+  " numeric variable(s) with Skewness>3 or Skewness<(-3)."))
+  DQA.Predictors.Numeric.Summary[as.numeric(as.character(DQA.Predictors.Numeric.Summary$Skewness))>3 |
+                                 as.numeric(as.character(DQA.Predictors.Numeric.Summary$Skewness))<(-3),]
+} else {
+  print("No skewed numeric Predictors noted.")
+}
 
 ```
 
@@ -120,7 +332,15 @@ PDA <- LED
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
 ```{r section_1.3.3, warning=FALSE, message=FALSE}
+##################################
+# Loading dataset
+##################################
+DPA <- LED
 
+##################################
+# Gathering descriptive statistics
+##################################
+(DPA_Skimmed <- skim(DPA))
 
 ```
 
@@ -200,20 +420,21 @@ PDA <- LED
 | **[Book]** [Explainable AI: Interpreting, Explaining and Visualizing Deep Learning](https://link.springer.com/book/10.1007/978-3-030-28954-6) by Wojciech Samek, Gregoire Montavon, Andrea Vedaldi, Lars Kai Hansen and Klaus-Robert Muller
 | **[R Package]** [DALEX](https://cran.r-project.org/web/packages/DALEX/index.html) by Przemyslaw Biecek, Szymon Maksymiuk and Hubert Baniecki
 | **[R Package]** [iml](https://cran.r-project.org/web/packages/iml/index.html) by Christoph Molnar
-| **[R Package]** [ALEPlot](https://cran.r-project.org/web/packages/DALEX/index.html) by Dan Apley
-| **[R Package]** [randomForest](https://cran.r-project.org/web/packages/DALEX/index.html) by Leo Breiman, Adele Cutler, Andy Liaw and Matthew Wiener
-| **[R Package]** [auditor](https://cran.r-project.org/web/packages/DALEX/index.html) by Alicja Gosiewska, Przemyslaw Biecek, Hubert Baniecki and Tomasz Mikołajczyk
-| **[R Package]** [fastshap](https://cran.r-project.org/web/packages/DALEX/index.html) by Brandon Greenwell
-| **[R Package]** [rms](https://cran.r-project.org/web/packages/DALEX/index.html) by Frank Harrell
-| **[R Package]** [EIX](https://cran.r-project.org/web/packages/DALEX/index.html) by Szymon Maksymiuk, Ewelina Karbowiak and Przemyslaw Biecek
-| **[R Package]** [parsnip](https://cran.r-project.org/web/packages/DALEX/index.html) by Max Kuhn and Davis Vaughan 
-| **[R Package]** [h2o](https://cran.r-project.org/web/packages/DALEX/index.html) by Tomas Fryda, Erin LeDell, Navdeep Gill, Spencer Aiello, Anqi Fu, Arno Candel, Cliff Click, Tom Kraljevic, Tomas Nykodym, Patrick Aboyoun, Michal Kurka, Michal Malohlava, Sebastien Poirier and Wendy Wong
-| **[R Package]** [tidymodels](https://cran.r-project.org/web/packages/DALEX/index.html) by Max Kuhn and Hadley Wickham 
-| **[R Package]** [e1071](https://cran.r-project.org/web/packages/DALEX/index.html) by David Meyer, Evgenia Dimitriadou, Kurt Hornik, Andreas Weingessel and Friedrich Leisch
-| **[R Package]** [lime](https://cran.r-project.org/web/packages/DALEX/index.html) by Emil Hvitfeldt, Thomas Lin Pedersen and Michael Benesty
-| **[R Package]** [gbm](https://cran.r-project.org/web/packages/DALEX/index.html) by Brandon Greenwell, Bradley Boehmke, Jay Cunningham and GBM Developers
-| **[R Package]** [ExplainPrediction](https://cran.r-project.org/web/packages/DALEX/index.html) by Marko Robnik-Sikonja
+| **[R Package]** [ALEPlot](https://cran.r-project.org/web/packages/ALEPlot/index.html) by Dan Apley
+| **[R Package]** [randomForest](https://cran.r-project.org/web/packages/randomForest/index.html) by Leo Breiman, Adele Cutler, Andy Liaw and Matthew Wiener
+| **[R Package]** [auditor](https://cran.r-project.org/web/packages/auditor/index.html) by Alicja Gosiewska, Przemyslaw Biecek, Hubert Baniecki and Tomasz Mikołajczyk
+| **[R Package]** [fastshap](https://cran.r-project.org/web/packages/fastshap/index.html) by Brandon Greenwell
+| **[R Package]** [rms](https://cran.r-project.org/web/packages/rms/index.html) by Frank Harrell
+| **[R Package]** [EIX](https://cran.r-project.org/web/packages/EIX/index.html) by Szymon Maksymiuk, Ewelina Karbowiak and Przemyslaw Biecek
+| **[R Package]** [parsnip](https://cran.r-project.org/web/packages/parsnip/index.html) by Max Kuhn and Davis Vaughan 
+| **[R Package]** [h2o](https://cran.r-project.org/web/packages/h2o/index.html) by Tomas Fryda, Erin LeDell, Navdeep Gill, Spencer Aiello, Anqi Fu, Arno Candel, Cliff Click, Tom Kraljevic, Tomas Nykodym, Patrick Aboyoun, Michal Kurka, Michal Malohlava, Sebastien Poirier and Wendy Wong
+| **[R Package]** [tidymodels](https://cran.r-project.org/web/packages/tidymodels/index.html) by Max Kuhn and Hadley Wickham 
+| **[R Package]** [e1071](https://cran.r-project.org/web/packages/e1071/index.html) by David Meyer, Evgenia Dimitriadou, Kurt Hornik, Andreas Weingessel and Friedrich Leisch
+| **[R Package]** [lime](https://cran.r-project.org/web/packages/lime/index.html) by Emil Hvitfeldt, Thomas Lin Pedersen and Michael Benesty
+| **[R Package]** [gbm](https://cran.r-project.org/web/packages/gbm/index.html) by Brandon Greenwell, Bradley Boehmke, Jay Cunningham and GBM Developers
+| **[R Package]** [ExplainPrediction](https://cran.r-project.org/web/packages/ExplainPrediction/index.html) by Marko Robnik-Sikonja
 | **[R Package]** [localModel](https://cran.r-project.org/web/packages/localModel/index.html) by Przemyslaw Biecek and Mateusz Staniak
+| **[R Package]** [skimr](https://cran.r-project.org/web/packages/skimr/skimr.pdf) by  Elin Waring
 | **[Article]** [Interpretation Methods for Black-Box Machine Learning Models in Insurance Rating-Type Applications ](https://support.sas.com/resources/papers/proceedings20/5116-2020.pdf) by Gabe Taylor, Sunish Menon, Huimin Ru, Ray Wright, Xin Hunt and Ralph Abbey
 | **[Article]** [4 Model-Agnostic Interpretability Techniques for Complex Models ](https://blogs.sas.com/content/subconsciousmusings/2020/05/07/model-agnostic-interpretability/) by Funda Gunes
 | **[Article]** [How Can We Provide Post-Hoc Explanations for Black-Box AI Models? ](https://aisingapore.github.io/ai-practitioner-handbook/book/6-modelling/post-hoc-explanation.html) by Joy Lin
