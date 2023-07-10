@@ -568,6 +568,35 @@ if (DPA_LinearlyDependentCount > 0) {
 # Shape Transformation
 ##################################
 
+##################################
+# Applying a Box-Cox transformation
+##################################
+DPA_BoxCox <- preProcess(DPA.Predictors.Numeric, method = c("BoxCox"))
+DPA_BoxCoxTransformed <- predict(DPA_BoxCox, DPA.Predictors.Numeric)
+DPA_BoxCoxTransformed <- cbind(DPA_BoxCoxTransformed,DPA[,c("COUNTRY",
+                                                            "YEAR",
+                                                            "GENDER",
+                                                            "LIFEXP")])
+
+##################################
+# Gathering descriptive statistics
+##################################
+(DPA_BoxCoxTransformedSkimmed <- skim(DPA_BoxCoxTransformed))
+
+```
+
+```{r section_1.3.3.7, warning=FALSE, message=FALSE}
+##################################
+# Creating the pre-modelling
+# train set
+##################################
+PMA <- DPA_BoxCoxTransformed[,!names(DPA_BoxCoxTransformed) %in% c("YEAR","GNI","DPTIMM","RURPOP")]
+
+##################################
+# Gathering descriptive statistics
+##################################
+(PMA_Skimmed <- skim(PMA))
+
 ```
 
 </details>
@@ -579,7 +608,31 @@ if (DPA_LinearlyDependentCount > 0) {
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
 ```{r section_1.3.4, warning=FALSE, message=FALSE}
+##################################
+# Loading dataset
+##################################
+PME <- PMA
 
+##################################
+# Listing all Predictors
+##################################
+PME.Predictors <- PME[,!names(PME) %in% c("COUNTRY","LIFEXP")]
+
+##################################
+# Listing all numeric Predictors
+##################################
+PME.Predictors.Numeric <- PME.Predictors[,sapply(PME.Predictors, is.numeric), drop = FALSE]
+ncol(PME.Predictors.Numeric)
+
+##################################
+# Formulating the scatter plot
+##################################
+featurePlot(x = PME.Predictors.Numeric, 
+            y = PME$LIFEXP,
+            plot = "scatter",
+            type = c("p", "smooth"),
+            span = .5,
+            layout = c(5, ceiling(ncol(PME.Predictors.Numeric)/5)))
 
 ```
 
