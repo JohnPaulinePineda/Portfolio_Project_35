@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 ##  1.1 Introduction
 |
-###  1.1.1 Research Objectives
+###  1.1.1 Study Objectives
 |
 ###  1.1.2 Outcome
 |
@@ -43,6 +43,57 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
 ```{r section_1.3.1, warning=FALSE, message=FALSE}
+##################################
+# Loading R libraries
+##################################
+library(DALEX)
+library(caret)
+library(randomForest)
+library(e1071)
+library(gbm)
+
+##################################
+# Loading source and
+# formulating the analysis set
+##################################
+LED <- read.csv("Life_Expectancy_Data.csv",
+                na.strings=c("NA","NaN"," ",""),
+                stringsAsFactors = FALSE)
+LED <- as.data.frame(LED)
+
+##################################
+# Performing a general exploration of the data set
+##################################
+dim(LED)
+str(LED)
+summary(LED)
+
+##################################
+# Transforming to appropriate data types
+##################################
+LED$YEAR <- factor(LED$YEAR,
+                      levels = c("2019"))
+LED$GENDER <- factor(LED$GENDER,
+                      levels = c("Male","Female"))
+
+##################################
+# Reducing the range of values
+# for certain numeric predictors
+##################################
+LED$GDP     <- LED$GDP/1000000000
+LED$GNI     <- LED$GNI/1000000000
+LED$PERCAP  <- LED$PERCAP/1000
+
+##################################
+# Formulating a data type assessment summary
+##################################
+PDA <- LED
+(PDA.Summary <- data.frame(
+  Column.Index=c(1:length(names(PDA))),
+  Column.Name= names(PDA), 
+  Column.Type=sapply(PDA, function(x) class(x)), 
+  row.names=NULL)
+)
 
 
 ```

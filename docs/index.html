@@ -233,6 +233,107 @@ window.buildTabsets = function(tocID) {
 
 
 
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 
 
 
@@ -362,8 +463,8 @@ Table of Contents</strong></a>
 <ul>
 <li><a href="#introduction" id="toc-introduction">1.1 Introduction</a>
 <ul>
-<li><a href="#research-objectives" id="toc-research-objectives">1.1.1
-Research Objectives</a></li>
+<li><a href="#study-objectives" id="toc-study-objectives">1.1.1 Study
+Objectives</a></li>
 <li><a href="#outcome" id="toc-outcome">1.1.2 Outcome</a></li>
 <li><a href="#predictors" id="toc-predictors">1.1.3 Predictors</a></li>
 </ul></li>
@@ -408,8 +509,8 @@ Description<br />
 <div id="introduction" class="section level2">
 <h2>1.1 Introduction</h2>
 <div class="line-block"></div>
-<div id="research-objectives" class="section level3">
-<h3>1.1.1 Research Objectives</h3>
+<div id="study-objectives" class="section level3">
+<h3>1.1.1 Study Objectives</h3>
 <div class="line-block"></div>
 </div>
 <div id="outcome" class="section level3">
@@ -449,6 +550,145 @@ Description<br />
 <mark style="background-color: #000000;color: #FFFFFF"><strong>Code
 Chunk | Output</strong></mark>
 </summary>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">##################################</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading R libraries</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="do">##################################</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DALEX)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(e1071)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gbm)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="do">##################################</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading source and</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># formulating the analysis set</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="do">##################################</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>LED <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;Life_Expectancy_Data.csv&quot;</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>                <span class="at">na.strings=</span><span class="fu">c</span>(<span class="st">&quot;NA&quot;</span>,<span class="st">&quot;NaN&quot;</span>,<span class="st">&quot; &quot;</span>,<span class="st">&quot;&quot;</span>),</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>                <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>LED <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(LED)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="do">##################################</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Performing a general exploration of the data set</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="do">##################################</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(LED)</span></code></pre></div>
+<pre><code>## [1] 396  22</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(LED)</span></code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    396 obs. of  22 variables:
+##  $ COUNTRY: chr  &quot;Afghanistan&quot; &quot;Albania&quot; &quot;Algeria&quot; &quot;Angola&quot; ...
+##  $ YEAR   : int  2019 2019 2019 2019 2019 2019 2019 2019 2019 2019 ...
+##  $ GENDER : chr  &quot;Female&quot; &quot;Female&quot; &quot;Female&quot; &quot;Female&quot; ...
+##  $ LIFEXP : num  66.4 80.2 78.1 64 78.1 ...
+##  $ UNEMPR : num  14.06 11.32 18.63 7.84 8.26 ...
+##  $ INFMOR : num  42.9 7.7 18.6 44.5 5.1 ...
+##  $ GDP    : num  1.88e+10 1.54e+10 1.72e+11 8.94e+10 1.69e+09 ...
+##  $ GNI    : num  1.91e+10 1.52e+10 1.68e+11 8.19e+10 1.58e+09 ...
+##  $ CLTECH : num  36 80.7 99.3 49.6 100 ...
+##  $ PERCAP : num  494 5396 3990 2810 17377 ...
+##  $ RTIMOR : num  15.9 11.7 20.9 26.1 0 ...
+##  $ TUBINC : num  189 16 61 351 0 29 26 2.2 6.9 6 ...
+##  $ DPTIMM : num  66 99 91 57 95 ...
+##  $ HEPIMM : num  66 99 91 53 99 ...
+##  $ MEAIMM : num  64 95 80 51 93 ...
+##  $ HOSBED : num  0.432 3.052 1.8 0.8 2.581 ...
+##  $ SANSER : num  49 99.2 86.1 51.4 85.5 ...
+##  $ TUBTRT : num  91 88 86 69 72.3 ...
+##  $ URBPOP : num  25.8 61.2 73.2 66.2 24.5 ...
+##  $ RURPOP : num  74.2 38.8 26.8 33.8 75.5 ...
+##  $ NCOMOR : num  36.2 6 12.8 19.4 17.6 ...
+##  $ SUIRAT : num  3.6 2.7 1.8 2.3 0.8 ...</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(LED)</span></code></pre></div>
+<pre><code>##    COUNTRY               YEAR         GENDER              LIFEXP     
+##  Length:396         Min.   :2019   Length:396         Min.   :51.20  
+##  Class :character   1st Qu.:2019   Class :character   1st Qu.:67.62  
+##  Mode  :character   Median :2019   Mode  :character   Median :74.38  
+##                     Mean   :2019                      Mean   :73.10  
+##                     3rd Qu.:2019                      3rd Qu.:79.31  
+##                     Max.   :2019                      Max.   :88.10  
+##      UNEMPR           INFMOR           GDP                 GNI           
+##  Min.   : 0.071   Min.   : 1.40   Min.   :1.884e+08   Min.   :3.754e+08  
+##  1st Qu.: 3.575   1st Qu.: 5.90   1st Qu.:1.131e+10   1st Qu.:1.114e+10  
+##  Median : 5.647   Median :15.05   Median :3.916e+10   Median :4.007e+10  
+##  Mean   : 7.749   Mean   :21.46   Mean   :5.763e+11   Mean   :5.974e+11  
+##  3rd Qu.: 9.839   3rd Qu.:30.38   3rd Qu.:2.499e+11   3rd Qu.:2.463e+11  
+##  Max.   :41.153   Max.   :88.80   Max.   :2.318e+13   Max.   :2.344e+13  
+##      CLTECH           PERCAP             RTIMOR          TUBINC   
+##  Min.   :  0.00   Min.   :   228.2   Min.   : 0.00   Min.   :  0  
+##  1st Qu.: 33.50   1st Qu.:  2229.9   1st Qu.: 8.20   1st Qu.: 12  
+##  Median : 80.10   Median :  6617.1   Median :15.95   Median : 46  
+##  Mean   : 65.83   Mean   : 16917.8   Mean   :16.98   Mean   :103  
+##  3rd Qu.:100.00   3rd Qu.: 19575.8   3rd Qu.:23.90   3rd Qu.:140  
+##  Max.   :100.00   Max.   :175813.9   Max.   :64.60   Max.   :654  
+##      DPTIMM          HEPIMM          MEAIMM          HOSBED      
+##  Min.   :35.00   Min.   :35.00   Min.   :37.00   Min.   : 0.200  
+##  1st Qu.:85.69   1st Qu.:81.31   1st Qu.:84.85   1st Qu.: 1.300  
+##  Median :92.00   Median :91.00   Median :92.00   Median : 2.572  
+##  Mean   :87.90   Mean   :86.65   Mean   :87.22   Mean   : 2.987  
+##  3rd Qu.:97.00   3rd Qu.:96.00   3rd Qu.:96.00   3rd Qu.: 3.746  
+##  Max.   :99.00   Max.   :99.00   Max.   :99.00   Max.   :13.710  
+##      SANSER            TUBTRT           URBPOP           RURPOP     
+##  Min.   :  8.632   Min.   :  0.00   Min.   : 13.25   Min.   : 0.00  
+##  1st Qu.: 63.898   1st Qu.: 73.00   1st Qu.: 41.61   1st Qu.:21.90  
+##  Median : 91.239   Median : 82.00   Median : 58.90   Median :41.10  
+##  Mean   : 77.606   Mean   : 77.66   Mean   : 59.21   Mean   :40.79  
+##  3rd Qu.: 98.648   3rd Qu.: 88.00   3rd Qu.: 78.10   3rd Qu.:58.39  
+##  Max.   :100.000   Max.   :100.00   Max.   :100.00   Max.   :86.75  
+##      NCOMOR          SUIRAT       
+##  Min.   : 4.40   Min.   :  0.000  
+##  1st Qu.:13.60   1st Qu.:  3.300  
+##  Median :19.85   Median :  6.950  
+##  Mean   :19.99   Mean   :  9.603  
+##  3rd Qu.:24.02   3rd Qu.: 11.225  
+##  Max.   :58.40   Max.   :116.000</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">##################################</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Transforming to appropriate data types</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="do">##################################</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>LED<span class="sc">$</span>YEAR <span class="ot">&lt;-</span> <span class="fu">factor</span>(LED<span class="sc">$</span>YEAR,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;2019&quot;</span>))</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>LED<span class="sc">$</span>GENDER <span class="ot">&lt;-</span> <span class="fu">factor</span>(LED<span class="sc">$</span>GENDER,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                      <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Male&quot;</span>,<span class="st">&quot;Female&quot;</span>))</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="do">##################################</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Reducing the range of values</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co"># for certain numeric predictors</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="do">##################################</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>LED<span class="sc">$</span>GDP     <span class="ot">&lt;-</span> LED<span class="sc">$</span>GDP<span class="sc">/</span><span class="dv">1000000000</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>LED<span class="sc">$</span>GNI     <span class="ot">&lt;-</span> LED<span class="sc">$</span>GNI<span class="sc">/</span><span class="dv">1000000000</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>LED<span class="sc">$</span>PERCAP  <span class="ot">&lt;-</span> LED<span class="sc">$</span>PERCAP<span class="sc">/</span><span class="dv">1000</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="do">##################################</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Formulating a data type assessment summary</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="do">##################################</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>PDA <span class="ot">&lt;-</span> LED</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>(PDA.Summary <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">Column.Index=</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(<span class="fu">names</span>(PDA))),</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">Column.Name=</span> <span class="fu">names</span>(PDA), </span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">Column.Type=</span><span class="fu">sapply</span>(PDA, <span class="cf">function</span>(x) <span class="fu">class</span>(x)), </span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">row.names=</span><span class="cn">NULL</span>)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>##    Column.Index Column.Name Column.Type
+## 1             1     COUNTRY   character
+## 2             2        YEAR      factor
+## 3             3      GENDER      factor
+## 4             4      LIFEXP     numeric
+## 5             5      UNEMPR     numeric
+## 6             6      INFMOR     numeric
+## 7             7         GDP     numeric
+## 8             8         GNI     numeric
+## 9             9      CLTECH     numeric
+## 10           10      PERCAP     numeric
+## 11           11      RTIMOR     numeric
+## 12           12      TUBINC     numeric
+## 13           13      DPTIMM     numeric
+## 14           14      HEPIMM     numeric
+## 15           15      MEAIMM     numeric
+## 16           16      HOSBED     numeric
+## 17           17      SANSER     numeric
+## 18           18      TUBTRT     numeric
+## 19           19      URBPOP     numeric
+## 20           20      RURPOP     numeric
+## 21           21      NCOMOR     numeric
+## 22           22      SUIRAT     numeric</code></pre>
 </details>
 </div>
 <div id="data-quality-assessment" class="section level3">
