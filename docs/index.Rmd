@@ -1108,6 +1108,63 @@ plot(RF_VarImp,
      cex=2,
      origin=0,
      alpha=0.45)
+
+##################################
+# Defining the model hyperparameter values
+# for the NN model
+##################################
+NN_Grid = expand.grid(size = c(2, 5, 10, 15, 20), 
+                      decay = c(0, 0.1, 0.001, 0.0001, 0.00001))
+
+##################################
+# Running the NN model
+# by setting the caret method to 'NN'
+##################################
+set.seed(12345678)
+NN_Tune <- train(x = PME.Model.Predictors,
+                 y = PME$LIFEXP,
+                 method = "nnet",
+                 linout = TRUE,
+                 preProcess = c('center', 'scale'),
+                 maxit = 500,
+                 tuneGrid = NN_Grid,
+                 trControl = KFold_Control)
+
+##################################
+# Reporting the cross-validation results
+# for the NN model
+##################################
+NN_Tune
+
+NN_Tune$finalModel
+
+(NN_Tune_RMSE <- NN_Tune$results[NN_Tune$results$size==NN_Tune$bestTune$size &
+                              NN_Tune$results$decay==NN_Tune$bestTune$decay,
+                 c("RMSE")])
+
+(NN_Tune_Rsquared <- NN_Tune$results[NN_Tune$results$size==NN_Tune$bestTune$size &
+                              NN_Tune$results$decay==NN_Tune$bestTune$decay,
+                 c("Rsquared")])
+
+(NN_Tune_MAE <- NN_Tune$results[NN_Tune$results$size==NN_Tune$bestTune$size &
+                              NN_Tune$results$decay==NN_Tune$bestTune$decay,
+                 c("MAE")])
+
+##################################
+# Identifying and plotting the
+# best model predictors
+# for the NN model
+##################################
+NN_VarImp <- varImp(NN_Tune, scale = TRUE)
+plot(NN_VarImp, 
+     scales=list(y=list(cex = .95)),
+     main="Ranked Variable Importance : NN",
+     xlab="Scaled Variable Importance Metrics",
+     ylab="Predictors",
+     cex=2,
+     origin=0,
+     alpha=0.45)
+
 ```
 
 </details>
