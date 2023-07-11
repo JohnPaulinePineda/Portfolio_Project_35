@@ -1111,15 +1111,15 @@ MT <- PME[-trainIndex,]
 # Preparing the dataset for
 # model development
 ##################################
-MD <- MD[,c("INFMOR","PERCAP","CLTECH","NCOMOR","TUBINC","URBPOP","HOSBED","LIFEXP")]
+MD <- MD[,c("GENDER","INFMOR","PERCAP","CLTECH","NCOMOR","TUBINC","URBPOP","HOSBED","LIFEXP")]
 
-MD.Model.Predictors <- MD[,c("INFMOR","PERCAP","CLTECH","NCOMOR","TUBINC","URBPOP","HOSBED")]
+MD.Model.Predictors <- MD[,c("GENDER","INFMOR","PERCAP","CLTECH","NCOMOR","TUBINC","URBPOP","HOSBED")]
 
 ##################################
 # Preparing the dataset for
 # model test
 ##################################
-MT <- MT[,c("INFMOR","PERCAP","CLTECH","NCOMOR","TUBINC","URBPOP","HOSBED","LIFEXP")]
+MT <- MT[,c("GENDER","INFMOR","PERCAP","CLTECH","NCOMOR","TUBINC","URBPOP","HOSBED","LIFEXP")]
 
 ##################################
 # Creating consistent fold assignments 
@@ -1480,6 +1480,15 @@ GBM_DALEX <- DALEX::explain(GBM_Tune,
                             label = "GBM")
 
 (GBM_DALEX_Performance <- model_performance(GBM_DALEX))
+(GBM_DALEX_Diagnostics <- model_diagnostics(GBM_DALEX))
+plot(GBM_DALEX_Diagnostics, 
+     variable = "y", 
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") + 
+  scale_y_continuous("Predicted LIFEXP") + 
+  geom_abline(slope = 1) + 
+  ggtitle("GBM: Observed and Predicted LIFEXP")
 
 ##################################
 # Formulating the DALEX object
@@ -1492,6 +1501,15 @@ RF_DALEX <- DALEX::explain(RF_Tune,
                            label = "RF")
 
 (RF_DALEX_Performance <- model_performance(RF_DALEX))
+(RF_DALEX_Diagnostics <- model_diagnostics(RF_DALEX))
+plot(RF_DALEX_Diagnostics, 
+     variable = "y", 
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") + 
+  scale_y_continuous("Predicted LIFEXP") + 
+  geom_abline(slope = 1) + 
+  ggtitle("RF: Observed and Predicted LIFEXP")
 
 ##################################
 # Formulating the DALEX object
@@ -1504,6 +1522,15 @@ NN_DALEX <- DALEX::explain(NN_Tune,
                            label = "NN")
 
 (NN_DALEX_Performance <- model_performance(NN_DALEX))
+(NN_DALEX_Diagnostics <- model_diagnostics(NN_DALEX))
+plot(NN_DALEX_Diagnostics, 
+     variable = "y", 
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") + 
+  scale_y_continuous("Predicted LIFEXP") + 
+  geom_abline(slope = 1) + 
+  ggtitle("NN: Observed and Predicted LIFEXP")
 
 ##################################
 # Formulating the DALEX object
@@ -1516,6 +1543,15 @@ PLS_DALEX <- DALEX::explain(PLS_Tune,
                             label = "PLS")
 
 (PLS_DALEX_Performance <- model_performance(PLS_DALEX))
+(PLS_DALEX_Diagnostics <- model_diagnostics(PLS_DALEX))
+plot(PLS_DALEX_Diagnostics, 
+     variable = "y", 
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") + 
+  scale_y_continuous("Predicted LIFEXP") + 
+  geom_abline(slope = 1) + 
+  ggtitle("PLS: Observed and Predicted LIFEXP")
 
 ##################################
 # Formulating the DALEX object
@@ -1528,7 +1564,15 @@ CUBIST_DALEX <- DALEX::explain(CUBIST_Tune,
                             label = "CUBIST")
 
 (CUBIST_DALEX_Performance <- model_performance(CUBIST_DALEX))
-
+(CUBIST_DALEX_Diagnostics <- model_diagnostics(CUBIST_DALEX))
+plot(CUBIST_DALEX_Diagnostics, 
+     variable = "y", 
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") + 
+  scale_y_continuous("Predicted LIFEXP") + 
+  geom_abline(slope = 1) + 
+  ggtitle("CUBIST: Observed and Predicted LIFEXP")
 
 ```
 
