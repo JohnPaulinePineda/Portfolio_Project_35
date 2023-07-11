@@ -5,7 +5,7 @@ date: "July 15, 2023"
 output: 
   html_document:
     toc: true
-    toc_depth: 3
+    toc_depth: 4
     theme: readable
     highlight: tango
     css: doc.css
@@ -333,6 +333,9 @@ if (length(names(DQA.Predictors.Numeric))==0) {
 ###  1.3.3 Data Preprocessing
 |
 |
+####  1.3.3.1 Outlier Treatment
+|
+|
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
@@ -501,6 +504,16 @@ DPA.Predictors.Numeric <- DPA.Predictors[,sapply(DPA.Predictors, is.numeric)]
 
 ```
 
+</details>
+
+|
+|
+####  1.3.3.2 Zero and Near-Zero Variance
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
 ```{r section_1.3.3.3, warning=FALSE, message=FALSE}
 ##################################
 # Zero and Near-Zero Variance
@@ -546,6 +559,16 @@ if ((nrow(DPA_LowVariance[DPA_LowVariance$nzv,]))==0){
 }
 
 ```
+
+</details>
+
+|
+|
+####  1.3.3.3 Collinearity
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
 ```{r section_1.3.3.4, warning=FALSE, message=FALSE}
 ##################################
@@ -617,6 +640,16 @@ if (DPA_HighlyCorrelatedCount > 0) {
 
 ```
 
+</details>
+
+|
+|
+####  1.3.3.4 Linear Dependencies
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
 ```{r section_1.3.3.5, warning=FALSE, message=FALSE}
 ##################################
 # Linear Dependencies
@@ -676,6 +709,16 @@ if (DPA_LinearlyDependentCount > 0) {
 
 ```
 
+</details>
+
+|
+|
+####  1.3.3.5 Shape Transformation
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
 ```{r section_1.3.3.6, warning=FALSE, message=FALSE, fig.width=15, fig.height=2}
 ##################################
 # Shape Transformation
@@ -713,6 +756,16 @@ DPA_BoxCoxTransformed <- cbind(DPA_BoxCoxTransformed,DPA[,c("COUNTRY",
                                                             "LIFEXP")])
 
 ```
+
+</details>
+
+|
+|
+####  1.3.3.6 Pre-Processed Dataset
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
 ```{r section_1.3.3.7, warning=FALSE, message=FALSE}
 ##################################
@@ -794,10 +847,13 @@ featurePlot(x = PME.Numeric,
 ###  1.3.5 Feature Selection
 |
 |
+####  1.3.5.1 Locally Weighted Scatterplot Smoothing Pseudo-R-Squared (LOWESSPR)
+|
+|
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
-```{r section_1.3.5, warning=FALSE, message=FALSE}
+```{r section_1.3.5.1, warning=FALSE, message=FALSE}
 ##################################
 # Evaluating model-independent
 # feature importance metrics
@@ -838,7 +894,19 @@ dotplot(Predictor ~ LOWESSPR | Metric,
         panel = function(x, y, ...) {
             panel.dotplot(x, reorder(y, x), ...)
         })
+```
 
+</details>
+
+|
+|
+####  1.3.5.2 Pearson’s Correlation Coefficient (PCC)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.5.2, warning=FALSE, message=FALSE}
 ##################################
 # Obtaining the Pearson correlation coefficient
 ##################################
@@ -870,7 +938,19 @@ dotplot(Predictor ~ PCC | Metric,
         panel = function(x, y, ...) {
             panel.dotplot(x, reorder(y, x), ...)
         })
+```
 
+</details>
+
+|
+|
+####  1.3.5.3 Spearman’s Rank Correlation Coefficient (SRCC)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.5.3, warning=FALSE, message=FALSE}
 ##################################
 # Obtaining the Spearman's rank correlation coefficient
 ##################################
@@ -902,7 +982,19 @@ dotplot(Predictor ~ SRCC | Metric,
         panel = function(x, y, ...) {
             panel.dotplot(x, reorder(y, x), ...)
         })
+```
 
+</details>
+
+|
+|
+####  1.3.5.4 Maximal Information Coefficient (MIC)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.5.4, warning=FALSE, message=FALSE}
 ##################################
 # Obtaining the maximal information coefficient
 ##################################
@@ -935,7 +1027,19 @@ dotplot(Predictor ~ MIC | Metric,
         panel = function(x, y, ...) {
             panel.dotplot(x, reorder(y, x), ...)
         })
+```
 
+</details>
+
+|
+|
+####  1.3.5.5 Relief Values (RV)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.5.5, warning=FALSE, message=FALSE}
 ##################################
 # Obtaining the relief values
 ##################################
@@ -968,31 +1072,61 @@ dotplot(Predictor ~ RV | Metric,
         panel = function(x, y, ...) {
             panel.dotplot(x, reorder(y, x), ...)
         })
-
 ```
 
 </details>
 
-###  1.3.6 Model Development
+###  1.3.6 Model Development and Performance Estimation
+|
+|
+
+####  1.3.6.1 Stochastic Gradient Boosting (GBM)
 |
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
-```{r section_1.3.6, warning=FALSE, message=FALSE}
+```{r section_1.3.6.1, warning=FALSE, message=FALSE}
+##################################
+# Preparing the dataset for
+# model development and test
+##################################
+set.seed(12345678)
+trainIndex <- createDataPartition(PME$LIFEXP,
+                                  p = 0.8, 
+                                  list = FALSE, 
+                                  times = 1)
+
+##################################
+# Formulating the model development data
+##################################
+MD <- PME[ trainIndex,]
+
+##################################
+# Formulating the model test data
+##################################
+MT <- PME[-trainIndex,]
+
 ##################################
 # Preparing the dataset for
 # model development
 ##################################
-PME.Model.Predictors <- PME[,c("INFMOR","PERCAP","CLTECH","NCOMOR","TUBINC","URBPOP","HOSBED")]
-MD <- PME[,c("INFMOR","PERCAP","CLTECH","NCOMOR","TUBINC","URBPOP","HOSBED","LIFEXP")]
+MD <- MD[,c("INFMOR","PERCAP","CLTECH","NCOMOR","TUBINC","URBPOP","HOSBED","LIFEXP")]
+
+MD.Model.Predictors <- MD[,c("INFMOR","PERCAP","CLTECH","NCOMOR","TUBINC","URBPOP","HOSBED")]
+
+##################################
+# Preparing the dataset for
+# model test
+##################################
+MT <- MT[,c("INFMOR","PERCAP","CLTECH","NCOMOR","TUBINC","URBPOP","HOSBED","LIFEXP")]
 
 ##################################
 # Creating consistent fold assignments 
 # for the 10-Fold Cross Validation process
 ##################################
 set.seed(12345678)
-KFold_Indices <- createFolds(PME$LIFEXP,
+KFold_Indices <- createFolds(MD$LIFEXP,
                              k = 10,
                              returnTrain=TRUE)
 KFold_Control <- trainControl(method="cv",
@@ -1012,8 +1146,8 @@ GBM_Grid = expand.grid(n.trees = c(100, 200, 300),
 # by setting the caret method to 'gbm'
 ##################################
 set.seed(12345678)
-GBM_Tune <- train(x = PME.Model.Predictors, 
-                  y = PME$LIFEXP,
+GBM_Tune <- train(x = MD.Model.Predictors, 
+                  y = MD$LIFEXP,
                   method = "gbm",
                   tuneGrid = GBM_Grid,
                   trControl = KFold_Control)
@@ -1059,6 +1193,19 @@ plot(GBM_VarImp,
      origin=0,
      alpha=0.45)
 
+```
+
+</details>
+
+|
+|
+####  1.3.6.2 Random Forest (RF)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.6.2, warning=FALSE, message=FALSE}
 ##################################
 # Defining the model hyperparameter values
 # for the RF model
@@ -1071,8 +1218,8 @@ RF_Grid = data.frame(mtry = c(100, 200, 300, 400, 500,
 # by setting the caret method to 'RF'
 ##################################
 set.seed(12345678)
-RF_Tune <- train(x = PME.Model.Predictors, 
-                 y = PME$LIFEXP,
+RF_Tune <- train(x = MD.Model.Predictors, 
+                 y = MD$LIFEXP,
                  method = "rf",
                  tuneGrid = RF_Grid,
                  trControl = KFold_Control)
@@ -1109,6 +1256,19 @@ plot(RF_VarImp,
      origin=0,
      alpha=0.45)
 
+```
+
+</details>
+
+|
+|
+####  1.3.6.3 Neural Network (NN)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.6.3, warning=FALSE, message=FALSE}
 ##################################
 # Defining the model hyperparameter values
 # for the NN model
@@ -1121,8 +1281,8 @@ NN_Grid = expand.grid(size = c(2, 5, 10, 15, 20),
 # by setting the caret method to 'NN'
 ##################################
 set.seed(12345678)
-NN_Tune <- train(x = PME.Model.Predictors,
-                 y = PME$LIFEXP,
+NN_Tune <- train(x = MD.Model.Predictors,
+                 y = MD$LIFEXP,
                  method = "nnet",
                  linout = TRUE,
                  preProcess = c('center', 'scale'),
@@ -1169,7 +1329,135 @@ plot(NN_VarImp,
 
 </details>
 
-###  1.3.7 Model Performance Estimation
+|
+|
+####  1.3.6.4 Partial Least Squares Regression (PLS)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.6.4, warning=FALSE, message=FALSE}
+##################################
+# Defining the model hyperparameter values
+# for the PLS model
+##################################
+PLS_Grid = expand.grid(ncomp = 1:5)
+
+##################################
+# Running the PLS model
+# by setting the caret method to 'pls'
+##################################
+set.seed(12345678)
+PLS_Tune <- train(x = MD.Model.Predictors,
+                  y = MD$LIFEXP,
+                  method = "pls",
+                  tuneGrid = PLS_Grid,
+                  trControl = KFold_Control)
+
+##################################
+# Reporting the cross-validation results
+# for the PLS model
+##################################
+PLS_Tune
+
+PLS_Tune$finalModel
+
+(PLS_Tune_RMSE <- PLS_Tune$results[PLS_Tune$results$ncomp==PLS_Tune$bestTune$ncomp,
+                 c("RMSE")])
+
+(PLS_Tune_Rsquared <- PLS_Tune$results[PLS_Tune$results$ncomp==PLS_Tune$bestTune$ncomp,
+                 c("Rsquared")])
+
+(PLS_Tune_MAE <- PLS_Tune$results[PLS_Tune$results$ncomp==PLS_Tune$bestTune$ncomp,
+                 c("MAE")])
+
+##################################
+# Identifying and plotting the
+# best model predictors
+# for the PLS model
+##################################
+PLS_VarImp <- varImp(PLS_Tune, scale = TRUE)
+plot(PLS_VarImp, 
+     scales=list(y=list(cex = .95)),
+     main="Ranked Variable Importance : PLS",
+     xlab="Scaled Variable Importance Metrics",
+     ylab="Predictors",
+     cex=2,
+     origin=0,
+     alpha=0.45)
+```
+
+</details>
+
+|
+|
+####  1.3.6.5 Cubist Regression (CUBIST)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.6.5, warning=FALSE, message=FALSE}
+##################################
+# Defining the model hyperparameter values
+# for the CUBIST model
+##################################
+CUBIST_Grid = expand.grid(committees = c(10, 20, 30, 40, 50), 
+                          neighbors = c(0, 3, 6, 9))
+
+
+##################################
+# Running the CUBIST model
+# by setting the caret method to 'cubist'
+##################################
+set.seed(12345678)
+CUBIST_Tune <- train(x = MD.Model.Predictors,
+                   y = MD$LIFEXP,
+                   method = "cubist",
+                   tuneGrid = CUBIST_Grid,
+                   trControl = KFold_Control)
+
+##################################
+# Reporting the cross-validation results
+# for the CUBIST model
+##################################
+CUBIST_Tune
+
+CUBIST_Tune$finalModel
+
+(CUBIST_Tune_RMSE <- CUBIST_Tune$results[CUBIST_Tune$results$committees==CUBIST_Tune$bestTune$committees &
+                              CUBIST_Tune$results$neighbors==CUBIST_Tune$bestTune$neighbors,
+                 c("RMSE")])
+
+(CUBIST_Tune_Rsquared <- CUBIST_Tune$results[CUBIST_Tune$results$committees==CUBIST_Tune$bestTune$committees &
+                              CUBIST_Tune$results$neighbors==CUBIST_Tune$bestTune$neighbors,
+                 c("Rsquared")])
+
+(CUBIST_Tune_MAE <- CUBIST_Tune$results[CUBIST_Tune$results$committees==CUBIST_Tune$bestTune$committees &
+                              CUBIST_Tune$results$neighbors==CUBIST_Tune$bestTune$neighbors,
+                 c("MAE")])
+
+##################################
+# Identifying and plotting the
+# best model predictors
+# for the CUBIST model
+##################################
+CUBIST_VarImp <- varImp(CUBIST_Tune, scale = TRUE)
+plot(CUBIST_VarImp, 
+     scales=list(y=list(cex = .95)),
+     main="Ranked Variable Importance : CUBIST",
+     xlab="Scaled Variable Importance Metrics",
+     ylab="Predictors",
+     cex=2,
+     origin=0,
+     alpha=0.45)
+
+```
+
+</details>
+
+###  1.3.7 Model Performance Validation
 |
 |
 
@@ -1177,12 +1465,17 @@ plot(NN_VarImp,
 
 ```{r section_1.3.7, warning=FALSE, message=FALSE}
 ##################################
+# Evaluating the models
+# on the model test data
+##################################
+
+##################################
 # Formulating the DALEX object
 # for the Best GBM model
 ##################################
 GBM_DALEX <- DALEX::explain(GBM_Tune, 
-                            data = MD, 
-                            y = MD$LIFEXP,
+                            data = MT, 
+                            y = MT$LIFEXP,
                             verbose = FALSE,
                             label = "GBM")
 
@@ -1193,17 +1486,48 @@ GBM_DALEX <- DALEX::explain(GBM_Tune,
 # for the Best RF model
 ##################################
 RF_DALEX <- DALEX::explain(RF_Tune, 
-                            data = MD, 
-                            y = MD$LIFEXP,
-                            verbose = FALSE,
-                            label = "RF")
+                           data = MT, 
+                           y = MT$LIFEXP,
+                           verbose = FALSE,
+                           label = "RF")
 
 (RF_DALEX_Performance <- model_performance(RF_DALEX))
 
+##################################
+# Formulating the DALEX object
+# for the Best NN model
+##################################
+NN_DALEX <- DALEX::explain(NN_Tune, 
+                           data = MT, 
+                           y = MT$LIFEXP,
+                           verbose = FALSE,
+                           label = "NN")
 
-plot(GBM_DALEX_Performance,
-     RF_DALEX_Performance,
-     geom = "boxplot")
+(NN_DALEX_Performance <- model_performance(NN_DALEX))
+
+##################################
+# Formulating the DALEX object
+# for the Best PLS model
+##################################
+PLS_DALEX <- DALEX::explain(PLS_Tune,
+                            data = MT,
+                            y = MT$LIFEXP,
+                            verbose = FALSE,
+                            label = "PLS")
+
+(PLS_DALEX_Performance <- model_performance(PLS_DALEX))
+
+##################################
+# Formulating the DALEX object
+# for the Best CUBIST model
+##################################
+CUBIST_DALEX <- DALEX::explain(CUBIST_Tune,
+                            data = MT,
+                            y = MT$LIFEXP,
+                            verbose = FALSE,
+                            label = "CUBIST")
+
+(CUBIST_DALEX_Performance <- model_performance(CUBIST_DALEX))
 
 
 ```
@@ -1217,32 +1541,56 @@ plot(GBM_DALEX_Performance,
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
 ```{r section_1.3.8, warning=FALSE, message=FALSE}
+##################################
+# Consolidating the performance
+# on the model test data
+##################################
+plot(GBM_DALEX_Performance,
+     RF_DALEX_Performance,
+     NN_DALEX_Performance,
+     PLS_DALEX_Performance,
+     CUBIST_DALEX_Performance)
 
+
+plot(GBM_DALEX_Performance,
+     RF_DALEX_Performance,
+     NN_DALEX_Performance,
+     PLS_DALEX_Performance,
+     CUBIST_DALEX_Performance,
+     geom = "boxplot")
+
+##################################
+# Consolidating the variable importance
+# on the model test data
+##################################
+GBM_DALEX_VariableImportance    <- model_parts(GBM_DALEX,
+                                            loss_function = loss_root_mean_square)
+RF_DALEX_VariableImportance     <- model_parts(RF_DALEX,
+                                           loss_function = loss_root_mean_square)
+NN_DALEX_VariableImportance     <- model_parts(NN_DALEX,
+                                           loss_function = loss_root_mean_square)
+PLS_DALEX_VariableImportance    <- model_parts(PLS_DALEX,
+                                            loss_function = loss_root_mean_square)
+CUBIST_DALEX_VariableImportance <- model_parts(CUBIST_DALEX,
+                                               loss_function = loss_root_mean_square)
+
+plot(GBM_DALEX_VariableImportance, 
+     RF_DALEX_VariableImportance, 
+     NN_DALEX_VariableImportance,
+     PLS_DALEX_VariableImportance,
+     CUBIST_DALEX_VariableImportance)
 
 ```
 
 </details>
 
-###  1.3.9 Model Performance Validation
+###  1.3.9 Model Post-Hoc Analysis
 |
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
 ```{r section_1.3.9, warning=FALSE, message=FALSE}
-
-
-```
-
-</details>
-
-###  1.3.10 Model Post-Hoc Analysis
-|
-|
-
-<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
-
-```{r section_1.3.10, warning=FALSE, message=FALSE}
 
 
 ```
@@ -1269,12 +1617,19 @@ plot(GBM_DALEX_Performance,
 | **[R Package]** [tidymodels](https://cran.r-project.org/web/packages/tidymodels/index.html) by Max Kuhn and Hadley Wickham 
 | **[R Package]** [e1071](https://cran.r-project.org/web/packages/e1071/index.html) by David Meyer, Evgenia Dimitriadou, Kurt Hornik, Andreas Weingessel and Friedrich Leisch
 | **[R Package]** [lime](https://cran.r-project.org/web/packages/lime/index.html) by Emil Hvitfeldt, Thomas Lin Pedersen and Michael Benesty
-| **[R Package]** [gbm](https://cran.r-project.org/web/packages/gbm/index.html) by Brandon Greenwell, Bradley Boehmke, Jay Cunningham and GBM Developers
 | **[R Package]** [ExplainPrediction](https://cran.r-project.org/web/packages/ExplainPrediction/index.html) by Marko Robnik-Sikonja
 | **[R Package]** [localModel](https://cran.r-project.org/web/packages/localModel/index.html) by Przemyslaw Biecek and Mateusz Staniak
 | **[R Package]** [skimr](https://cran.r-project.org/web/packages/skimr/skimr.pdf) by  Elin Waring
 | **[R Package]** [corrplot](https://cran.r-project.org/web/packages/corrplot/corrplot.pdf) by Taiyun Wei
 | **[R Package]** [lares](https://cran.rstudio.com/web/packages/lares/lares.pdf) by Bernardo Lares
+| **[R Package]** [minerva](https://cran.r-project.org/web/packages/minerva/minerva.pdf) by Michele Filosi
+| **[R Package]** [CORElearn](https://cran.r-project.org/web/packages/CORElearn/CORElearn.pdf) by Marko Robnik-Sikonja and Petr Savicky
+| **[R Package]** [caret](https://topepo.github.io/caret/index.html) by Max Kuhn
+| **[R Package]** [gbm](https://cran.r-project.org/web/packages/gbm/index.html) by Brandon Greenwell, Bradley Boehmke, Jay Cunningham and GBM Developers
+| **[R Package]** [randomForest](https://cran.r-project.org/web/packages/randomForest/randomForest.pdf) by Andy Liaw
+| **[R Package]** [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf) by Brian Ripley
+| **[R Package]** [pls](https://cran.r-project.org/web/packages/pls/pls.pdf) by Kristian Hovde Liland
+| **[R Package]** [Cubist](https://cran.r-project.org/web/packages/Cubist/Cubist.pdf) by Max Kuhn
 | **[Article]** [Interpretation Methods for Black-Box Machine Learning Models in Insurance Rating-Type Applications ](https://support.sas.com/resources/papers/proceedings20/5116-2020.pdf) by Gabe Taylor, Sunish Menon, Huimin Ru, Ray Wright, Xin Hunt and Ralph Abbey
 | **[Article]** [4 Model-Agnostic Interpretability Techniques for Complex Models ](https://blogs.sas.com/content/subconsciousmusings/2020/05/07/model-agnostic-interpretability/) by Funda Gunes
 | **[Article]** [How Can We Provide Post-Hoc Explanations for Black-Box AI Models? ](https://aisingapore.github.io/ai-practitioner-handbook/book/6-modelling/post-hoc-explanation.html) by Joy Lin
