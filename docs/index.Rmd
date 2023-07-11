@@ -55,6 +55,8 @@ library(skimr)
 library(corrplot)
 library(lares)
 library(dplyr)
+library(minerva)
+library(CORElearn)
 
 ##################################
 # Loading source and
@@ -805,8 +807,8 @@ featurePlot(x = PME.Numeric,
 # Obtaining the LOWESSPR pseudo-R-Squared
 ##################################
 FE_LOWESSPR <- filterVarImp(x = PME.Numeric[,!names(PME.Numeric) %in% c("LIFEXP")],
-                          y = PME$LIFEXP,
-                          nonpara = TRUE)
+                            y = PME$LIFEXP,
+                            nonpara = TRUE)
 
 ##################################
 # Formulating the summary table
@@ -853,7 +855,7 @@ FE_PCC_Summary
 
 ##################################
 # Exploring predictor performance
-# using LOWESS
+# using PCC
 ##################################
 dotplot(Predictor ~ PCC | Metric, 
         FE_PCC_Summary,
@@ -869,8 +871,70 @@ dotplot(Predictor ~ PCC | Metric,
             panel.dotplot(x, reorder(y, x), ...)
         })
 
+##################################
+# Obtaining the Spearman's rank correlation coefficient
+##################################
+(FE_SRCC <- abs(cor(PME.Numeric, method="spearman")[-13,13]))
 
+##################################
+# Formulating the summary table
+##################################
+FE_SRCC_Summary <- data.frame(Predictor = names(PME.Numeric)[1:(ncol(PME.Numeric)-1)],
+                             SRCC = FE_SRCC,
+                             Metric = rep("SRCC", length(FE_SRCC)))
 
+FE_SRCC_Summary
+
+##################################
+# Exploring predictor performance
+# using SRCC
+##################################
+dotplot(Predictor ~ SRCC | Metric, 
+        FE_SRCC_Summary,
+        origin = 0,
+        type = c("p", "h"),
+        pch = 16,
+        cex = 2,
+        alpha = 0.45,
+        prepanel = function(x, y) {
+            list(ylim = levels(reorder(y, x)))
+        },
+        panel = function(x, y, ...) {
+            panel.dotplot(x, reorder(y, x), ...)
+        })
+
+##################################
+# Obtaining the maximal information coefficient
+##################################
+FE_MIC <- mine(x = PME.Numeric[,!names(PME.Numeric) %in% c("LIFEXP")],
+               y = PME$LIFEXP)$MIC
+
+##################################
+# Formulating the summary table
+##################################
+FE_MIC_Summary <- data.frame(Predictor = names(PME.Numeric)[1:(ncol(PME.Numeric)-1)],
+                             MIC = FE_MIC[,1],
+                             Metric = rep("MIC", length(FE_MIC)))
+
+FE_MIC_Summary
+
+##################################
+# Exploring predictor performance
+# using MIC
+##################################
+dotplot(Predictor ~ MIC | Metric, 
+        FE_MIC_Summary,
+        origin = 0,
+        type = c("p", "h"),
+        pch = 16,
+        cex = 2,
+        alpha = 0.45,
+        prepanel = function(x, y) {
+            list(ylim = levels(reorder(y, x)))
+        },
+        panel = function(x, y, ...) {
+            panel.dotplot(x, reorder(y, x), ...)
+        })
 
 ```
 
