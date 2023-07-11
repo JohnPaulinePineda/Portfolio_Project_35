@@ -936,6 +936,39 @@ dotplot(Predictor ~ MIC | Metric,
             panel.dotplot(x, reorder(y, x), ...)
         })
 
+##################################
+# Obtaining the relief values
+##################################
+FE_RV <- attrEval(LIFEXP ~ .,  
+                  data = PME.Numeric,
+                  estimator = "RReliefFequalK")
+
+##################################
+# Formulating the summary table
+##################################
+FE_RV_Summary <- data.frame(Predictor = names(FE_RV),
+                            RV = FE_RV,
+                            Metric = rep("RV", length(FE_RV)))
+
+FE_RV_Summary
+
+##################################
+# Exploring predictor performance
+##################################
+dotplot(Predictor ~ RV | Metric, 
+        FE_RV_Summary,
+        origin = 0,
+        type = c("p", "h"),
+        pch = 16,
+        cex = 2,
+        alpha = 0.45,
+        prepanel = function(x, y) {
+            list(ylim = levels(reorder(y, x)))
+        },
+        panel = function(x, y, ...) {
+            panel.dotplot(x, reorder(y, x), ...)
+        })
+
 ```
 
 </details>
