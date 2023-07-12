@@ -57,6 +57,7 @@ library(lares)
 library(dplyr)
 library(minerva)
 library(CORElearn)
+library(patchwork)
 
 ##################################
 # Loading source and
@@ -1111,17 +1112,17 @@ MT <- PME[-trainIndex,]
 # Preparing the dataset for
 # model development
 ##################################
-MD <- MD[,c("GENDER","INFMOR","PERCAP","CLTECH","NCOMOR","TUBINC","URBPOP","HOSBED","LIFEXP")]
+MD <- MD[,c("GENDER","INFMOR","PERCAP","CLTECH","NCOMOR","LIFEXP")]
 
-MD.Model.Predictors <- MD[,c("GENDER","INFMOR","PERCAP","CLTECH","NCOMOR","TUBINC","URBPOP","HOSBED")]
+MD.Model.Predictors <- MD[,c("GENDER","INFMOR","PERCAP","CLTECH","NCOMOR")]
 
 ##################################
 # Preparing the dataset for
 # model test
 ##################################
-MT <- MT[,c("GENDER","INFMOR","PERCAP","CLTECH","NCOMOR","TUBINC","URBPOP","HOSBED","LIFEXP")]
+MT <- MT[,c("GENDER","INFMOR","PERCAP","CLTECH","NCOMOR","LIFEXP")]
 
-MT.Model.Predictors <- MT[,c("GENDER","INFMOR","PERCAP","CLTECH","NCOMOR","TUBINC","URBPOP","HOSBED")]
+MT.Model.Predictors <- MT[,c("GENDER","INFMOR","PERCAP","CLTECH","NCOMOR")]
 
 ##################################
 # Creating consistent fold assignments 
@@ -1670,10 +1671,12 @@ plot(GBM_DALEX_VariableImportance)
 GBM_DALEX_PartialDependencePlot_INFMOR <- model_profile(GBM_DALEX, variables = "INFMOR")
 GBM_DALEX_PartialDependencePlot_NCOMOR <- model_profile(GBM_DALEX, variables = "NCOMOR")
 GBM_DALEX_PartialDependencePlot_CLTECH <- model_profile(GBM_DALEX, variables = "CLTECH")
-GBM_DALEX_PartialDependencePlot_PERCAP <- model_profile(GBM_DALEX, variables = "HOSBED")
-GBM_DALEX_PartialDependencePlot_HOSBED <- model_profile(GBM_DALEX, variables = "HOSBED")
-GBM_DALEX_PartialDependencePlot_URBPOP <- model_profile(GBM_DALEX, variables = "URBPOP")
-GBM_DALEX_PartialDependencePlot_TUBINC <- model_profile(GBM_DALEX, variables = "TUBINC")
+GBM_DALEX_PartialDependencePlot_PERCAP <- model_profile(GBM_DALEX, variables = "PERCAP")
+
+(GBM_DALEX_PDP_INFMOR <- plot(GBM_DALEX_PartialDependencePlot_INFMOR, geom = "profiles"))
+(GBM_DALEX_PDP_NCOMOR <- plot(GBM_DALEX_PartialDependencePlot_NCOMOR, geom = "profiles"))
+(GBM_DALEX_PDP_CLTECH <- plot(GBM_DALEX_PartialDependencePlot_CLTECH, geom = "profiles"))
+(GBM_DALEX_PDP_PERCAP <- plot(GBM_DALEX_PartialDependencePlot_PERCAP, geom = "profiles"))
 
 
 ```
