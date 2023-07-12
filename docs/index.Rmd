@@ -1121,6 +1121,8 @@ MD.Model.Predictors <- MD[,c("GENDER","INFMOR","PERCAP","CLTECH","NCOMOR","TUBIN
 ##################################
 MT <- MT[,c("GENDER","INFMOR","PERCAP","CLTECH","NCOMOR","TUBINC","URBPOP","HOSBED","LIFEXP")]
 
+MT.Model.Predictors <- MT[,c("GENDER","INFMOR","PERCAP","CLTECH","NCOMOR","TUBINC","URBPOP","HOSBED")]
+
 ##################################
 # Creating consistent fold assignments 
 # for the 10-Fold Cross Validation process
@@ -1474,7 +1476,7 @@ plot(CUBIST_VarImp,
 # for the Best GBM model
 ##################################
 GBM_DALEX <- DALEX::explain(GBM_Tune, 
-                            data = MT, 
+                            data = MT.Model.Predictors, 
                             y = MT$LIFEXP,
                             verbose = FALSE,
                             label = "GBM")
@@ -1495,7 +1497,7 @@ plot(GBM_DALEX_Diagnostics,
 # for the Best RF model
 ##################################
 RF_DALEX <- DALEX::explain(RF_Tune, 
-                           data = MT, 
+                           data = MT.Model.Predictors, 
                            y = MT$LIFEXP,
                            verbose = FALSE,
                            label = "RF")
@@ -1516,7 +1518,7 @@ plot(RF_DALEX_Diagnostics,
 # for the Best NN model
 ##################################
 NN_DALEX <- DALEX::explain(NN_Tune, 
-                           data = MT, 
+                           data = MT.Model.Predictors, 
                            y = MT$LIFEXP,
                            verbose = FALSE,
                            label = "NN")
@@ -1537,7 +1539,7 @@ plot(NN_DALEX_Diagnostics,
 # for the Best PLS model
 ##################################
 PLS_DALEX <- DALEX::explain(PLS_Tune,
-                            data = MT,
+                            data = MT.Model.Predictors,
                             y = MT$LIFEXP,
                             verbose = FALSE,
                             label = "PLS")
@@ -1558,7 +1560,7 @@ plot(PLS_DALEX_Diagnostics,
 # for the Best CUBIST model
 ##################################
 CUBIST_DALEX <- DALEX::explain(CUBIST_Tune,
-                            data = MT,
+                            data = MT.Model.Predictors,
                             y = MT$LIFEXP,
                             verbose = FALSE,
                             label = "CUBIST")
@@ -1603,20 +1605,37 @@ plot(GBM_DALEX_Performance,
      CUBIST_DALEX_Performance,
      geom = "boxplot")
 
+plot(GBM_DALEX_Performance,
+     RF_DALEX_Performance,
+     NN_DALEX_Performance,
+     PLS_DALEX_Performance,
+     CUBIST_DALEX_Performance,
+     geom = "histogram")
+
 ##################################
 # Consolidating the variable importance
 # on the model test data
 ##################################
 GBM_DALEX_VariableImportance    <- model_parts(GBM_DALEX,
-                                            loss_function = loss_root_mean_square)
+                                               loss_function = loss_root_mean_square,
+                                               B = 200, 
+                                               N = NULL)
 RF_DALEX_VariableImportance     <- model_parts(RF_DALEX,
-                                           loss_function = loss_root_mean_square)
+                                               loss_function = loss_root_mean_square,
+                                               B = 200, 
+                                               N = NULL)
 NN_DALEX_VariableImportance     <- model_parts(NN_DALEX,
-                                           loss_function = loss_root_mean_square)
+                                               loss_function = loss_root_mean_square,
+                                               B = 200, 
+                                               N = NULL)
 PLS_DALEX_VariableImportance    <- model_parts(PLS_DALEX,
-                                            loss_function = loss_root_mean_square)
+                                               loss_function = loss_root_mean_square,
+                                               B = 200, 
+                                               N = NULL)
 CUBIST_DALEX_VariableImportance <- model_parts(CUBIST_DALEX,
-                                               loss_function = loss_root_mean_square)
+                                               loss_function = loss_root_mean_square,
+                                               B = 200, 
+                                               N = NULL)
 
 plot(GBM_DALEX_VariableImportance, 
      RF_DALEX_VariableImportance, 
@@ -1635,6 +1654,26 @@ plot(GBM_DALEX_VariableImportance,
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
 ```{r section_1.3.9, warning=FALSE, message=FALSE}
+##################################
+# Summarizing the variable importance
+# for the final model - GBM
+##################################
+GBM_DALEX_VariableImportance
+
+plot(GBM_DALEX_VariableImportance)
+
+##################################
+# Formulating the partial dependence plots
+# for the final model - GBM
+# using the different variables
+##################################
+GBM_DALEX_PartialDependencePlot_INFMOR <- model_profile(GBM_DALEX, variables = "INFMOR")
+GBM_DALEX_PartialDependencePlot_NCOMOR <- model_profile(GBM_DALEX, variables = "NCOMOR")
+GBM_DALEX_PartialDependencePlot_CLTECH <- model_profile(GBM_DALEX, variables = "CLTECH")
+GBM_DALEX_PartialDependencePlot_PERCAP <- model_profile(GBM_DALEX, variables = "HOSBED")
+GBM_DALEX_PartialDependencePlot_HOSBED <- model_profile(GBM_DALEX, variables = "HOSBED")
+GBM_DALEX_PartialDependencePlot_URBPOP <- model_profile(GBM_DALEX, variables = "URBPOP")
+GBM_DALEX_PartialDependencePlot_TUBINC <- model_profile(GBM_DALEX, variables = "TUBINC")
 
 
 ```
@@ -1674,6 +1713,7 @@ plot(GBM_DALEX_VariableImportance,
 | **[R Package]** [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf) by Brian Ripley
 | **[R Package]** [pls](https://cran.r-project.org/web/packages/pls/pls.pdf) by Kristian Hovde Liland
 | **[R Package]** [Cubist](https://cran.r-project.org/web/packages/Cubist/Cubist.pdf) by Max Kuhn
+| **[R Package]** [patchwork](https://cran.r-project.org/web/packages/patchwork/patchwork.pdf) by Thomas Lin Pedersen
 | **[Article]** [Interpretation Methods for Black-Box Machine Learning Models in Insurance Rating-Type Applications ](https://support.sas.com/resources/papers/proceedings20/5116-2020.pdf) by Gabe Taylor, Sunish Menon, Huimin Ru, Ray Wright, Xin Hunt and Ralph Abbey
 | **[Article]** [4 Model-Agnostic Interpretability Techniques for Complex Models ](https://blogs.sas.com/content/subconsciousmusings/2020/05/07/model-agnostic-interpretability/) by Funda Gunes
 | **[Article]** [How Can We Provide Post-Hoc Explanations for Black-Box AI Models? ](https://aisingapore.github.io/ai-practitioner-handbook/book/6-modelling/post-hoc-explanation.html) by Joy Lin
