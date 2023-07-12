@@ -1668,15 +1668,50 @@ plot(GBM_DALEX_VariableImportance)
 # for the final model - GBM
 # using the different variables
 ##################################
-GBM_DALEX_PartialDependencePlot_INFMOR <- model_profile(GBM_DALEX, variables = "INFMOR")
-GBM_DALEX_PartialDependencePlot_NCOMOR <- model_profile(GBM_DALEX, variables = "NCOMOR")
-GBM_DALEX_PartialDependencePlot_CLTECH <- model_profile(GBM_DALEX, variables = "CLTECH")
-GBM_DALEX_PartialDependencePlot_PERCAP <- model_profile(GBM_DALEX, variables = "PERCAP")
+GBM_DALEX_PartialDependencePlot_INFMOR <- model_profile(GBM_DALEX, 
+                                                        variables = "INFMOR")
+GBM_DALEX_PartialDependencePlot_NCOMOR <- model_profile(GBM_DALEX, 
+                                                        variables = "NCOMOR")
+GBM_DALEX_PartialDependencePlot_CLTECH <- model_profile(GBM_DALEX, 
+                                                        variables = "CLTECH")
+GBM_DALEX_PartialDependencePlot_PERCAP <- model_profile(GBM_DALEX, 
+                                                        variables = "PERCAP")
 
-(GBM_DALEX_PDP_INFMOR <- plot(GBM_DALEX_PartialDependencePlot_INFMOR, geom = "profiles"))
-(GBM_DALEX_PDP_NCOMOR <- plot(GBM_DALEX_PartialDependencePlot_NCOMOR, geom = "profiles"))
-(GBM_DALEX_PDP_CLTECH <- plot(GBM_DALEX_PartialDependencePlot_CLTECH, geom = "profiles"))
-(GBM_DALEX_PDP_PERCAP <- plot(GBM_DALEX_PartialDependencePlot_PERCAP, geom = "profiles"))
+(GBM_DALEX_PDP_INFMOR <- plot(GBM_DALEX_PartialDependencePlot_INFMOR, 
+                              geom = "profiles"))
+(GBM_DALEX_PDP_NCOMOR <- plot(GBM_DALEX_PartialDependencePlot_NCOMOR, 
+                              geom = "profiles"))
+(GBM_DALEX_PDP_CLTECH <- plot(GBM_DALEX_PartialDependencePlot_CLTECH, 
+                              geom = "profiles"))
+(GBM_DALEX_PDP_PERCAP <- plot(GBM_DALEX_PartialDependencePlot_PERCAP, 
+                              geom = "profiles"))
+
+##################################
+# Formulating the grouped partial dependence plots
+# for the final model - GBM
+# using the different variables
+##################################
+GBM_DALEX_GroupedPartialDependencePlot_INFMOR <- model_profile(GBM_DALEX, 
+                                                               variables = "INFMOR",
+                                                               groups = "GENDER")
+GBM_DALEX_GroupedPartialDependencePlot_NCOMOR <- model_profile(GBM_DALEX, 
+                                                               variables = "NCOMOR",
+                                                               groups = "GENDER")
+GBM_DALEX_GroupedPartialDependencePlot_CLTECH <- model_profile(GBM_DALEX, 
+                                                               variables = "CLTECH",
+                                                               groups = "GENDER")
+GBM_DALEX_GroupedPartialDependencePlot_PERCAP <- model_profile(GBM_DALEX, 
+                                                               variables = "PERCAP",
+                                                               groups = "GENDER")
+
+(GBM_DALEX_GPDP_INFMOR <- plot(GBM_DALEX_GroupedPartialDependencePlot_INFMOR, 
+                              geom = "profiles"))
+(GBM_DALEX_GPDP_NCOMOR <- plot(GBM_DALEX_GroupedPartialDependencePlot_NCOMOR, 
+                              geom = "profiles"))
+(GBM_DALEX_GPDP_CLTECH <- plot(GBM_DALEX_GroupedPartialDependencePlot_CLTECH, 
+                              geom = "profiles"))
+(GBM_DALEX_GPDP_PERCAP <- plot(GBM_DALEX_GroupedPartialDependencePlot_PERCAP, 
+                              geom = "profiles"))
 
 
 ```
