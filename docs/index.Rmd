@@ -1169,6 +1169,34 @@ GBM_Tune <- train(x = MD.Model.Predictors,
                   trControl = KFold_Control)
 
 ##################################
+# Reporting the apparent results
+# for the GBM model
+##################################
+GBM_DALEX <- DALEX::explain(GBM_Tune,
+                            data = MD.Model.Predictors,
+                            y = MD$LIFEXP,
+                            verbose = FALSE,
+                            label = "GBM")
+
+(GBM_DALEX_Performance <- model_performance(GBM_DALEX))
+(GBM_DALEX_Diagnostics <- model_diagnostics(GBM_DALEX))
+plot(GBM_DALEX_Diagnostics,
+     variable = "y",
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") +
+  scale_y_continuous("Predicted LIFEXP") +
+  geom_abline(slope = 1) +
+  ggtitle("GBM: Observed and Predicted LIFEXP")
+
+GBM_DALEX_VariableImportance    <- model_parts(GBM_DALEX,
+                                               loss_function = loss_root_mean_square,
+                                               B = 200,
+                                               N = NULL)
+
+plot(GBM_DALEX_VariableImportance)
+
+##################################
 # Reporting the cross-validation results
 # for the GBM model
 ##################################
@@ -1193,21 +1221,6 @@ GBM_Tune$finalModel
                               GBM_Tune$results$n.minobsinnode==GBM_Tune$bestTune$n.minobsinnode &
                               GBM_Tune$results$n.trees==GBM_Tune$bestTune$n.trees,
                  c("MAE")])
-
-##################################
-# Identifying and plotting the
-# best model predictors
-# for the GBM model
-##################################
-GBM_VarImp <- varImp(GBM_Tune, scale = TRUE)
-plot(GBM_VarImp,
-     scales=list(y=list(cex = .95)),
-     main="Ranked Variable Importance : GBM",
-     xlab="Scaled Variable Importance Metrics",
-     ylab="Predictors",
-     cex=2,
-     origin=0,
-     alpha=0.45)
 
 ```
 
@@ -1241,6 +1254,34 @@ RF_Tune <- train(x = MD.Model.Predictors,
                  trControl = KFold_Control)
 
 ##################################
+# Reporting the apparent results
+# for the RF model
+##################################
+RF_DALEX <- DALEX::explain(RF_Tune,
+                           data = MD.Model.Predictors,
+                           y = MD$LIFEXP,
+                           verbose = FALSE,
+                           label = "RF")
+
+(RF_DALEX_Performance <- model_performance(RF_DALEX))
+(RF_DALEX_Diagnostics <- model_diagnostics(RF_DALEX))
+plot(RF_DALEX_Diagnostics,
+     variable = "y",
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") +
+  scale_y_continuous("Predicted LIFEXP") +
+  geom_abline(slope = 1) +
+  ggtitle("RF: Observed and Predicted LIFEXP")
+
+RF_DALEX_VariableImportance    <- model_parts(RF_DALEX,
+                                              loss_function = loss_root_mean_square,
+                                              B = 200,
+                                              N = NULL)
+
+plot(RF_DALEX_VariableImportance)
+
+##################################
 # Reporting the cross-validation results
 # for the RF model
 ##################################
@@ -1256,21 +1297,6 @@ RF_Tune$finalModel
 
 (RF_Tune_MAE <- RF_Tune$results[RF_Tune$results$mtry==RF_Tune$bestTune$mtry,
                  c("MAE")])
-
-##################################
-# Identifying and plotting the
-# best model predictors
-# for the RF model
-##################################
-RF_VarImp <- varImp(RF_Tune, scale = TRUE)
-plot(RF_VarImp,
-     scales=list(y=list(cex = .95)),
-     main="Ranked Variable Importance : RF",
-     xlab="Scaled Variable Importance Metrics",
-     ylab="Predictors",
-     cex=2,
-     origin=0,
-     alpha=0.45)
 
 ```
 
@@ -1307,6 +1333,34 @@ NN_Tune <- train(x = MD.Model.Predictors,
                  trControl = KFold_Control)
 
 ##################################
+# Reporting the apparent results
+# for the NN model
+##################################
+NN_DALEX <- DALEX::explain(NN_Tune,
+                           data = MD.Model.Predictors,
+                           y = MD$LIFEXP,
+                           verbose = FALSE,
+                           label = "NN")
+
+(NN_DALEX_Performance <- model_performance(NN_DALEX))
+(NN_DALEX_Diagnostics <- model_diagnostics(NN_DALEX))
+plot(NN_DALEX_Diagnostics,
+     variable = "y",
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") +
+  scale_y_continuous("Predicted LIFEXP") +
+  geom_abline(slope = 1) +
+  ggtitle("RF: Observed and Predicted LIFEXP")
+
+NN_DALEX_VariableImportance    <- model_parts(NN_DALEX,
+                                              loss_function = loss_root_mean_square,
+                                              B = 200,
+                                              N = NULL)
+
+plot(NN_DALEX_VariableImportance)
+
+##################################
 # Reporting the cross-validation results
 # for the NN model
 ##################################
@@ -1325,21 +1379,6 @@ NN_Tune$finalModel
 (NN_Tune_MAE <- NN_Tune$results[NN_Tune$results$size==NN_Tune$bestTune$size &
                               NN_Tune$results$decay==NN_Tune$bestTune$decay,
                  c("MAE")])
-
-##################################
-# Identifying and plotting the
-# best model predictors
-# for the NN model
-##################################
-# NN_VarImp <- varImp(NN_Tune, scale = TRUE)
-# plot(NN_VarImp,
-#      scales=list(y=list(cex = .95)),
-#      main="Ranked Variable Importance : NN",
-#      xlab="Scaled Variable Importance Metrics",
-#      ylab="Predictors",
-#      cex=2,
-#      origin=0,
-#      alpha=0.45)
 
 ```
 
@@ -1372,6 +1411,34 @@ PLS_Tune <- train(x = MD.Model.Predictors,
                   trControl = KFold_Control)
 
 ##################################
+# Reporting the apparent results
+# for the PLS model
+##################################
+PLS_DALEX <- DALEX::explain(PLS_Tune,
+                           data = MD.Model.Predictors,
+                           y = MD$LIFEXP,
+                           verbose = FALSE,
+                           label = "PLS")
+
+(PLS_DALEX_Performance <- model_performance(PLS_DALEX))
+(PLS_DALEX_Diagnostics <- model_diagnostics(PLS_DALEX))
+plot(PLS_DALEX_Diagnostics,
+     variable = "y",
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") +
+  scale_y_continuous("Predicted LIFEXP") +
+  geom_abline(slope = 1) +
+  ggtitle("RF: Observed and Predicted LIFEXP")
+
+PLS_DALEX_VariableImportance    <- model_parts(PLS_DALEX,
+                                              loss_function = loss_root_mean_square,
+                                              B = 200,
+                                              N = NULL)
+
+plot(PLS_DALEX_VariableImportance)
+
+##################################
 # Reporting the cross-validation results
 # for the PLS model
 ##################################
@@ -1388,20 +1455,6 @@ PLS_Tune$finalModel
 (PLS_Tune_MAE <- PLS_Tune$results[PLS_Tune$results$ncomp==PLS_Tune$bestTune$ncomp,
                  c("MAE")])
 
-##################################
-# Identifying and plotting the
-# best model predictors
-# for the PLS model
-##################################
-PLS_VarImp <- varImp(PLS_Tune, scale = TRUE)
-plot(PLS_VarImp,
-     scales=list(y=list(cex = .95)),
-     main="Ranked Variable Importance : PLS",
-     xlab="Scaled Variable Importance Metrics",
-     ylab="Predictors",
-     cex=2,
-     origin=0,
-     alpha=0.45)
 ```
 
 </details>
@@ -1435,6 +1488,34 @@ CUBIST_Tune <- train(x = MD.Model.Predictors,
                    trControl = KFold_Control)
 
 ##################################
+# Reporting the apparent results
+# for the CUBIST model
+##################################
+CUBIST_DALEX <- DALEX::explain(CUBIST_Tune,
+                           data = MD.Model.Predictors,
+                           y = MD$LIFEXP,
+                           verbose = FALSE,
+                           label = "CUBIST")
+
+(CUBIST_DALEX_Performance <- model_performance(CUBIST_DALEX))
+(CUBIST_DALEX_Diagnostics <- model_diagnostics(CUBIST_DALEX))
+plot(CUBIST_DALEX_Diagnostics,
+     variable = "y",
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") +
+  scale_y_continuous("Predicted LIFEXP") +
+  geom_abline(slope = 1) +
+  ggtitle("RF: Observed and Predicted LIFEXP")
+
+CUBIST_DALEX_VariableImportance    <- model_parts(CUBIST_DALEX,
+                                              loss_function = loss_root_mean_square,
+                                              B = 200,
+                                              N = NULL)
+
+plot(CUBIST_DALEX_VariableImportance)
+
+##################################
 # Reporting the cross-validation results
 # for the CUBIST model
 ##################################
@@ -1453,21 +1534,6 @@ CUBIST_Tune$finalModel
 (CUBIST_Tune_MAE <- CUBIST_Tune$results[CUBIST_Tune$results$committees==CUBIST_Tune$bestTune$committees &
                               CUBIST_Tune$results$neighbors==CUBIST_Tune$bestTune$neighbors,
                  c("MAE")])
-
-##################################
-# Identifying and plotting the
-# best model predictors
-# for the CUBIST model
-##################################
-CUBIST_VarImp <- varImp(CUBIST_Tune, scale = TRUE)
-plot(CUBIST_VarImp,
-     scales=list(y=list(cex = .95)),
-     main="Ranked Variable Importance : CUBIST",
-     xlab="Scaled Variable Importance Metrics",
-     ylab="Predictors",
-     cex=2,
-     origin=0,
-     alpha=0.45)
 
 ```
 
@@ -1488,6 +1554,7 @@ plot(CUBIST_VarImp,
 ##################################
 # Formulating the DALEX object
 # for the Best GBM model
+# as applied to the model test data
 ##################################
 GBM_DALEX <- DALEX::explain(GBM_Tune,
                             data = MT.Model.Predictors,
@@ -1509,6 +1576,7 @@ plot(GBM_DALEX_Diagnostics,
 ##################################
 # Formulating the DALEX object
 # for the Best RF model
+# as applied to the model test data
 ##################################
 RF_DALEX <- DALEX::explain(RF_Tune,
                            data = MT.Model.Predictors,
@@ -1530,6 +1598,7 @@ plot(RF_DALEX_Diagnostics,
 ##################################
 # Formulating the DALEX object
 # for the Best NN model
+# as applied to the model test data
 ##################################
 NN_DALEX <- DALEX::explain(NN_Tune,
                            data = MT.Model.Predictors,
@@ -1551,6 +1620,7 @@ plot(NN_DALEX_Diagnostics,
 ##################################
 # Formulating the DALEX object
 # for the Best PLS model
+# as applied to the model test data
 ##################################
 PLS_DALEX <- DALEX::explain(PLS_Tune,
                             data = MT.Model.Predictors,
@@ -1572,6 +1642,7 @@ plot(PLS_DALEX_Diagnostics,
 ##################################
 # Formulating the DALEX object
 # for the Best CUBIST model
+# as applied to the model test data
 ##################################
 CUBIST_DALEX <- DALEX::explain(CUBIST_Tune,
                             data = MT.Model.Predictors,
@@ -1668,63 +1739,63 @@ plot(GBM_DALEX_VariableImportance,
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
 ```{r section_1.3.9, warning=FALSE, message=FALSE}
-# ##################################
-# # Summarizing the variable importance
-# # for the final model - GBM
-# ##################################
-# GBM_DALEX_VariableImportance
-# 
-# plot(GBM_DALEX_VariableImportance)
-# 
-# ##################################
-# # Formulating the partial dependence plots
-# # for the final model - GBM
-# # using the different variables
-# ##################################
-# GBM_DALEX_PartialDependencePlot_INFMOR <- model_profile(GBM_DALEX,
-#                                                         variables = "INFMOR")
-# GBM_DALEX_PartialDependencePlot_NCOMOR <- model_profile(GBM_DALEX,
-#                                                         variables = "NCOMOR")
-# GBM_DALEX_PartialDependencePlot_CLTECH <- model_profile(GBM_DALEX,
-#                                                         variables = "CLTECH")
-# GBM_DALEX_PartialDependencePlot_PERCAP <- model_profile(GBM_DALEX,
-#                                                         variables = "PERCAP")
-# 
-# (GBM_DALEX_PDP_INFMOR <- plot(GBM_DALEX_PartialDependencePlot_INFMOR,
-#                               geom = "profiles"))
-# (GBM_DALEX_PDP_NCOMOR <- plot(GBM_DALEX_PartialDependencePlot_NCOMOR,
-#                               geom = "profiles"))
-# (GBM_DALEX_PDP_CLTECH <- plot(GBM_DALEX_PartialDependencePlot_CLTECH,
-#                               geom = "profiles"))
-# (GBM_DALEX_PDP_PERCAP <- plot(GBM_DALEX_PartialDependencePlot_PERCAP,
-#                               geom = "profiles"))
-# 
-# ##################################
-# # Formulating the grouped partial dependence plots
-# # for the final model - GBM
-# # using the different variables
-# ##################################
-# GBM_DALEX_GroupedPartialDependencePlot_INFMOR <- model_profile(GBM_DALEX,
-#                                                                variables = "INFMOR",
-#                                                                groups = "GENDER")
-# GBM_DALEX_GroupedPartialDependencePlot_NCOMOR <- model_profile(GBM_DALEX,
-#                                                                variables = "NCOMOR",
-#                                                                groups = "GENDER")
-# GBM_DALEX_GroupedPartialDependencePlot_CLTECH <- model_profile(GBM_DALEX,
-#                                                                variables = "CLTECH",
-#                                                                groups = "GENDER")
-# GBM_DALEX_GroupedPartialDependencePlot_PERCAP <- model_profile(GBM_DALEX,
-#                                                                variables = "PERCAP",
-#                                                                groups = "GENDER")
-# 
-# (GBM_DALEX_GPDP_INFMOR <- plot(GBM_DALEX_GroupedPartialDependencePlot_INFMOR,
-#                               geom = "profiles"))
-# (GBM_DALEX_GPDP_NCOMOR <- plot(GBM_DALEX_GroupedPartialDependencePlot_NCOMOR,
-#                               geom = "profiles"))
-# (GBM_DALEX_GPDP_CLTECH <- plot(GBM_DALEX_GroupedPartialDependencePlot_CLTECH,
-#                               geom = "profiles"))
-# (GBM_DALEX_GPDP_PERCAP <- plot(GBM_DALEX_GroupedPartialDependencePlot_PERCAP,
-#                               geom = "profiles"))
+##################################
+# Summarizing the variable importance
+# for the final model - GBM
+##################################
+GBM_DALEX_VariableImportance
+
+plot(GBM_DALEX_VariableImportance)
+
+##################################
+# Formulating the partial dependence plots
+# for the final model - GBM
+# using the different variables
+##################################
+GBM_DALEX_PartialDependencePlot_INFMOR <- model_profile(GBM_DALEX,
+                                                        variables = "INFMOR")
+GBM_DALEX_PartialDependencePlot_NCOMOR <- model_profile(GBM_DALEX,
+                                                        variables = "NCOMOR")
+GBM_DALEX_PartialDependencePlot_CLTECH <- model_profile(GBM_DALEX,
+                                                        variables = "CLTECH")
+GBM_DALEX_PartialDependencePlot_PERCAP <- model_profile(GBM_DALEX,
+                                                        variables = "PERCAP")
+
+(GBM_DALEX_PDP_INFMOR <- plot(GBM_DALEX_PartialDependencePlot_INFMOR,
+                              geom = "profiles"))
+(GBM_DALEX_PDP_NCOMOR <- plot(GBM_DALEX_PartialDependencePlot_NCOMOR,
+                              geom = "profiles"))
+(GBM_DALEX_PDP_CLTECH <- plot(GBM_DALEX_PartialDependencePlot_CLTECH,
+                              geom = "profiles"))
+(GBM_DALEX_PDP_PERCAP <- plot(GBM_DALEX_PartialDependencePlot_PERCAP,
+                              geom = "profiles"))
+
+##################################
+# Formulating the grouped partial dependence plots
+# for the final model - GBM
+# using the different variables
+##################################
+GBM_DALEX_GroupedPartialDependencePlot_INFMOR <- model_profile(GBM_DALEX,
+                                                               variables = "INFMOR",
+                                                               groups = "GENDER")
+GBM_DALEX_GroupedPartialDependencePlot_NCOMOR <- model_profile(GBM_DALEX,
+                                                               variables = "NCOMOR",
+                                                               groups = "GENDER")
+GBM_DALEX_GroupedPartialDependencePlot_CLTECH <- model_profile(GBM_DALEX,
+                                                               variables = "CLTECH",
+                                                               groups = "GENDER")
+GBM_DALEX_GroupedPartialDependencePlot_PERCAP <- model_profile(GBM_DALEX,
+                                                               variables = "PERCAP",
+                                                               groups = "GENDER")
+
+(GBM_DALEX_GPDP_INFMOR <- plot(GBM_DALEX_GroupedPartialDependencePlot_INFMOR,
+                              geom = "profiles"))
+(GBM_DALEX_GPDP_NCOMOR <- plot(GBM_DALEX_GroupedPartialDependencePlot_NCOMOR,
+                              geom = "profiles"))
+(GBM_DALEX_GPDP_CLTECH <- plot(GBM_DALEX_GroupedPartialDependencePlot_CLTECH,
+                              geom = "profiles"))
+(GBM_DALEX_GPDP_PERCAP <- plot(GBM_DALEX_GroupedPartialDependencePlot_PERCAP,
+                              geom = "profiles"))
 
 ```
 
