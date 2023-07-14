@@ -1856,9 +1856,9 @@ GBM_DALEX_PartialDependencePlot_CONTIN <- model_profile(GBM_DALEX,
                                                         variable_type = 'categorical',
                                                         variables = "CONTIN")
 
-(GBM_DALEX_GPDP_GENDER <- plot(GBM_DALEX_PartialDependencePlot_GENDER,
+(GBM_DALEX_PDP_GENDER <- plot(GBM_DALEX_PartialDependencePlot_GENDER,
                                geom = "profiles"))
-(GBM_DALEX_GPDP_CONTIN <- plot(GBM_DALEX_PartialDependencePlot_CONTIN,
+(GBM_DALEX_PDP_CONTIN <- plot(GBM_DALEX_PartialDependencePlot_CONTIN,
                                geom = "profiles"))
 
 ```
@@ -1866,25 +1866,13 @@ GBM_DALEX_PartialDependencePlot_CONTIN <- model_profile(GBM_DALEX,
 </details>
 |
 |
-####  1.3.9.3 Dataset Level Exploration : Accumulated Local Profiles (DLE_ALP)
+####  1.3.9.3 Instance Level Exploration : Breakdown Plots (ILE_BP)
 |
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
 ```{r section_1.3.9.3, warning=FALSE, message=FALSE}
-```
-
-</details>
-|
-|
-####  1.3.9.4 Instance Level Exploration : Breakdown Plots (ILE_BP)
-|
-|
-
-<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
-
-```{r section_1.3.9.4, warning=FALSE, message=FALSE}
 ##################################
 # Formulating the sampled instances
 # for illustration
@@ -1913,13 +1901,13 @@ plot(Instance_2_GBM_BDP)
 </details>
 |
 |
-####  1.3.9.5 Instance Level Exploration : Shapley Additive Explanations (ILE_SHAP)
+####  1.3.9.4 Instance Level Exploration : Shapley Additive Explanations (ILE_SHAP)
 |
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
-```{r section_1.3.9.5, warning=FALSE, message=FALSE}
+```{r section_1.3.9.4, warning=FALSE, message=FALSE}
 ##################################
 # Obtaining the shapley additive explanations
 # for the individual instances
@@ -1942,13 +1930,13 @@ plot(Instance_2_GBM_SHAP)
 
 |
 |
-####  1.3.9.6 Instance Level Exploration : Ceteris Paribus Profiles (ILE_CPP)
+####  1.3.9.5 Instance Level Exploration : Ceteris Paribus Profiles (ILE_CPP)
 |
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
-```{r section_1.3.9.6, warning=FALSE, message=FALSE}
+```{r section_1.3.9.5, warning=FALSE, message=FALSE}
 ##################################
 # Obtaining the ceteris paribus profiles
 # for the individual instances
@@ -1984,13 +1972,13 @@ plot(Instance_2_GBM_CPP,
 </details>
 |
 |
-####  1.3.9.7 Instance Level Exploration : Local Fidelity Plot (ILE_LFP)
+####  1.3.9.6 Instance Level Exploration : Local Fidelity Plot (ILE_LFP)
 |
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
-```{r section_1.3.9.7, warning=FALSE, message=FALSE}
+```{r section_1.3.9.6, warning=FALSE, message=FALSE}
 Instance_1_GBM_LFP <- predict_diagnostics(explainer = GBM_DALEX,
                                          new_observation = Instance_1_Philippines_Female[,c(1:6)],
                                          neighbours = 50)
@@ -2006,34 +1994,34 @@ plot(Instance_2_GBM_LFP)
 </details>
 |
 |
-####  1.3.9.8 Instance Level Exploration : Local Stability Plot (ILE_LSP)
+####  1.3.9.7 Instance Level Exploration : Local Stability Plot (ILE_LSP)
 |
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
-```{r section_1.3.9.8, warning=FALSE, message=FALSE}
+```{r section_1.3.9.7, warning=FALSE, message=FALSE}
 Instance_1_GBM_LFP <- predict_diagnostics(explainer = GBM_DALEX,
                                           new_observation = Instance_1_Philippines_Female[,c(1:6)],
-                                          neighbours = 10,
+                                          neighbours = 5,
                                           variables = c("INFMOR","NCOMOR","CLTECH","PERCAP"))
 plot(Instance_1_GBM_LFP)
 
 Instance_1_GBM_LFP <- predict_diagnostics(explainer = GBM_DALEX,
                                           new_observation = Instance_1_Philippines_Female[,c(1:6)],
-                                          neighbours = 10,
+                                          neighbours = 5,
                                           variables = c("GENDER","CONTIN"))
 plot(Instance_1_GBM_LFP)
 
 Instance_2_GBM_LFP <- predict_diagnostics(explainer = GBM_DALEX,
                                           new_observation = Instance_2_Philippines_Male[,c(1:6)],
-                                          neighbours = 10,
+                                          neighbours = 5,
                                           variables = c("INFMOR","NCOMOR","CLTECH","PERCAP"))
 plot(Instance_2_GBM_LFP)
 
 Instance_2_GBM_LFP <- predict_diagnostics(explainer = GBM_DALEX,
                                           new_observation = Instance_2_Philippines_Male[,c(1:6)],
-                                          neighbours = 10,
+                                          neighbours = 5,
                                           variables = c("GENDER","CONTIN"))
 plot(Instance_2_GBM_LFP)
 
