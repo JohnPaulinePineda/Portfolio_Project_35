@@ -1735,10 +1735,13 @@ plot(GBM_DALEX_VariableImportance,
 ###  1.3.9 Model Post-Hoc Analysis
 |
 |
+####  1.3.9.1 Dataset Level Exploration : Variable Importance (DLE_VARIMP)
+|
+|
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
-```{r section_1.3.9, warning=FALSE, message=FALSE}
+```{r section_1.3.9.1, warning=FALSE, message=FALSE}
 ##################################
 # Summarizing the variable importance
 # for the final model - GBM
@@ -1747,10 +1750,23 @@ GBM_DALEX_VariableImportance
 
 plot(GBM_DALEX_VariableImportance)
 
+```
+
+</details>
+
+|
+|
+####  1.3.9.2 Dataset Level Exploration : Partial Dependence Plots (DLE_PDP)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.9.2, warning=FALSE, message=FALSE}
 ##################################
 # Formulating the partial dependence plots
 # for the final model - GBM
-# using the different variables
+# using the numeric variables
 ##################################
 GBM_DALEX_PartialDependencePlot_INFMOR <- model_profile(GBM_DALEX,
                                                         variables = "INFMOR")
@@ -1773,7 +1789,8 @@ GBM_DALEX_PartialDependencePlot_PERCAP <- model_profile(GBM_DALEX,
 ##################################
 # Formulating the grouped partial dependence plots
 # for the final model - GBM
-# using the different variables
+# using the numeric variables
+# stratified by GENDER
 ##################################
 GBM_DALEX_GroupedPartialDependencePlot_INFMOR <- model_profile(GBM_DALEX,
                                                                variables = "INFMOR",
@@ -1797,6 +1814,135 @@ GBM_DALEX_GroupedPartialDependencePlot_PERCAP <- model_profile(GBM_DALEX,
 (GBM_DALEX_GPDP_PERCAP <- plot(GBM_DALEX_GroupedPartialDependencePlot_PERCAP,
                               geom = "profiles"))
 
+##################################
+# Formulating the grouped partial dependence plots
+# for the final model - GBM
+# using the numeric variables
+# stratified by CONTIN
+##################################
+GBM_DALEX_GroupedPartialDependencePlot_INFMOR <- model_profile(GBM_DALEX,
+                                                               variables = "INFMOR",
+                                                               groups = "CONTIN")
+GBM_DALEX_GroupedPartialDependencePlot_NCOMOR <- model_profile(GBM_DALEX,
+                                                               variables = "NCOMOR",
+                                                               groups = "CONTIN")
+GBM_DALEX_GroupedPartialDependencePlot_CLTECH <- model_profile(GBM_DALEX,
+                                                               variables = "CLTECH",
+                                                               groups = "CONTIN")
+GBM_DALEX_GroupedPartialDependencePlot_PERCAP <- model_profile(GBM_DALEX,
+                                                               variables = "PERCAP",
+                                                               groups = "CONTIN")
+
+(GBM_DALEX_GPDP_INFMOR <- plot(GBM_DALEX_GroupedPartialDependencePlot_INFMOR,
+                              geom = "profiles"))
+(GBM_DALEX_GPDP_NCOMOR <- plot(GBM_DALEX_GroupedPartialDependencePlot_NCOMOR,
+                              geom = "profiles"))
+(GBM_DALEX_GPDP_CLTECH <- plot(GBM_DALEX_GroupedPartialDependencePlot_CLTECH,
+                              geom = "profiles"))
+(GBM_DALEX_GPDP_PERCAP <- plot(GBM_DALEX_GroupedPartialDependencePlot_PERCAP,
+                              geom = "profiles"))
+
+##################################
+# Formulating the partial dependence plots
+# for the final model - GBM
+# using the factor variables
+##################################
+GBM_DALEX_PartialDependencePlot_GENDER <- model_profile(GBM_DALEX,
+                                                        variable_type = 'categorical',
+                                                        variables = "GENDER")
+GBM_DALEX_PartialDependencePlot_CONTIN <- model_profile(GBM_DALEX,
+                                                        variable_type = 'categorical',
+                                                        variables = "CONTIN")
+
+(GBM_DALEX_GPDP_GENDER <- plot(GBM_DALEX_PartialDependencePlot_GENDER,
+                               geom = "profiles"))
+(GBM_DALEX_GPDP_CONTIN <- plot(GBM_DALEX_PartialDependencePlot_CONTIN,
+                               geom = "profiles"))
+
+```
+
+</details>
+|
+|
+####  1.3.9.3 Dataset Level Exploration : Accumulated Local Profiles (DLE_ALP)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.9.3, warning=FALSE, message=FALSE}
+```
+
+</details>
+|
+|
+####  1.3.9.4 Instance Level Exploration : Breakdown Plots (ILE_BP)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.9.4, warning=FALSE, message=FALSE}
+```
+
+</details>
+|
+|
+####  1.3.9.5 Instance Level Exploration : Shapley Additive Explanations (ILE_SHAP)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.9.5, warning=FALSE, message=FALSE}
+```
+
+</details>
+|
+|
+####  1.3.9.6 Instance Level Exploration : Local Interpretable Model-Agnostic Explanations (ILE_LIME)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.9.6, warning=FALSE, message=FALSE}
+```
+
+</details>
+|
+|
+####  1.3.9.7 Instance Level Exploration : Ceteris Paribus Profiles (ILE_CPP)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.9.7, warning=FALSE, message=FALSE}
+```
+
+</details>
+|
+|
+####  1.3.9.8 Instance Level Exploration : Local Fidelity Plot (ILE_LFP)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.9.8, warning=FALSE, message=FALSE}
+```
+
+</details>
+|
+|
+####  1.3.9.9 Instance Level Exploration : Local Fidelity Plot (ILE_LSP)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.9.9, warning=FALSE, message=FALSE}
 ```
 
 </details>
