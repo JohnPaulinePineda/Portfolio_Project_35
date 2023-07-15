@@ -2111,7 +2111,17 @@ plot(Instance_2_GBM_LFP)
 | **[Article]** [Interpretation Methods for Black-Box Machine Learning Models in Insurance Rating-Type Applications ](https://support.sas.com/resources/papers/proceedings20/5116-2020.pdf) by Gabe Taylor, Sunish Menon, Huimin Ru, Ray Wright, Xin Hunt and Ralph Abbey
 | **[Article]** [4 Model-Agnostic Interpretability Techniques for Complex Models ](https://blogs.sas.com/content/subconsciousmusings/2020/05/07/model-agnostic-interpretability/) by Funda Gunes
 | **[Article]** [How Can We Provide Post-Hoc Explanations for Black-Box AI Models? ](https://aisingapore.github.io/ai-practitioner-handbook/book/6-modelling/post-hoc-explanation.html) by Joy Lin
-| **[Article]** [Methods for Foreasts of Continuous Variables ](https://www.cawcr.gov.au/projects/verification/#Methods_for_foreasts_of_continuous_variables) by WWRP/WGNE Joint Working Group on Forecast Verification Research Team
+| **[Article]** [Correlation in R: Pearson and Spearman Correlation Matrix](https://www.guru99.com/r-pearson-spearman-correlation.html) by Daniel Johnson
+| **[Article]** [Correlation (Pearson, Kendall, Spearman)](https://www.statisticssolutions.com/free-resources/directory-of-statistical-analyses/correlation-pearson-kendall-spearman/) by Statistics Solutions Team
+| **[Article]** [A Comparison of the Pearson and Spearman Correlation Methods](https://support.minitab.com/en-us/minitab/21/help-and-how-to/statistics/basic-statistics/supporting-topics/correlation-and-covariance/a-comparison-of-the-pearson-and-spearman-correlation-methods/#:~:text=The%20Pearson%20and%20Spearman%20correlation%20coefficients%20can%20range,correlation%20coefficient%20is%20also%20%2B1%20in%20this%20case.) by Minitab Support Team
+| **[Article]** [How to Perform Lowess Smoothing in R (Step-by-Step)](https://www.statology.org/lowess-smoothing-r/) by Statology Team
+| **[Article]** [Maximal Information Coefficient](https://www.r-bloggers.com/2014/09/maximal-information-coefficient-part-ii/) by R Bloggers Team
+| **[Article]** [Methods for Forecasts of Continuous Variables ](https://www.cawcr.gov.au/projects/verification/#Methods_for_foreasts_of_continuous_variables) by WWRP/WGNE Joint Working Group on Forecast Verification Research Team
+| **[Article]** [Generalized Boosting Model](https://support.bccvl.org.au/support/solutions/articles/6000083212-generalized-boosting-model) by BCCVL Team
+| **[Article]** [An Introduction to Partial Least Squares](https://www.statology.org/partial-least-squares/) by Statology Team
+| **[Article]** [Random Forest](https://support.bccvl.org.au/support/solutions/articles/6000083217-random-forest) by BCCVL Team
+| **[Article]** [Artificial Neural Network](https://support.bccvl.org.au/support/solutions/articles/6000083200-artificial-neural-network) by BCCVL Team
+| **[Article]** [Cubist Regression Models](https://cran.r-project.org/web/packages/Cubist/vignettes/cubist.html) by Max Kuhn
 | **[Publication]** [Robust Locally Weighted Regression and Smoothing Scatterplots](https://www.tandfonline.com/doi/abs/10.1080/01621459.1979.10481038) by William Cleveland (Journal of the American Statistical Association)
 | **[Publication]** [Mathematical Contributions to the Theory of Evolution: Regression, Heredity and Panmixia](https://royalsocietypublishing.org/doi/10.1098/rsta.1896.0007) by Karl Pearson (Royal Society)
 | **[Publication]** [The Proof and Measurement of Association between Two Things](https://www.jstor.org/stable/1412159?origin=crossref) by Charles Spearman (The American Journal of Psychology)
