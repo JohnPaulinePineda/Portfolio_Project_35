@@ -54,7 +54,27 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 ###  1.2.3 Model Evaluation
 |
+| [Root Mean Squared Error](https://link.springer.com/book/10.1007/978-0-387-84858-7) computes the square root of the average squared difference between the predicted and target values which ranges from zero to infinity. A value of zero indicates perfect prediction of the target values. The metric is weighted according to the square of the error - putting greater influence on large errors than smaller errors which makes it sensitive to outliers but may also encourage conservative prediction.
+|
+| [Median Absolute Deviation](https://link.springer.com/book/10.1007/978-0-387-84858-7) computes the median among all absolute difference between the predicted and target values which ranges from zero to infinity. A value of zero indicates perfect prediction of the target values. The metric gives less weight to large errors and is robust to outliers.
+|
+| [R-Squared](https://link.springer.com/book/10.1007/978-0-387-84858-7) computes the normalized version of the root mean squared error and also referred to as the coefficient of determination. With a value ranging from zero to infinity, a value of one indicates perfect prediction of the target values. The metric can also be interpreted as the fraction of the total variance in the response variable which can be explained by the model.  
+|
 ###  1.2.4 Model Post-Hoc Analysis
+|
+| [Variable Importance](https://jmlr.org/papers/volume20/18-760/18-760.pdf) pertains to model-agnostic methods which allow the comparison of an explanatory variable’s importance between models with different structures. The process involves measuring how much a model’s performance change if the effect of a selected explanatory variable, or of a group of variables, is removed. To remove the effect, perturbations are applied including resampling from an empirical distribution or permutation of the values of the variable. If a variable is important, the model’s performance is expected to worsen after permuting the values of the variable. A larger change in performance indicates the greater importance of the variable.
+|
+| [Partial Dependence Plots](https://www.semanticscholar.org/paper/Greedy-function-approximation%3A-A-gradient-boosting-Friedman/1679beddda3a183714d380e944fe6bf586c083cd) show how the expected values of model prediction behave as a function of a selected explanatory variable using the average of a set of individual ceteris paribus profiles. While a ceteris paribus profile shows the dependence of an instance-level prediction on an explanatory variable, a partial dependence profile is estimated by the mean of the ceteris paribus profiles for all instances in a data set.
+|
+| [Breakdown Plots](https://ieeexplore.ieee.org/document/4407709) present variable attributions by decomposing the model's prediction into contributions that can be attributed to the different explanatory variables. Given a prediction which is an approximation of the expected value of the dependent variable driven by the values of explanatory variables, the process involves capturing the contribution of an explanatory variable to the model’s prediction by computing the shift in the expected value of the response, while fixing the values of other variables.
+|
+| [Shapley Additive Explanations](https://dl.acm.org/doi/10.5555/1756006.1756007) are based on Shapley values developed in the cooperative game theory. The process involves explaining a prediction by assuming that each explanatory variable for an instance is a player in a game where the prediction is the payout. The game is the prediction task for a single instance of the data set. The gain is the actual prediction for this instance minus the average prediction for all instances. The players are the explanatory variable values of the instance that collaborate to receive the gain (predict a certain value). The determined value is the average marginal contribution of an explanatory variable across all possible coalitions.
+|
+| [Ceteris Paribus Profiles](https://www.tandfonline.com/doi/full/10.1080/10618600.2014.907095) examine the influence of an explanatory variable by assuming that the values of all other variables do not change. The main objective is to understand how changes in the values of the variable affect the model’s predictions. The process involves evaluating the dependence of the conditional expectation of the response on the values of the particular explanatory variable.
+|
+| [Local Fidelity Plots](https://ema.drwhy.ai/) evaluate the local predictive performance of the model around the observation of interest. The process involves summarizing two distributions of residuals including the residuals for the neighbors of the observation of interest and residuals for the entire training dataset except for neighbors. The results help evaluate whether the model-fit for the instance of interest is unbiased (based on small residuals with distributions symmetric around 0).
+|
+| [Local Stability Plots](https://ema.drwhy.ai/) assess the local stability of predictions around the observation of interest. The process involves checking whether small changes in the explanatory variables, as represented by the changes within the set of neighbors, induce much influence on the predictions. The results help evaluate whether the model is locally additive (based on parallel ceteris paribus profiles) and locally stable (based on adjacent ceteris paribus profiles).
 |
 ##  1.3 Results
 |
@@ -1994,7 +2014,7 @@ plot(Instance_2_GBM_CPP,
 </details>
 |
 |
-####  1.3.9.6 Instance Level Exploration : Local Fidelity Plot (ILE_LFP)
+####  1.3.9.6 Instance Level Exploration : Local Fidelity Plots (ILE_LFP)
 |
 |
 
@@ -2016,7 +2036,7 @@ plot(Instance_2_GBM_LFP)
 </details>
 |
 |
-####  1.3.9.7 Instance Level Exploration : Local Stability Plot (ILE_LSP)
+####  1.3.9.7 Instance Level Exploration : Local Stability Plots (ILE_LSP)
 |
 |
 
@@ -2058,6 +2078,8 @@ plot(Instance_2_GBM_LFP)
 | **[Book]** [Explanatory Model Analysis: Explore, Explain, and Examine Predictive Models With examples in R and Python](https://ema.drwhy.ai/) by Przemyslaw Biecek and Tomasz Burzykowski
 | **[Book]** [Explainable Machine Learning: A Guide for Making Black Box Models Explainable](https://christophm.github.io/interpretable-ml-book/) by Christoph Molnar
 | **[Book]** [Explainable AI: Interpreting, Explaining and Visualizing Deep Learning](https://link.springer.com/book/10.1007/978-3-030-28954-6) by Wojciech Samek, Gregoire Montavon, Andrea Vedaldi, Lars Kai Hansen and Klaus-Robert Muller
+| **[Book]** [Applied Predictive Modeling](https://link.springer.com/book/10.1007/978-1-4614-6849-3) by Max Kuhn and Kjell Johnson
+| **[Book]** [The Elements of Statistical Learning](https://link.springer.com/book/10.1007/978-0-387-84858-7) by Trevor Hastie , Robert Tibshirani and Jerome Friedman
 | **[Book]** [Pattern Recognition and Neural Networks](https://www.cambridge.org/core/books/pattern-recognition-and-neural-networks/4E038249C9BAA06C8F4EE6F044D09C5C) by Brian Ripley
 | **[R Package]** [DALEX](https://cran.r-project.org/web/packages/DALEX/index.html) by Przemyslaw Biecek, Szymon Maksymiuk and Hubert Baniecki
 | **[R Package]** [iml](https://cran.r-project.org/web/packages/iml/index.html) by Christoph Molnar
@@ -2089,6 +2111,7 @@ plot(Instance_2_GBM_LFP)
 | **[Article]** [Interpretation Methods for Black-Box Machine Learning Models in Insurance Rating-Type Applications ](https://support.sas.com/resources/papers/proceedings20/5116-2020.pdf) by Gabe Taylor, Sunish Menon, Huimin Ru, Ray Wright, Xin Hunt and Ralph Abbey
 | **[Article]** [4 Model-Agnostic Interpretability Techniques for Complex Models ](https://blogs.sas.com/content/subconsciousmusings/2020/05/07/model-agnostic-interpretability/) by Funda Gunes
 | **[Article]** [How Can We Provide Post-Hoc Explanations for Black-Box AI Models? ](https://aisingapore.github.io/ai-practitioner-handbook/book/6-modelling/post-hoc-explanation.html) by Joy Lin
+| **[Article]** [Methods for Foreasts of Continuous Variables ](https://www.cawcr.gov.au/projects/verification/#Methods_for_foreasts_of_continuous_variables) by WWRP/WGNE Joint Working Group on Forecast Verification Research Team
 | **[Publication]** [Robust Locally Weighted Regression and Smoothing Scatterplots](https://www.tandfonline.com/doi/abs/10.1080/01621459.1979.10481038) by William Cleveland (Journal of the American Statistical Association)
 | **[Publication]** [Mathematical Contributions to the Theory of Evolution: Regression, Heredity and Panmixia](https://royalsocietypublishing.org/doi/10.1098/rsta.1896.0007) by Karl Pearson (Royal Society)
 | **[Publication]** [The Proof and Measurement of Association between Two Things](https://www.jstor.org/stable/1412159?origin=crossref) by Charles Spearman (The American Journal of Psychology)
@@ -2099,6 +2122,11 @@ plot(Instance_2_GBM_LFP)
 | **[Publication]** [Learning With Continuous Classes ](https://www.semanticscholar.org/paper/Learning-With-Continuous-Classes-Quinlan/ead572634c6f7253bf187a3e9a7dc87ae2e34258) by Ross Quinlan (Proceedings of the 5th Australian Joint Conference On Artificial Intelligence)
 | **[Publication]** [A Survey of Methods for Explaining Black Box Models](https://dl.acm.org/doi/10.1145/3236009) by Riccardo Guidotti, Anna Monreale, Salvatore Ruggieri, Franco Turini, Fosca Giannotti and Dino Pedreschi (ACM Computing Surveys)
 | **[Publication]** [iml: An R package for Interpretable Machine Learning](https://doi.org/10.21105/joss.00786) by Christoph Molnar (Journal of Open Source Software)
+| **[Publication]** [All Models Are Wrong, but Many Are Useful: Learning a Variable’s Importance by Studying an Entire Class of Prediction Models Simultaneously](https://jmlr.org/papers/volume20/18-760/18-760.pdf) by Aaron Fisher, Cynthia Rudin and Francesca Dominici (Journal of Machine Learning Research)
+| **[Publication]** [Greedy Function Approximation: A Gradient Boosting Machine](https://www.semanticscholar.org/paper/Greedy-function-approximation%3A-A-gradient-boosting-Friedman/1679beddda3a183714d380e944fe6bf586c083cd) by Jerome Friedman (Annals of Statistics)
+| **[Publication]** [Peeking Inside the Black Box: Visualizing Statistical Learning With Plots of Individual Conditional Expectation](https://www.tandfonline.com/doi/full/10.1080/10618600.2014.907095) by Alex Goldstein, Adam Kapelner, Justin Bleich and Emil Pitkin (Journal of Computational and Graphical Statistics)
+| **[Publication]** [An Efficient Explanation of Individual Classifications Using Game Theory](https://dl.acm.org/doi/10.5555/1756006.1756007) by Erik Strumbelj and Igor Kononenko (Journal of Machine Learning Research)
+| **[Publication]** [Explaining Classifications For Individual Instances](https://ieeexplore.ieee.org/document/4407709) by Marco Robnik-Sikonja and Igor Kononenko (IEEE Transactions on Knowledge and Data Engineering)
 |
 |
 |
