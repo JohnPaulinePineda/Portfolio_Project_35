@@ -197,7 +197,7 @@ PDA <- LED
 |
 | **[D]** High skewness observed for 3 numeric predictors with Skewness>3 or Skewness<(-3) 
 |      **[D.1]** <span style="color: #FF0000">GDP</span> = 8.62
-|      **[D.2]** <span style="color: #FF0000">GNI/span> = 8.55
+|      **[D.2]** <span style="color: #FF0000">GNI</span> = 8.55
 |      **[D.3]** <span style="color: #FF0000">SUIRAT</span> = 4.08
 |
 |
@@ -428,6 +428,23 @@ if (length(names(DQA.Predictors.Numeric))==0) {
 |
 ####  1.3.3.1 Outlier Treatment
 |
+| **[A]** Outliers noted for 15 out of the 18 numeric predictors. Predictor values were visualized through a boxplot including observations classified as suspected outliers using the IQR criterion. The IQR criterion means that all observations above the (75th percentile + 1.5 x IQR) or below the (25th percentile - 1.5 x IQR) are suspected outliers, where IQR is the difference between the third quartile (75th percentile) and first quartile (25th percentile).
+|      **[A.1]** <span style="color: #FF0000">UNEMPR</span> = 30
+|      **[A.2]** <span style="color: #FF0000">INFMOR</span> = 10
+|      **[A.3]** <span style="color: #FF0000">GDP</span> = 46
+|      **[A.4]** <span style="color: #FF0000">GNI</span> = 48
+|      **[A.5]** <span style="color: #FF0000">PERCAP</span> = 46
+|      **[A.6]** <span style="color: #FF0000">RTIMOR</span> = 2
+|      **[A.7]** <span style="color: #FF0000">TUBINC</span> = 32
+|      **[A.8]** <span style="color: #FF0000">DPTIMM</span> = 34
+|      **[A.9]** <span style="color: #FF0000">HEPIMM</span> = 26
+|      **[A.10]** <span style="color: #FF0000">MEAIMM</span> = 40
+|      **[A.11]** <span style="color: #FF0000">HOSBED</span> = 16
+|      **[A.12]** <span style="color: #FF0000">SANSER</span> = 8
+|      **[A.13]** <span style="color: #FF0000">TUBTRT</span> = 34
+|      **[A.14]** <span style="color: #FF0000">NCOMOR</span> = 11
+|      **[A.15]** <span style="color: #FF0000">SUIRAT</span> = 29
+|
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
@@ -603,6 +620,8 @@ DPA.Predictors.Numeric <- DPA.Predictors[,sapply(DPA.Predictors, is.numeric)]
 |
 ####  1.3.3.2 Zero and Near-Zero Variance
 |
+| **[A]** No low variance observed for any predictor using a preprocessing summary from the <mark style="background-color: #CCECFF">**caret**</mark> package. The <span style="color: #0000FF">nearZeroVar</span> method using both the <span style="color: #0000FF">freqCut</span> and <span style="color: #0000FF">uniqueCut</span> criteria set at 95/5 and 10, respectively, were applied on the dataset.
+|
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
@@ -659,6 +678,15 @@ if ((nrow(DPA_LowVariance[DPA_LowVariance$nzv,]))==0){
 |
 ####  1.3.3.3 Collinearity
 |
+| **[A]** High correlation were noted for 7 pairs of numeric predictors with Pearson correlation coefficients >75% p-values<0.05 as confirmed using the preprocessing summaries from the <mark style="background-color: #CCECFF">**caret**</mark> and <mark style="background-color: #CCECFF">**lares**</mark> packages.
+|      **[A.1]** <span style="color: #FF0000">GDP</span> and <span style="color: #FF0000">GNI</span>  = +99.99%
+|      **[A.2]** <span style="color: #FF0000">DPTIMM</span> and <span style="color: #FF0000">HEPIMM</span>  = +95.03%
+|      **[A.3]** <span style="color: #FF0000">DPTIMM</span> and <span style="color: #FF0000">MEAIMM</span>  = +88.17%
+|      **[A.4]** <span style="color: #FF0000">HEPIMM</span> and <span style="color: #FF0000">MEAIMM</span>  = +86.42%
+|      **[A.5]** <span style="color: #FF0000">CLTECH</span> and <span style="color: #FF0000">SANSER</span>  = +86.21%
+|      **[A.6]** <span style="color: #FF0000">INFMOR</span> and <span style="color: #FF0000">SANSER</span>  = -82.41%
+|      **[A.7]** <span style="color: #FF0000">INFMOR</span> and <span style="color: #FF0000">CLTECH</span>  = -77.58%
+|
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
@@ -671,6 +699,10 @@ if ((nrow(DPA_LowVariance[DPA_LowVariance$nzv,]))==0){
 ##################################
 # Visualizing pairwise correlation between predictors
 ##################################
+(DPA_Correlation <- cor(DPA.Predictors.Numeric,
+             method = "pearson",
+             use="pairwise.complete.obs"))
+
 DPA_CorrelationTest <- cor.mtest(DPA.Predictors.Numeric,
                        method = "pearson",
                        conf.level = .95)
@@ -678,15 +710,15 @@ DPA_CorrelationTest <- cor.mtest(DPA.Predictors.Numeric,
 corrplot(cor(DPA.Predictors.Numeric,
              method = "pearson",
              use="pairwise.complete.obs"), 
-         method = "circle",
-         type = "upper", 
-         order = "original", 
-         tl.col = "black", 
-         tl.cex = 0.75,
-         tl.srt = 90, 
-         sig.level = 0.05, 
-         p.mat = DPA_CorrelationTest$p,
-         insig = "blank")
+             method = "circle",
+             type = "upper", 
+             order = "original", 
+             tl.col = "black", 
+             tl.cex = 0.75,
+             tl.srt = 90, 
+             sig.level = 0.05, 
+             p.mat = DPA_CorrelationTest$p,
+             insig = "blank")
 
 ##################################
 # Identifying the highly correlated variables
