@@ -52,7 +52,11 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 | [Cubist Regression](https://www.semanticscholar.org/paper/Learning-With-Continuous-Classes-Quinlan/ead572634c6f7253bf187a3e9a7dc87ae2e34258) is a rule-based model that is an extension of Quinlan’s M5 model tree. A tree is grown where the terminal leaves contain linear regression models. These models are based on the predictors used in previous splits. Also, there are intermediate linear models at each step of the tree. A prediction is made using the linear regression model at the terminal node of the tree, but is smoothed by taking into account the prediction from the linear model in the previous node of the tree (which also occurs recursively up the tree). The tree is reduced to a set of rules, which initially are paths from the top of the tree to the bottom. Rules are eliminated via pruning and/or combined for simplification. The Cubist model can also use a boosting-like scheme called committees where iterative model trees are created in sequence. Another innovation is about using nearest-neighbors to adjust the predictions from the rule-based model.
 |
-###  1.2.3 Model Evaluation
+###  1.2.3 Model Hyperparameter Tuning
+|
+| [K-Fold Cross-Validation](http://appliedpredictivemodeling.com/) involves dividing the training set after a random shuffle into a user-defined K number of smaller non-overlapping sets called folds. Each unique fold is assigned as the hold-out test data to assess the model trained from the data set collected from all the remaining K-1 folds. The evaluation score is retained but the model is discarded. The process is recursively performed resulting to a total of K fitted models and evaluated on the K hold-out test sets. All K-computed performance measures reported from the process are then averaged to represent the estimated performance of the model. This approach can be computationally expensive and may be highly dependent on how the data was randomly assigned to their respective folds, but does not waste too much data which is a major advantage in problems where the number of samples is very small.
+|
+###  1.2.4 Model Performance Evaluation
 |
 | [Root Mean Squared Error](https://link.springer.com/book/10.1007/978-0-387-84858-7) computes the square root of the average squared difference between the predicted and target values which ranges from zero to infinity. A value of zero indicates perfect prediction of the target values. The metric is weighted according to the square of the error - putting greater influence on large errors than smaller errors which makes it sensitive to outliers but may also encourage conservative prediction.
 |
@@ -60,7 +64,7 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 | [R-Squared](https://link.springer.com/book/10.1007/978-0-387-84858-7) computes the normalized version of the root mean squared error and also referred to as the coefficient of determination. With a value ranging from zero to infinity, a value of one indicates perfect prediction of the target values. The metric can also be interpreted as the fraction of the total variance in the response variable which can be explained by the model.  
 |
-###  1.2.4 Model Post-Hoc Analysis
+###  1.2.5 Model Post-Hoc Analysis
 |
 | [Variable Importance](https://jmlr.org/papers/volume20/18-760/18-760.pdf) pertains to model-agnostic methods which allow the comparison of an explanatory variable’s importance between models with different structures. The process involves measuring how much a model’s performance change if the effect of a selected explanatory variable, or of a group of variables, is removed. To remove the effect, perturbations are applied including resampling from an empirical distribution or permutation of the values of the variable. If a variable is important, the model’s performance is expected to worsen after permuting the values of the variable. A larger change in performance indicates the greater importance of the variable.
 |
@@ -477,7 +481,7 @@ if (length(names(DQA.Predictors.Numeric))==0) {
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
-```{r section_1.3.3.1, warning=FALSE, message=FALSE}
+```{r section_1.3.3.0, warning=FALSE, message=FALSE}
 ##################################
 # Loading dataset
 ##################################
@@ -489,7 +493,7 @@ DPA <- LED
 (DPA_Skimmed <- skim(DPA))
 ```
 
-```{r section_1.3.3.2, warning=FALSE, message=FALSE, fig.width=15, fig.height=2}
+```{r section_1.3.3.1, warning=FALSE, message=FALSE, fig.width=15, fig.height=2}
 ##################################
 # Outlier Treatment
 ##################################
@@ -653,7 +657,7 @@ DPA.Predictors.Numeric <- DPA.Predictors[,sapply(DPA.Predictors, is.numeric)]
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
-```{r section_1.3.3.3, warning=FALSE, message=FALSE}
+```{r section_1.3.3.2, warning=FALSE, message=FALSE}
 ##################################
 # Zero and Near-Zero Variance
 ##################################
@@ -718,7 +722,7 @@ if ((nrow(DPA_LowVariance[DPA_LowVariance$nzv,]))==0){
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
-```{r section_1.3.3.4, warning=FALSE, message=FALSE}
+```{r section_1.3.3.3, warning=FALSE, message=FALSE}
 ##################################
 # Collinearity
 ##################################
@@ -802,7 +806,7 @@ if (DPA_HighlyCorrelatedCount > 0) {
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
-```{r section_1.3.3.5, warning=FALSE, message=FALSE}
+```{r section_1.3.3.4, warning=FALSE, message=FALSE}
 ##################################
 # Linear Dependencies
 ##################################
@@ -887,7 +891,7 @@ if (DPA_LinearlyDependentCount > 0) {
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
-```{r section_1.3.3.6, warning=FALSE, message=FALSE, fig.width=15, fig.height=2}
+```{r section_1.3.3.5, warning=FALSE, message=FALSE, fig.width=15, fig.height=2}
 ##################################
 # Shape Transformation
 ##################################
@@ -961,7 +965,7 @@ DPA_BoxCoxTransformed <- cbind(DPA_BoxCoxTransformed,DPA[,c("COUNTRY",
 |      **[A.3]** <span style="color: #FF0000">DPTIMM</span> = High correlation with <span style="color: #FF0000">HEPIMM</span>
 |      **[A.4]** <span style="color: #FF0000">MEAIMM</span> = High correlation with <span style="color: #FF0000">HEPIMM</span>
 |      **[A.5]** <span style="color: #FF0000">URBPOP</span> = High correlation with <span style="color: #FF0000">RURPOP</span>
-|      **[A.6]** <span style="color: #FF0000">SANSER</span> = High correlation with <span style="color: #FF0000">INFMORE</span> and span style="color: #FF0000">CLTECH</span>
+|      **[A.6]** <span style="color: #FF0000">SANSER</span> = High correlation with <span style="color: #FF0000">INFMOR</span> and span style="color: #FF0000">CLTECH</span>
 |      **[A.7]** <span style="color: #FF0000">TUBINC</span> = High outlier count even after shape transformation
 |      **[A.8]** <span style="color: #FF0000">TUBTRT</span> = High outlier count even after shape transformation
 |      **[A.9]** <span style="color: #FF0000">SUIRAT</span> = High skewness even after shape transformation
@@ -992,7 +996,7 @@ DPA_BoxCoxTransformed <- cbind(DPA_BoxCoxTransformed,DPA[,c("COUNTRY",
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
-```{r section_1.3.3.7, warning=FALSE, message=FALSE}
+```{r section_1.3.3.6, warning=FALSE, message=FALSE}
 ##################################
 # Creating the pre-modelling
 # train set
@@ -1029,6 +1033,7 @@ PMA <- DPA_BoxCoxTransformed[,!names(DPA_BoxCoxTransformed) %in% c("YEAR",
 | **[C]** Both factor predictors demonstrated a differential relationship with the response variable <span style="color: #FF0000">LIFEXP</span> included:
 |      **[C.1]** <span style="color: #FF0000">GENDER</span> (factor)
 |      **[C.2]** <span style="color: #FF0000">CONTIN</span> (factor)
+|
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
@@ -1096,6 +1101,7 @@ featurePlot(x = PME.Numeric,
 ###  1.3.5 Feature Selection
 |
 | Model-independent feature importance metrics were evaluated for the numeric predictors to determine an optimal subset of variables for the subsequent modelling process.
+|
 |
 ####  1.3.5.1 Locally Weighted Scatterplot Smoothing Pseudo-R-Squared (LOWESSPR)
 |
@@ -1496,6 +1502,28 @@ GBM_Tune$finalModel
 |
 ####  1.3.6.2 Random Forest (RF)
 |
+| **[A]** The random forest model from the  <mark style="background-color: #CCECFF">**randomForest**</mark> package was implemented through the <mark style="background-color: #CCECFF">**caret**</mark> package.
+|
+| **[B]** The model contains 1 hyperparameter:
+|      **[B.1]** <span style="color: #FF0000">mtry</span> = number of randomly selected predictors made to vary across a range of values equal to 100 to 1000 with intervals of 100
+|
+| **[C]** The 10-fold cross-validated model performance of the optimal model is summarized as follows:
+|      **[C.1]** Optimal model used mtry=400 which demonstrated the lowest root mean square error
+|      **[C.2]** Root Mean Square Error = 2.2390
+|      **[C.3]** R-Squared = 0.9201
+|
+| **[D]** The apparent model performance of the optimal model is summarized as follows:
+|      **[D.1]** Root Mean Square Error = 0.9698
+|      **[D.2]** R-Squared = 0.9848
+|
+| **[E]** The top-performing predictors in the model ranked using the root mean square error loss after permutations are as follows:
+|      **[E.1]** <span style="color: #FF0000">INFMOR</span> (numeric) = 8.39
+|      **[E.2]** <span style="color: #FF0000">NCOMOR</span> (numeric) = 4.23
+|      **[E.3]** <span style="color: #FF0000">CONTIN</span> (factor) = 1.45
+|      **[E.4]** <span style="color: #FF0000">GENDER</span> (factor) = 1.36
+|      **[E.5]** <span style="color: #FF0000">CLTECH</span> (numeric) = 1.28
+|      **[E.6]** <span style="color: #FF0000">PERCAP</span> (numeric) = 1.25
+|
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
@@ -1540,10 +1568,10 @@ plot(RF_DALEX_Diagnostics,
   geom_abline(slope = 1) +
   ggtitle("RF: Observed and Predicted LIFEXP")
 
-RF_DALEX_VariableImportance    <- model_parts(RF_DALEX,
+(RF_DALEX_VariableImportance    <- model_parts(RF_DALEX,
                                               loss_function = loss_root_mean_square,
                                               B = 200,
-                                              N = NULL)
+                                              N = NULL))
 
 plot(RF_DALEX_VariableImportance)
 
@@ -1619,10 +1647,10 @@ plot(NN_DALEX_Diagnostics,
   geom_abline(slope = 1) +
   ggtitle("RF: Observed and Predicted LIFEXP")
 
-NN_DALEX_VariableImportance    <- model_parts(NN_DALEX,
+(NN_DALEX_VariableImportance    <- model_parts(NN_DALEX,
                                               loss_function = loss_root_mean_square,
                                               B = 200,
-                                              N = NULL)
+                                              N = NULL))
 
 plot(NN_DALEX_VariableImportance)
 
@@ -1653,6 +1681,28 @@ NN_Tune$finalModel
 |
 |
 ####  1.3.6.4 Partial Least Squares Regression (PLS)
+|
+| **[A]** The partial least squares regression model from the  <mark style="background-color: #CCECFF">**pls**</mark> package was implemented through the <mark style="background-color: #CCECFF">**caret**</mark> package.
+|
+| **[B]** The model contains 1 hyperparameter:
+|      **[B.1]** <span style="color: #FF0000">ncomp</span> = number of components made to vary across a range of values equal to 1 to 5 with intervals of 1
+|
+| **[C]** The 10-fold cross-validated model performance of the optimal model is summarized as follows:
+|      **[C.1]** Optimal model used ncomp=5 which demonstrated the lowest root mean square error
+|      **[C.2]** Root Mean Square Error = 2.4632
+|      **[C.3]** R-Squared = 0.9087
+|
+| **[D]** The apparent model performance of the optimal model is summarized as follows:
+|      **[D.1]** Root Mean Square Error = 2.4242
+|      **[D.2]** R-Squared = 0.9050
+|
+| **[E]** The top-performing predictors in the model ranked using the root mean square error loss after permutations are as follows:
+|      **[E.1]** <span style="color: #FF0000">INFMOR</span> (numeric) = 7.84
+|      **[E.2]** <span style="color: #FF0000">GENDER</span> (factor) = 3.25
+|      **[E.3]** <span style="color: #FF0000">CLTECH</span> (numeric) = 3.16
+|      **[E.4]** <span style="color: #FF0000">CONTIN</span> (factor) = 3.07
+|      **[E.5]** <span style="color: #FF0000">NCOMOR</span> (numeric) = 2.97
+|      **[E.6]** <span style="color: #FF0000">PERCAP</span> (numeric) = 2.43
 |
 |
 
@@ -1697,10 +1747,10 @@ plot(PLS_DALEX_Diagnostics,
   geom_abline(slope = 1) +
   ggtitle("RF: Observed and Predicted LIFEXP")
 
-PLS_DALEX_VariableImportance    <- model_parts(PLS_DALEX,
+(PLS_DALEX_VariableImportance    <- model_parts(PLS_DALEX,
                                               loss_function = loss_root_mean_square,
                                               B = 200,
-                                              N = NULL)
+                                              N = NULL))
 
 plot(PLS_DALEX_VariableImportance)
 
@@ -1728,6 +1778,29 @@ PLS_Tune$finalModel
 |
 |
 ####  1.3.6.5 Cubist Regression (CUBIST)
+|
+| **[A]** The cubist regression model from the  <mark style="background-color: #CCECFF">**Cubist**</mark> package was implemented through the <mark style="background-color: #CCECFF">**caret**</mark> package.
+|
+| **[B]** The model contains 2 hyperparameters:
+|      **[B.1]** <span style="color: #FF0000">committees</span> = number of committees made to vary across a range of values equal to 10 to 50 with intervals of 10
+|      **[B.2]** <span style="color: #FF0000">neighbors</span> = number of neighbors made to vary across a range of values equal to 0 to 9 with intervals of 3
+|
+| **[C]** The 10-fold cross-validated model performance of the optimal model is summarized as follows:
+|      **[C.1]** Optimal model used committees=50 and neighbors=0 which demonstrated the lowest root mean square error
+|      **[C.2]** Root Mean Square Error = 2.0967
+|      **[C.3]** R-Squared = 0.9316
+|
+| **[D]** The apparent model performance of the optimal model is summarized as follows:
+|      **[D.1]** Root Mean Square Error = 1.9126
+|      **[D.2]** R-Squared = 0.9408
+|
+| **[E]** The top-performing predictors in the model ranked using the root mean square error loss after permutations are as follows:
+|      **[E.1]** <span style="color: #FF0000">INFMOR</span> (numeric) = 7.73
+|      **[E.2]** <span style="color: #FF0000">NCOMOR</span> (numeric) = 3.75
+|      **[E.3]** <span style="color: #FF0000">CONTIN</span> (factor) = 2.36
+|      **[E.4]** <span style="color: #FF0000">GENDER</span> (factor) = 2.29
+|      **[E.5]** <span style="color: #FF0000">PERCAP</span> (numeric) = 2.09
+|      **[E.6]** <span style="color: #FF0000">CLTECH</span> (numeric) = 1.92
 |
 |
 
@@ -1774,10 +1847,10 @@ plot(CUBIST_DALEX_Diagnostics,
   geom_abline(slope = 1) +
   ggtitle("RF: Observed and Predicted LIFEXP")
 
-CUBIST_DALEX_VariableImportance    <- model_parts(CUBIST_DALEX,
+(CUBIST_DALEX_VariableImportance    <- model_parts(CUBIST_DALEX,
                                               loss_function = loss_root_mean_square,
                                               B = 200,
-                                              N = NULL)
+                                              N = NULL))
 
 plot(CUBIST_DALEX_VariableImportance)
 
@@ -2300,7 +2373,7 @@ plot(Instance_2_GBM_LFP)
 | **[Book]** [Explanatory Model Analysis: Explore, Explain, and Examine Predictive Models With examples in R and Python](https://ema.drwhy.ai/) by Przemyslaw Biecek and Tomasz Burzykowski
 | **[Book]** [Explainable Machine Learning: A Guide for Making Black Box Models Explainable](https://christophm.github.io/interpretable-ml-book/) by Christoph Molnar
 | **[Book]** [Explainable AI: Interpreting, Explaining and Visualizing Deep Learning](https://link.springer.com/book/10.1007/978-3-030-28954-6) by Wojciech Samek, Gregoire Montavon, Andrea Vedaldi, Lars Kai Hansen and Klaus-Robert Muller
-| **[Book]** [Applied Predictive Modeling](https://link.springer.com/book/10.1007/978-1-4614-6849-3) by Max Kuhn and Kjell Johnson
+| **[Book]** [Applied Predictive Modeling](http://appliedpredictivemodeling.com/) by Max Kuhn and Kjell Johnson
 | **[Book]** [The Elements of Statistical Learning](https://link.springer.com/book/10.1007/978-0-387-84858-7) by Trevor Hastie , Robert Tibshirani and Jerome Friedman
 | **[Book]** [Pattern Recognition and Neural Networks](https://www.cambridge.org/core/books/pattern-recognition-and-neural-networks/4E038249C9BAA06C8F4EE6F044D09C5C) by Brian Ripley
 | **[R Package]** [DALEX](https://cran.r-project.org/web/packages/DALEX/index.html) by Przemyslaw Biecek, Szymon Maksymiuk and Hubert Baniecki
