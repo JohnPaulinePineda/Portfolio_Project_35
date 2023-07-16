@@ -961,10 +961,10 @@ DPA_BoxCoxTransformed <- cbind(DPA_BoxCoxTransformed,DPA[,c("COUNTRY",
 |      **[A.3]** <span style="color: #FF0000">DPTIMM</span> = High correlation with <span style="color: #FF0000">HEPIMM</span>
 |      **[A.4]** <span style="color: #FF0000">MEAIMM</span> = High correlation with <span style="color: #FF0000">HEPIMM</span>
 |      **[A.5]** <span style="color: #FF0000">URBPOP</span> = High correlation with <span style="color: #FF0000">RURPOP</span>
-|      **[A.6]** <span style="color: #FF0000">SANSER</span> = High skewness even after shape transformation
+|      **[A.6]** <span style="color: #FF0000">SANSER</span> = High correlation with <span style="color: #FF0000">INFMORE</span> and span style="color: #FF0000">CLTECH</span>
 |      **[A.7]** <span style="color: #FF0000">TUBINC</span> = High outlier count even after shape transformation
 |      **[A.8]** <span style="color: #FF0000">TUBTRT</span> = High outlier count even after shape transformation
-|      **[A.9]** <span style="color: #FF0000">SUIRAT</span> = High outlier count even after shape transformation
+|      **[A.9]** <span style="color: #FF0000">SUIRAT</span> = High skewness even after shape transformation
 |
 | **[B]** A total of 30 observations were removed prior to data exploration and modelling due to issues identified during data preprocessing.
 |      **[B.1]** 15 countries were identified to be associated with distributional anomalies showing high number of observations reporting the exact same set of values.
@@ -972,21 +972,22 @@ DPA_BoxCoxTransformed <- cbind(DPA_BoxCoxTransformed,DPA[,c("COUNTRY",
 | **[C]** The preprocessed tabular dataset was comprised of 364 observations and 14 variables (including 1 metadata, 1 response and 12 predictors). 
 |      **[C.1]** 364 rows (observations)
 |      **[C.2]** 14 columns (variables)
-|             **[A.2.1]** 1/14 instance labels = <span style="color: #FF0000">COUNTRY</span> variable (character)
-|             **[A.2.2]** 1/14 response = <span style="color: #FF0000">LIFEXP</span> variable (numeric)
-|             **[A.2.3]** 12/14 predictors = 10/12 numeric + 2/12 factor
-|                      **[A.2.3.1]** <span style="color: #FF0000">GENDER</span> (factor)
-|                      **[A.2.3.2]** <span style="color: #FF0000">CONTIN</span> (factor)
-|                      **[A.2.3.3]** <span style="color: #FF0000">UNEMPR</span> (numeric)
-|                      **[A.2.3.4]** <span style="color: #FF0000">INFMOR</span> (numeric)
-|                      **[A.2.3.5]** <span style="color: #FF0000">GDP</span> (numeric)
-|                      **[A.2.3.6]** <span style="color: #FF0000">CLTECH</span> (numeric)
-|                      **[A.2.3.7]** <span style="color: #FF0000">PERCAP</span> (numeric)
-|                      **[A.2.3.8]** <span style="color: #FF0000">RTIMOR</span> (numeric)
-|                      **[A.2.3.9]** <span style="color: #FF0000">HEPIMM</span> (numeric)
-|                      **[A.2.3.10]** <span style="color: #FF0000">HOSBED</span> (numeric)
-|                      **[A.2.3.11]** <span style="color: #FF0000">RURPOP</span> (numeric)
-|                      **[A.2.3.12]** <span style="color: #FF0000">NCOMOR</span> (numeric)
+|             **[C.2.1]** 1/14 instance labels = <span style="color: #FF0000">COUNTRY</span> variable (character)
+|             **[C.2.2]** 1/14 response = <span style="color: #FF0000">LIFEXP</span> variable (numeric)
+|             **[C.2.3]** 12/14 predictors = 10/12 numeric + 2/12 factor
+|                      **[C.2.3.1]** <span style="color: #FF0000">GENDER</span> (factor)
+|                      **[C.2.3.2]** <span style="color: #FF0000">CONTIN</span> (factor)
+|                      **[C.2.3.3]** <span style="color: #FF0000">UNEMPR</span> (numeric)
+|                      **[C.2.3.4]** <span style="color: #FF0000">INFMOR</span> (numeric)
+|                      **[C.2.3.5]** <span style="color: #FF0000">GDP</span> (numeric)
+|                      **[C.2.3.6]** <span style="color: #FF0000">CLTECH</span> (numeric)
+|                      **[C.2.3.7]** <span style="color: #FF0000">PERCAP</span> (numeric)
+|                      **[C.2.3.8]** <span style="color: #FF0000">RTIMOR</span> (numeric)
+|                      **[C.2.3.9]** <span style="color: #FF0000">HEPIMM</span> (numeric)
+|                      **[C.2.3.10]** <span style="color: #FF0000">HOSBED</span> (numeric)
+|                      **[C.2.3.11]** <span style="color: #FF0000">RURPOP</span> (numeric)
+|                      **[C.2.3.12]** <span style="color: #FF0000">NCOMOR</span> (numeric)
+|
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
@@ -1017,6 +1018,17 @@ PMA <- DPA_BoxCoxTransformed[,!names(DPA_BoxCoxTransformed) %in% c("YEAR",
 
 ###  1.3.4 Data Exploration
 |
+| **[A]** Numeric predictors which demonstrated a positive linear relationship with the response variable <span style="color: #FF0000">LIFEXP</span> included:
+|      **[A.1]** <span style="color: #FF0000">PERCAP</span> (numeric)
+|      **[A.2]** <span style="color: #FF0000">CLTECH</span> (numeric)
+|
+| **[B]** Numeric predictors which demonstrated a negative linear relationship with the response variable <span style="color: #FF0000">LIFEXP</span> included:
+|      **[B.1]** <span style="color: #FF0000">INFMOR</span> (numeric)
+|      **[B.2]** <span style="color: #FF0000">NCOMOR</span> (numeric)
+|
+| **[C]** Both factor predictors demonstrated a differential relationship with the response variable <span style="color: #FF0000">LIFEXP</span> included:
+|      **[C.1]** <span style="color: #FF0000">GENDER</span> (factor)
+|      **[C.2]** <span style="color: #FF0000">CONTIN</span> (factor)
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
@@ -1083,8 +1095,15 @@ featurePlot(x = PME.Numeric,
 
 ###  1.3.5 Feature Selection
 |
+| Model-independent feature importance metrics were evaluated for the numeric predictors to determine an optimal subset of variables for the subsequent modelling process.
 |
 ####  1.3.5.1 Locally Weighted Scatterplot Smoothing Pseudo-R-Squared (LOWESSPR)
+|
+| **[A]** The numeric predictors which demonstrated the best feature importance in terms of the locally weighted scatterplot smoothing pseudo-r-squared statistic as obtained using the <mark style="background-color: #CCECFF">**caret**</mark> package included:
+|      **[A.1]** <span style="color: #FF0000">INFMOR</span> = 0.8254
+|      **[A.2]** <span style="color: #FF0000">PERCAP</span> = 0.6217
+|      **[A.3]** <span style="color: #FF0000">NCOMOR</span> = 0.5966
+|      **[A.4]** <span style="color: #FF0000">CLTECH</span> = 0.5819
 |
 |
 
@@ -1099,7 +1118,7 @@ featurePlot(x = PME.Numeric,
 ##################################
 # Obtaining the LOWESSPR pseudo-R-Squared
 ##################################
-FE_LOWESSPR <- filterVarImp(x = PME.Numeric[,!names(PME.Numeric) %in% c("LIFEXP")],
+FE_LOWESSPR <- filterVarImp(x = PME.Predictors.Numeric,
                             y = PME$LIFEXP,
                             nonpara = TRUE)
 
@@ -1139,6 +1158,12 @@ dotplot(Predictor ~ LOWESSPR | Metric,
 |
 ####  1.3.5.2 Pearson’s Correlation Coefficient (PCC)
 |
+| **[A]** The numeric predictors which demonstrated the best feature importance in terms of the higher Pearson’s correlation coefficients as obtained using the <mark style="background-color: #CCECFF">**stats**</mark> package included:
+|      **[A.1]** <span style="color: #FF0000">INFMOR</span> = 0.8796
+|      **[A.2]** <span style="color: #FF0000">PERCAP</span> = 0.7852
+|      **[A.3]** <span style="color: #FF0000">NCOMOR</span> = 0.7524
+|      **[A.4]** <span style="color: #FF0000">CLTECH</span> = 0.7332
+|
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
@@ -1147,14 +1172,15 @@ dotplot(Predictor ~ LOWESSPR | Metric,
 ##################################
 # Obtaining the Pearson correlation coefficient
 ##################################
-(FE_PCC <- abs(cor(PME.Numeric, method="pearson")[-10,10]))
+(FE_PCC <- abs(cor(PME.Numeric, method="pearson")[-11,11]))
 
 ##################################
 # Formulating the summary table
 ##################################
 FE_PCC_Summary <- data.frame(Predictor = names(PME.Numeric)[1:(ncol(PME.Numeric)-1)],
                              PCC = FE_PCC,
-                             Metric = rep("PCC", length(FE_PCC)))
+                             Metric = rep("PCC", length(FE_PCC)),
+                             row.names = NULL)
 
 FE_PCC_Summary
 
@@ -1162,7 +1188,7 @@ FE_PCC_Summary
 # Exploring predictor performance
 # using PCC
 ##################################
-dotplot(Predictor ~ PCC | Metric, 
+dotplot(Predictor ~ PCC | Metric,
         FE_PCC_Summary,
         origin = 0,
         type = c("p", "h"),
@@ -1183,6 +1209,12 @@ dotplot(Predictor ~ PCC | Metric,
 |
 ####  1.3.5.3 Spearman’s Rank Correlation Coefficient (SRCC)
 |
+| **[A]** The numeric predictors which demonstrated the best feature importance in terms of the higher Spearman’s rank correlation coefficients as obtained using the <mark style="background-color: #CCECFF">**stats**</mark> package included:
+|      **[A.1]** <span style="color: #FF0000">INFMOR</span> = 0.8919
+|      **[A.2]** <span style="color: #FF0000">PERCAP</span> = 0.7982
+|      **[A.3]** <span style="color: #FF0000">NCOMOR</span> = 0.7891
+|      **[A.4]** <span style="color: #FF0000">CLTECH</span> = 0.7837
+|
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
@@ -1191,14 +1223,15 @@ dotplot(Predictor ~ PCC | Metric,
 ##################################
 # Obtaining the Spearman's rank correlation coefficient
 ##################################
-(FE_SRCC <- abs(cor(PME.Numeric, method="spearman")[-10,10]))
+(FE_SRCC <- abs(cor(PME.Numeric, method="spearman")[-11,11]))
 
 ##################################
 # Formulating the summary table
 ##################################
 FE_SRCC_Summary <- data.frame(Predictor = names(PME.Numeric)[1:(ncol(PME.Numeric)-1)],
                              SRCC = FE_SRCC,
-                             Metric = rep("SRCC", length(FE_SRCC)))
+                             Metric = rep("SRCC", length(FE_SRCC)),
+                             row.names = NULL)
 
 FE_SRCC_Summary
 
@@ -1226,6 +1259,12 @@ dotplot(Predictor ~ SRCC | Metric,
 |
 |
 ####  1.3.5.4 Maximal Information Coefficient (MIC)
+|
+| **[A]** The numeric predictors which demonstrated the best feature importance in terms of the higher maximal information coefficients as obtained using the <mark style="background-color: #CCECFF">**minerva**</mark> package included:
+|      **[A.1]** <span style="color: #FF0000">INFMOR</span> = 0.7084
+|      **[A.2]** <span style="color: #FF0000">NCOMOR</span> = 0.6439
+|      **[A.3]** <span style="color: #FF0000">PERCAP</span> = 0.5502
+|      **[A.4]** <span style="color: #FF0000">CLTECH</span> = 0.5099
 |
 |
 
@@ -1271,6 +1310,10 @@ dotplot(Predictor ~ MIC | Metric,
 |
 |
 ####  1.3.5.5 Relief Values (RV)
+|
+| **[A]** The numeric predictors which demonstrated the best feature importance in terms of the higher relief values as obtained using the <mark style="background-color: #CCECFF">**CORElearn**</mark> package included:
+|      **[A.1]** <span style="color: #FF0000">NCOMOR</span> = 0.2991
+|      **[A.2]** <span style="color: #FF0000">INFMOR</span> = 00936
 |
 |
 
