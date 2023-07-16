@@ -195,7 +195,7 @@ PDA <- LED
 |
 | **[C]** No low variance observed for any predictor with Unique.Count.Ratio<0.01.
 |
-| **[D]** High skewness observed for 3 numeric predictors with Skewness>3 or Skewness<(-3) 
+| **[D]** High skewness observed for 3 numeric predictors with Skewness>3 or Skewness<(-3). 
 |      **[D.1]** <span style="color: #FF0000">GDP</span> = 8.62
 |      **[D.2]** <span style="color: #FF0000">GNI</span> = 8.55
 |      **[D.3]** <span style="color: #FF0000">SUIRAT</span> = 4.08
@@ -445,6 +445,34 @@ if (length(names(DQA.Predictors.Numeric))==0) {
 |      **[A.14]** <span style="color: #FF0000">NCOMOR</span> = 11
 |      **[A.15]** <span style="color: #FF0000">SUIRAT</span> = 29
 |
+| **[B]** Distributional anomalies observed for 9 predictors showing a high number of observations reporting the exact same set of values.
+|      **[B.1]** <span style="color: #FF0000">INFMOR=30.20</span> 
+|      **[B.2]** <span style="color: #FF0000">CLTECH=60.60</span> 
+|      **[B.3]** <span style="color: #FF0000">RTIMOR=18.20</span> 
+|      **[B.4]** <span style="color: #FF0000">DPTIMM=85.70</span> 
+|      **[B.5]** <span style="color: #FF0000">HEPIMM=81.30</span>
+|      **[B.6]** <span style="color: #FF0000">MEAIMM=84.90</span> 
+|      **[B.7]** <span style="color: #FF0000">HOSBED=3.00</span> 
+|      **[B.8]** <span style="color: #FF0000">NCOMOR=22.10</span> 
+|      **[B.9]** <span style="color: #FF0000">SUIRAT=10.60</span> 
+|
+| **[C]** A total of 30 observations representing 15 countries associated with these unreliable values were removed for the subsequent analysis.
+|      **[C.1]** <span style="color: #FF0000">COUNTRY=Aruba</span>
+|      **[C.2]** <span style="color: #FF0000">COUNTRY=Bermuda</span>
+|      **[C.3]** <span style="color: #FF0000">COUNTRY=Channel Islands</span>
+|      **[C.4]** <span style="color: #FF0000">COUNTRY=Faroe Islands</span>
+|      **[C.5]** <span style="color: #FF0000">COUNTRY=French Polynesia</span>
+|      **[C.6]** <span style="color: #FF0000">COUNTRY=Guam</span>
+|      **[C.7]** <span style="color: #FF0000">COUNTRY=Hong Kong SAR, China</span>
+|      **[C.8]** <span style="color: #FF0000">COUNTRY=Kosovo</span>
+|      **[C.9]** <span style="color: #FF0000">COUNTRY=Liechtenstein</span>
+|      **[C.10]** <span style="color: #FF0000">COUNTRY=Macao SAR, China</span>
+|      **[C.11]** <span style="color: #FF0000">COUNTRY=New Caledonia</span>
+|      **[C.12]** <span style="color: #FF0000">COUNTRY=Puerto Rico</span>
+|      **[C.13]** <span style="color: #FF0000">COUNTRY=St. Martin (French part)</span>
+|      **[C.14]** <span style="color: #FF0000">COUNTRY=Virgin Islands (U.S.)</span>
+|      **[C.15]** <span style="color: #FF0000">COUNTRY=West Bank and Gaza</span>
+|
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
@@ -592,8 +620,7 @@ DPA %>%
 (AnomalousVariables_Unique_Country <- MEAIMM_Unique_Country)
 
 ##################################
-# Removing associated rows associated
-# with anomalous variables
+# Removing rows with anomalous values
 ##################################
 dim(DPA)
 
@@ -678,14 +705,14 @@ if ((nrow(DPA_LowVariance[DPA_LowVariance$nzv,]))==0){
 |
 ####  1.3.3.3 Collinearity
 |
-| **[A]** High correlation were noted for 7 pairs of numeric predictors with Pearson correlation coefficients >75% and p-values<0.05 as confirmed using the preprocessing summaries from the <mark style="background-color: #CCECFF">**caret**</mark> and <mark style="background-color: #CCECFF">**lares**</mark> packages.
-|      **[A.1]** <span style="color: #FF0000">GDP</span> and <span style="color: #FF0000">GNI</span>  = +99.99%
-|      **[A.2]** <span style="color: #FF0000">DPTIMM</span> and <span style="color: #FF0000">HEPIMM</span>  = +95.03%
-|      **[A.3]** <span style="color: #FF0000">DPTIMM</span> and <span style="color: #FF0000">MEAIMM</span>  = +88.17%
-|      **[A.4]** <span style="color: #FF0000">HEPIMM</span> and <span style="color: #FF0000">MEAIMM</span>  = +86.42%
-|      **[A.5]** <span style="color: #FF0000">CLTECH</span> and <span style="color: #FF0000">SANSER</span>  = +86.21%
-|      **[A.6]** <span style="color: #FF0000">INFMOR</span> and <span style="color: #FF0000">SANSER</span>  = -82.41%
-|      **[A.7]** <span style="color: #FF0000">INFMOR</span> and <span style="color: #FF0000">CLTECH</span>  = -77.58%
+| **[A]** High correlation were noted for 7 pairs of numeric predictors with Pearson correlation coefficients >80% as confirmed using the preprocessing summaries from the <mark style="background-color: #CCECFF">**caret**</mark> package.
+|      **[A.1]** <span style="color: #FF0000">URBPOP</span> and <span style="color: #FF0000">RURPOP</span>  = -100.00%
+|      **[A.2]** <span style="color: #FF0000">GDP</span> and <span style="color: #FF0000">GNI</span>  = +99.99%
+|      **[A.3]** <span style="color: #FF0000">DPTIMM</span> and <span style="color: #FF0000">HEPIMM</span>  = +95.03%
+|      **[A.4]** <span style="color: #FF0000">DPTIMM</span> and <span style="color: #FF0000">MEAIMM</span>  = +88.17%
+|      **[A.5]** <span style="color: #FF0000">HEPIMM</span> and <span style="color: #FF0000">MEAIMM</span>  = +86.42%
+|      **[A.6]** <span style="color: #FF0000">CLTECH</span> and <span style="color: #FF0000">SANSER</span>  = +86.21%
+|      **[A.7]** <span style="color: #FF0000">INFMOR</span> and <span style="color: #FF0000">SANSER</span>  = -82.41%
 |
 |
 
@@ -700,17 +727,30 @@ if ((nrow(DPA_LowVariance[DPA_LowVariance$nzv,]))==0){
 # Visualizing pairwise correlation between predictors
 ##################################
 (DPA_Correlation <- cor(DPA.Predictors.Numeric,
-             method = "pearson",
-             use="pairwise.complete.obs"))
+                        method = "pearson",
+                        use="pairwise.complete.obs"))
 
 DPA_CorrelationTest <- cor.mtest(DPA.Predictors.Numeric,
                        method = "pearson",
-                       conf.level = .95)
+                       conf.level = 0.95)
 
 corrplot(cor(DPA.Predictors.Numeric,
              method = "pearson",
              use="pairwise.complete.obs"), 
              method = "circle",
+             type = "upper", 
+             order = "original", 
+             tl.col = "black", 
+             tl.cex = 0.75,
+             tl.srt = 90, 
+             sig.level = 0.05, 
+             p.mat = DPA_CorrelationTest$p,
+             insig = "blank")
+
+corrplot(cor(DPA.Predictors.Numeric,
+             method = "pearson",
+             use="pairwise.complete.obs"), 
+             method = "number",
              type = "upper", 
              order = "original", 
              tl.col = "black", 
@@ -726,26 +766,11 @@ corrplot(cor(DPA.Predictors.Numeric,
 DPA_Correlation <-  cor(DPA.Predictors.Numeric, 
                         method = "pearson",
                         use="pairwise.complete.obs")
-(DPA_HighlyCorrelatedCount <- sum(abs(DPA_Correlation[upper.tri(DPA_Correlation)]) > 0.75))
 
-if (DPA_HighlyCorrelatedCount == 0) {
-  print("No highly correlated predictors noted.")
-} else {
-  print(paste0("High correlation observed for ",
-               (DPA_HighlyCorrelatedCount),
-               " pairs of numeric variable(s) with Correlation.Coefficient>0.75."))
-  
-  (DPA_HighlyCorrelatedPairs <- corr_cross(DPA.Predictors.Numeric,
-  max_pvalue = 0.05, 
-  top = DPA_HighlyCorrelatedCount,
-  rm.na = TRUE,
-  grid = FALSE
-))
-  
-}
+(DPA_HighlyCorrelatedCount <- sum(abs(DPA_Correlation[upper.tri(DPA_Correlation)])>0.80))
 
 if (DPA_HighlyCorrelatedCount > 0) {
-  DPA_HighlyCorrelated <- findCorrelation(DPA_Correlation, cutoff = 0.75)
+  DPA_HighlyCorrelated <- findCorrelation(DPA_Correlation, cutoff = 0.80)
   
   (DPA_HighlyCorrelatedForRemoval <- length(DPA_HighlyCorrelated))
   
@@ -844,10 +869,10 @@ if (DPA_LinearlyDependentCount > 0) {
 |
 | **[A]** Shape transformation was applied to improve against skewness and minimize outliers for data distribution stability using the <span style="color: #0000FF">BoxCox</span> method from the <mark style="background-color: #CCECFF">**caret**</mark> package which transforms the distributional shape for predictors with strictly positive values.
 |
-| **[B]** Skewness measurrements were improved for most except for 1 numeric predictor with Skewness>3 
+| **[B]** Skewness measurements were improved for most except for 1 numeric predictor with Skewness>3. 
 |      **[B.1]** <span style="color: #FF0000">SUIRAT</span> = 3.95
 |
-| **[C]** Outliers were minimized for most except for 9 numeric predictor which continued to have outlying points noted using the IQR criterion.
+| **[C]** Outliers were minimized for most except for 9 numeric predictors which continued to contain outlying points as noted using the IQR criterion.
 |      **[C.1]** <span style="color: #FF0000">UNEMPR</span> = 5
 |      **[C.2]** <span style="color: #FF0000">RTIMOR</span> = 2
 |      **[C.3]** <span style="color: #FF0000">TUBINC</span> = 28
@@ -930,6 +955,38 @@ DPA_BoxCoxTransformed <- cbind(DPA_BoxCoxTransformed,DPA[,c("COUNTRY",
 |
 ####  1.3.3.6 Pre-Processed Dataset
 |
+| **[A]**  A total of 9 variables (8 predictors and 1 metadata) were removed prior to data exploration and modelling due to issues identified during data preprocessing.
+|      **[A.1]** <span style="color: #FF0000">YEAR</span> = Metadata containing only a single value
+|      **[A.2]** <span style="color: #FF0000">GNI</span> = High correlation with <span style="color: #FF0000">GDP</span>
+|      **[A.3]** <span style="color: #FF0000">DPTIMM</span> = High correlation with <span style="color: #FF0000">HEPIMM</span>
+|      **[A.4]** <span style="color: #FF0000">MEAIMM</span> = High correlation with <span style="color: #FF0000">HEPIMM</span>
+|      **[A.5]** <span style="color: #FF0000">URBPOP</span> = High correlation with <span style="color: #FF0000">RURPOP</span>
+|      **[A.6]** <span style="color: #FF0000">SANSER</span> = High skewness even after shape transformation
+|      **[A.7]** <span style="color: #FF0000">TUBINC</span> = High outlier count even after shape transformation
+|      **[A.8]** <span style="color: #FF0000">TUBTRT</span> = High outlier count even after shape transformation
+|      **[A.9]** <span style="color: #FF0000">SUIRAT</span> = High outlier count even after shape transformation
+|
+| **[B]** A total of 30 observations were removed prior to data exploration and modelling due to issues identified during data preprocessing.
+|      **[B.1]** 15 countries were identified to be associated with distributional anomalies showing high number of observations reporting the exact same set of values.
+|
+| **[C]** The preprocessed tabular dataset was comprised of 364 observations and 14 variables (including 1 metadata, 1 response and 12 predictors). 
+|      **[C.1]** 364 rows (observations)
+|      **[C.2]** 14 columns (variables)
+|             **[A.2.1]** 1/14 instance labels = <span style="color: #FF0000">COUNTRY</span> variable (character)
+|             **[A.2.2]** 1/14 response = <span style="color: #FF0000">LIFEXP</span> variable (numeric)
+|             **[A.2.3]** 12/14 predictors = 10/12 numeric + 2/12 factor
+|                      **[A.2.3.1]** <span style="color: #FF0000">GENDER</span> (factor)
+|                      **[A.2.3.2]** <span style="color: #FF0000">CONTIN</span> (factor)
+|                      **[A.2.3.3]** <span style="color: #FF0000">UNEMPR</span> (numeric)
+|                      **[A.2.3.4]** <span style="color: #FF0000">INFMOR</span> (numeric)
+|                      **[A.2.3.5]** <span style="color: #FF0000">GDP</span> (numeric)
+|                      **[A.2.3.6]** <span style="color: #FF0000">CLTECH</span> (numeric)
+|                      **[A.2.3.7]** <span style="color: #FF0000">PERCAP</span> (numeric)
+|                      **[A.2.3.8]** <span style="color: #FF0000">RTIMOR</span> (numeric)
+|                      **[A.2.3.9]** <span style="color: #FF0000">HEPIMM</span> (numeric)
+|                      **[A.2.3.10]** <span style="color: #FF0000">HOSBED</span> (numeric)
+|                      **[A.2.3.11]** <span style="color: #FF0000">RURPOP</span> (numeric)
+|                      **[A.2.3.12]** <span style="color: #FF0000">NCOMOR</span> (numeric)
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
@@ -943,9 +1000,11 @@ PMA <- DPA_BoxCoxTransformed[,!names(DPA_BoxCoxTransformed) %in% c("YEAR",
                                                                    "GNI",
                                                                    "DPTIMM",
                                                                    "MEAIMM",
-                                                                   "RURPOP",
+                                                                   "URBPOP",
                                                                    "SANSER",
-                                                                   "RTIMOR")]
+                                                                   "TUBINC",
+                                                                   "TUBTRT",
+                                                                   "SUIRAT")]
 
 ##################################
 # Gathering descriptive statistics
@@ -1005,7 +1064,7 @@ featurePlot(x = PME.Numeric,
             scales = list(x = list(relation="free", rot = 90), 
                           y = list(relation="free")),
             adjust = 1.5,
-            layout = c(4, 4))
+            layout = c(4, 3))
 
 ##################################
 # Formulating the box plot
@@ -1016,7 +1075,7 @@ featurePlot(x = PME.Numeric,
             scales = list(x = list(relation="free", rot = 90), 
                           y = list(relation="free")),
             adjust = 1.5,
-            layout = c(4, 4))
+            layout = c(4, 3))
 
 ```
 
@@ -1088,7 +1147,7 @@ dotplot(Predictor ~ LOWESSPR | Metric,
 ##################################
 # Obtaining the Pearson correlation coefficient
 ##################################
-(FE_PCC <- abs(cor(PME.Numeric, method="pearson")[-13,13]))
+(FE_PCC <- abs(cor(PME.Numeric, method="pearson")[-10,10]))
 
 ##################################
 # Formulating the summary table
@@ -1132,7 +1191,7 @@ dotplot(Predictor ~ PCC | Metric,
 ##################################
 # Obtaining the Spearman's rank correlation coefficient
 ##################################
-(FE_SRCC <- abs(cor(PME.Numeric, method="spearman")[-13,13]))
+(FE_SRCC <- abs(cor(PME.Numeric, method="spearman")[-10,10]))
 
 ##################################
 # Formulating the summary table
