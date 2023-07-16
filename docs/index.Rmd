@@ -678,7 +678,7 @@ if ((nrow(DPA_LowVariance[DPA_LowVariance$nzv,]))==0){
 |
 ####  1.3.3.3 Collinearity
 |
-| **[A]** High correlation were noted for 7 pairs of numeric predictors with Pearson correlation coefficients >75% p-values<0.05 as confirmed using the preprocessing summaries from the <mark style="background-color: #CCECFF">**caret**</mark> and <mark style="background-color: #CCECFF">**lares**</mark> packages.
+| **[A]** High correlation were noted for 7 pairs of numeric predictors with Pearson correlation coefficients >75% and p-values<0.05 as confirmed using the preprocessing summaries from the <mark style="background-color: #CCECFF">**caret**</mark> and <mark style="background-color: #CCECFF">**lares**</mark> packages.
 |      **[A.1]** <span style="color: #FF0000">GDP</span> and <span style="color: #FF0000">GNI</span>  = +99.99%
 |      **[A.2]** <span style="color: #FF0000">DPTIMM</span> and <span style="color: #FF0000">HEPIMM</span>  = +95.03%
 |      **[A.3]** <span style="color: #FF0000">DPTIMM</span> and <span style="color: #FF0000">MEAIMM</span>  = +88.17%
@@ -771,6 +771,8 @@ if (DPA_HighlyCorrelatedCount > 0) {
 |
 ####  1.3.3.4 Linear Dependencies
 |
+| **[A]** No linear dependencies noted for any subset of numeric variables using the preprocessing summary from the <mark style="background-color: #CCECFF">**caret**</mark> package applying the <span style="color: #0000FF">findLinearCombos</span> method which utilizes the QR decomposition of a matrix to enumerate sets of linear combinations (if they exist). 
+|
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
@@ -840,6 +842,22 @@ if (DPA_LinearlyDependentCount > 0) {
 |
 ####  1.3.3.5 Shape Transformation
 |
+| **[A]** Shape transformation was applied to improve against skewness and minimize outliers for data distribution stability using the <span style="color: #0000FF">BoxCox</span> method from the <mark style="background-color: #CCECFF">**caret**</mark> package which transforms the distributional shape for predictors with strictly positive values.
+|
+| **[B]** Skewness measurrements were improved for most except for 1 numeric predictor with Skewness>3 
+|      **[B.1]** <span style="color: #FF0000">SUIRAT</span> = 3.95
+|
+| **[C]** Outliers were minimized for most except for 9 numeric predictor which continued to have outlying points noted using the IQR criterion.
+|      **[C.1]** <span style="color: #FF0000">UNEMPR</span> = 5
+|      **[C.2]** <span style="color: #FF0000">RTIMOR</span> = 2
+|      **[C.3]** <span style="color: #FF0000">TUBINC</span> = 28
+|      **[C.4]** <span style="color: #FF0000">DPTIMM</span> = 24
+|      **[C.5]** <span style="color: #FF0000">HEPIMM</span> = 8
+|      **[C.6]** <span style="color: #FF0000">MEAIMM</span> = 18
+|      **[C.7]** <span style="color: #FF0000">TUBTRT</span> = 30
+|      **[C.8]** <span style="color: #FF0000">NCOMOR</span> = 2
+|      **[C.9]** <span style="color: #FF0000">SUIRAT</span> = 27
+|
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
@@ -875,11 +893,34 @@ for (i in 1:ncol(DPA_BoxCoxTransformed)) {
                        ", Skewness = ", Skewness)))
 }
 
+##################################
+# Identifying outliers for the numeric predictors
+##################################
+OutlierCountList <- c()
+
+for (i in 1:ncol(DPA_BoxCoxTransformed)) {
+  Outliers <- boxplot.stats(DPA_BoxCoxTransformed[,i])$out
+  OutlierCount <- length(Outliers)
+  OutlierCountList <- append(OutlierCountList,OutlierCount)
+  OutlierIndices <- which(DPA_BoxCoxTransformed[,i] %in% c(Outliers))
+  print(
+  ggplot(DPA_BoxCoxTransformed, aes(x=DPA_BoxCoxTransformed[,i])) +
+  geom_boxplot() +
+  theme_bw() +
+  theme(axis.text.y=element_blank(), 
+        axis.ticks.y=element_blank()) +
+  xlab(names(DPA_BoxCoxTransformed)[i]) +
+  labs(title=names(DPA_BoxCoxTransformed)[i],
+       subtitle=paste0(OutlierCount, " Outlier(s) Detected")))
+}
+
+
 DPA_BoxCoxTransformed <- cbind(DPA_BoxCoxTransformed,DPA[,c("COUNTRY",
                                                             "YEAR",
                                                             "GENDER",
                                                             "CONTIN",
                                                             "LIFEXP")])
+
 
 ```
 
