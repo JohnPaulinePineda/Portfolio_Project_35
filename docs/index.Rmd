@@ -963,7 +963,7 @@ DPA_BoxCoxTransformed <- cbind(DPA_BoxCoxTransformed,DPA[,c("COUNTRY",
 |      **[A.3]** <span style="color: #FF0000">DPTIMM</span> = High correlation with <span style="color: #FF0000">HEPIMM</span>
 |      **[A.4]** <span style="color: #FF0000">MEAIMM</span> = High correlation with <span style="color: #FF0000">HEPIMM</span>
 |      **[A.5]** <span style="color: #FF0000">URBPOP</span> = High correlation with <span style="color: #FF0000">RURPOP</span>
-|      **[A.6]** <span style="color: #FF0000">SANSER</span> = High correlation with <span style="color: #FF0000">INFMOR</span> and span style="color: #FF0000">CLTECH</span>
+|      **[A.6]** <span style="color: #FF0000">SANSER</span> = High correlation with <span style="color: #FF0000">INFMOR</span> and <span style="color: #FF0000">CLTECH</span>
 |      **[A.7]** <span style="color: #FF0000">TUBINC</span> = High outlier count even after shape transformation
 |      **[A.8]** <span style="color: #FF0000">TUBTRT</span> = High outlier count even after shape transformation
 |      **[A.9]** <span style="color: #FF0000">SUIRAT</span> = High skewness even after shape transformation
@@ -1925,6 +1925,63 @@ CUBIST_Tune$finalModel
 </details>
 
 ###  1.3.7 Model Performance Validation
+|
+| **[A]** Apparent performance ranked from best to worst among the candidate optimal models are provided as follows:
+|      **[A.1]** **RF: Random Forest** (<mark style="background-color: #CCECFF">**randomForest**</mark> package)
+|             **[A.1.1]** Root Mean Square Error = 0.9698
+|             **[A.1.2]** R-Squared = 0.9848 
+|      **[A.2]** **GBM: Stochastic Gradient Boosting** (<mark style="background-color: #CCECFF">**gbm**</mark> package)
+|             **[A.2.1]** Root Mean Square Error = 1.7044
+|             **[A.2.2]** R-Squared = 0.9530
+|      **[A.3]** **CUB: Cubist** (<mark style="background-color: #CCECFF">**Cubist**</mark> package)
+|             **[A.3.1]** Root Mean Square Error = 1.9126
+|             **[A.3.2]** R-Squared = 0.9408
+|      **[A.4]** **NN: Neural Network** (<mark style="background-color: #CCECFF">**nnet**</mark> package)
+|             **[A.4.1]** Root Mean Square Error = 1.9473
+|             **[A.4.2]** R-Squared = 0.9387 
+|      **[A.5]** **PLS: Partial Least Squares** (<mark style="background-color: #CCECFF">**pls**</mark> package)
+|             **[A.5.1]** Root Mean Square Error = 2.4242
+|             **[A.5.2]** R-Squared = 0.9050
+|
+| **[B]** 10-fold cross-validated performance ranked from best to worst among the candidate optimal models are provided as follows:
+|      **[B.1]** **NN: Neural Network** (<mark style="background-color: #CCECFF">**nnet**</mark> package)
+|             **[B.1.1]** Root Mean Square Error = 2.0701
+|             **[B.1.2]** R-Squared = 0.9321 
+|      **[B.2]** **CUB: Cubist** (<mark style="background-color: #CCECFF">**Cubist**</mark> package)
+|             **[B.2.1]** Root Mean Square Error = 2.0967
+|             **[B.2.2]** R-Squared = 0.9316
+|      **[B.3]** **GBM: Stochastic Gradient Boosting** (<mark style="background-color: #CCECFF">**gbm**</mark> package)
+|             **[B.3.1]** Root Mean Square Error = 2.0978
+|             **[B.3.2]** R-Squared = 0.9288
+|      **[B.4]** **RF: Random Forest** (<mark style="background-color: #CCECFF">**randomForest**</mark> package)
+|             **[B.4.1]** Root Mean Square Error = 2.2390
+|             **[B.4.2]** R-Squared = 0.9201 
+|      **[B.5]** **PLS: Partial Least Squares** (<mark style="background-color: #CCECFF">**pls**</mark> package)
+|             **[B.5.1]** Root Mean Square Error = 2.4632
+|             **[B.5.2]** R-Squared = 0.9087
+|
+| **[C]** Externally-validated performance ranked from best to worst among the candidate optimal models are provided as follows:
+|      **[C.1]** **GBM: Stochastic Gradient Boosting** (<mark style="background-color: #CCECFF">**gbm**</mark> package)
+|             **[C.1.1]** Root Mean Square Error = 2.1007
+|             **[C.1.2]** R-Squared = 0.9171
+|      **[C.2]** **CUB: Cubist** (<mark style="background-color: #CCECFF">**Cubist**</mark> package)
+|             **[C.2.1]** Root Mean Square Error = 2.2261
+|             **[C.2.2]** R-Squared = 0.9069
+|      **[C.3]** **NN: Neural Network** (<mark style="background-color: #CCECFF">**nnet**</mark> package)
+|             **[C.3.1]** Root Mean Square Error = 2.3021
+|             **[C.3.2]** R-Squared = 0.9005
+|      **[C.4]** **RF: Random Forest** (<mark style="background-color: #CCECFF">**randomForest**</mark> package)
+|             **[C.4.1]** Root Mean Square Error = 2.5012
+|             **[C.4.2]** R-Squared = 0.8825 
+|      **[C.5]** **PLS: Partial Least Squares** (<mark style="background-color: #CCECFF">**pls**</mark> package)
+|             **[C.5.1]** Root Mean Square Error = 2.6870
+|             **[C.5.2]** R-Squared = 0.8644
+|
+| **[D]** Optimal models formulated using **GBM: Stochastic Gradient Boosting**, **CUB: Cubist** and **NN: Neural Network** demonstrated consistently good performance from both internal and external validation.
+|
+| **[E]** Model formulated using **RF: Random Forest** showed signs of overfitting due to the huge difference in performance as observed between internal and external validation.
+|
+| **[F]** Model formulated using **PLS: Partial Least Squares** showed consistently worse performance from both internal and external validation.   
 |
 |
 
