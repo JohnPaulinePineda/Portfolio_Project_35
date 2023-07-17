@@ -28,9 +28,19 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 ##  1.2 Methodology
 |
-###  1.2.1 Feature Selection
+###  1.2.1 Data Assessment
 |
-| Model-independent feature importance metrics were evaluated for the numeric predictors in the study to determine the most optimal subset of variables for the subsequent modelling process which included the following:
+| Preliminary data used in the study was evaluated and prepared for analysis and modelling using the following methods: 
+|
+| [**Data Quality Assessment**](http://appliedpredictivemodeling.com/) involves profiling the data to understand its suitability for machine learning tasks. The quality of training data has a huge impact on the efficiency, accuracy and complexity of the predictive modelling methods applied. Data remains susceptible to errors or irregularities that may be introduced during collection, aggregation or annotation stage. Issues such as incorrect labels, synonymous categories in a categorical variable or heterogeneity in columns, among others, which might go undetected by standard pre-processing modules in these frameworks can lead to sub-optimal model performance, inaccurate analysis and unreliable decisions.
+|
+| [**Data Preprocessing**](http://appliedpredictivemodeling.com/) involves changing the raw feature vectors into a representation that is more suitable for the downstream modelling and estimation processes, including data cleaning, integration, reduction and transformation. Data cleaning aims to identify and correct errors in the dataset that may negatively impact a predictive model such as removing outliers, replacing missing values, smoothing noisy data, and correcting inconsistent data. Data integration addresses potential issues with redundant and inconsistent data obtained from multiple sources through approaches such as detection of tuple duplication and data conflict. The purpose of data reduction is to have a condensed representation of the data set that is smaller in volume, while maintaining the integrity of the original data set. Data transformation converts the data into the most appropriate form for data modeling.
+|
+| [**Data Exploration**](http://appliedpredictivemodeling.com/) involves analyzing and investigating data sets to summarize their main characteristics, often employing data visualization methods. It helps determine how best to manipulate data sources to discover patterns, spot anomalies, test a hypothesis, or check assumptions. This process is primarily used to see what data can reveal beyond the formal modeling or hypothesis testing task and provides a better understanding of data set variables and the relationships between them.
+|
+###  1.2.2 Feature Selection
+|
+| Model-independent feature importance metrics were assessed for the numeric predictors in the study to determine the most optimal subset of variables for the subsequent modelling process which included the following:
 |
 | [**Locally Weighted Scatterplot Smoothing Pseudo-R-Squared**](https://www.tandfonline.com/doi/abs/10.1080/01621459.1979.10481038) computes the R-squared statistic - a goodness-of-fit measure which represents explained variability, improvement from null to fitted model and square of the correlation on predicted values obtained from a locally weighted scatterplot smoothing process. LOWESS consists of computing a series of local linear regressions, with each local regression restricted to a window of x-values. Smoothness is achieved by using overlapping windows and by gradually down-weighting points in each regression according to their distance from the anchor point of the window (tri-cube weighting).
 |
@@ -42,7 +52,7 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 | [**Relief Values**](https://link.springer.com/article/10.1023/A:1025667309714) are heuristic measures which estimate the quality of variables according to how well their values compare to instances that are near to each other, but are efficient in detecting contextual information even with strong dependencies between attributes. Random instances and the corresponding K-nearest instances are selected, with the the weights for the different prediction values, different attributes and different prediction consolidated. The rank of the instance in a sequence of instances ordered by the distance is taken into account based on a a user-defined parameter controlling the influence of the distance. The contributions of each K-nearest instances are normalized by dividing the results with the sum of all K contributions. The presence of high relief values indicate the univariate association between the numeric predictors and the numeric response.
 |
-###  1.2.2 Model Formulation
+###  1.2.3 Model Formulation
 |
 | This study implemented various black-box regression modelling procedures with complex structures involving large numbers of model coefficients or mathematical transformations which lacked transparency in terms of the internal processes and weighted factors used in reaching a decision. Models applied in the analysis for predicting the numeric response were the following:
 |
@@ -56,13 +66,13 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 | [**Cubist Regression**](https://www.semanticscholar.org/paper/Learning-With-Continuous-Classes-Quinlan/ead572634c6f7253bf187a3e9a7dc87ae2e34258) is a rule-based model that is an extension of Quinlan’s M5 model tree. A tree is grown where the terminal leaves contain linear regression models. These models are based on the predictors used in previous splits. Also, there are intermediate linear models at each step of the tree. A prediction is made using the linear regression model at the terminal node of the tree, but is smoothed by taking into account the prediction from the linear model in the previous node of the tree (which also occurs recursively up the tree). The tree is reduced to a set of rules, which initially are paths from the top of the tree to the bottom. Rules are eliminated via pruning and/or combined for simplification. The Cubist model can also use a boosting-like scheme called committees where iterative model trees are created in sequence. Another innovation is about using nearest-neighbors to adjust the predictions from the rule-based model.
 |
-###  1.2.3 Model Hyperparameter Tuning
+###  1.2.4 Model Hyperparameter Tuning
 |
 | The optimal combination of hyperparameter values which maximized the performance of the various regression models in the study used the following hyperparameter tuning strategy:
 |
 | [**K-Fold Cross-Validation**](http://appliedpredictivemodeling.com/) involves dividing the training set after a random shuffle into a user-defined K number of smaller non-overlapping sets called folds. Each unique fold is assigned as the hold-out test data to assess the model trained from the data set collected from all the remaining K-1 folds. The evaluation score is retained but the model is discarded. The process is recursively performed resulting to a total of K fitted models and evaluated on the K hold-out test sets. All K-computed performance measures reported from the process are then averaged to represent the estimated performance of the model. This approach can be computationally expensive and may be highly dependent on how the data was randomly assigned to their respective folds, but does not waste too much data which is a major advantage in problems where the number of samples is very small.
 |
-###  1.2.4 Model Performance Evaluation
+###  1.2.5 Model Performance Evaluation
 |
 | Evaluation metrics applied in the analysis to estimate the generalization performance of the regression models on internally sub-sampled or independent datasets were the following:
 |
@@ -70,7 +80,7 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 | [**R-Squared**](https://link.springer.com/book/10.1007/978-0-387-84858-7) computes the normalized version of the root mean squared error and also referred to as the coefficient of determination. With a value ranging from zero to infinity, a value of one indicates perfect prediction of the target values. The metric can also be interpreted as the fraction of the total variance in the response variable which can be explained by the model.  
 |
-###  1.2.5 Model Presentation
+###  1.2.6 Model Presentation
 |
 | Due to the black-box nature of the regression models considered in the study, model presentation was conducted post-hoc and focused on model-agnostic techniques which did not consider any assumptions about the model structures. These methods were grouped into two categories:
 |
@@ -1112,7 +1122,6 @@ featurePlot(x = PME.Numeric,
 
 ###  1.3.5 Feature Selection
 |
-|
 ####  1.3.5.1 Locally Weighted Scatterplot Smoothing Pseudo-R-Squared (LOWESSPR)
 |
 | **[A]** The numeric predictors which demonstrated the best feature importance in terms of the locally weighted scatterplot smoothing pseudo-r-squared statistic as obtained using the <mark style="background-color: #CCECFF">**caret**</mark> package included:
@@ -1372,8 +1381,21 @@ dotplot(Predictor ~ RV | Metric,
 
 </details>
 
-###  1.3.6 Model Development and Performance Estimation
 |
+|
+####  1.3.5.6 Model Predictors
+|
+| **[A]** The final list of predictors to be applied during the modelling process involved 4 numeric predictors (which consistently demonstrated the best feature importance in terms of the aforementioned metrics) and 2 factor predictors enumerated as follows:
+|      **[A.1]** <span style="color: #FF0000">INFMOR</span> (numeric)
+|      **[A.2]** <span style="color: #FF0000">PERCAP</span> (numeric)
+|      **[A.3]** <span style="color: #FF0000">NCOMOR</span> (numeric)
+|      **[A.4]** <span style="color: #FF0000">CLTECH</span> (numeric)
+|      **[A.5]** <span style="color: #FF0000">GENDER</span> (factor)
+|      **[A.6]** <span style="color: #FF0000">CONTIN</span> (factor)
+|
+|
+
+###  1.3.6 Model Development and Performance Estimation
 |
 
 ####  1.3.6.1 Stochastic Gradient Boosting (GBM)
