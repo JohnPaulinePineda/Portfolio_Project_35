@@ -58,9 +58,7 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 ###  1.2.4 Model Performance Evaluation
 |
-| [Root Mean Squared Error](https://link.springer.com/book/10.1007/978-0-387-84858-7) computes the square root of the average squared difference between the predicted and target values which ranges from zero to infinity. A value of zero indicates perfect prediction of the target values. The metric is weighted according to the square of the error - putting greater influence on large errors than smaller errors which makes it sensitive to outliers but may also encourage conservative prediction.
-|
-| [Median Absolute Deviation](https://link.springer.com/book/10.1007/978-0-387-84858-7) computes the median among all absolute difference between the predicted and target values which ranges from zero to infinity. A value of zero indicates perfect prediction of the target values. The metric gives less weight to large errors and is robust to outliers.
+| [Root Mean Square Error](https://link.springer.com/book/10.1007/978-0-387-84858-7) computes the square root of the average squared difference between the predicted and target values which ranges from zero to infinity. A value of zero indicates perfect prediction of the target values. The metric is weighted according to the square of the error - putting greater influence on large errors than smaller errors which makes it sensitive to outliers but may also encourage conservative prediction.
 |
 | [R-Squared](https://link.springer.com/book/10.1007/978-0-387-84858-7) computes the normalized version of the root mean squared error and also referred to as the coefficient of determination. With a value ranging from zero to infinity, a value of one indicates perfect prediction of the target values. The metric can also be interpreted as the fraction of the total variance in the response variable which can be explained by the model.  
 |
@@ -1599,6 +1597,29 @@ RF_Tune$finalModel
 |
 |
 ####  1.3.6.3 Neural Network (NN)
+|
+| **[A]** The neural network regression model from the  <mark style="background-color: #CCECFF">**nnet**</mark> package was implemented through the <mark style="background-color: #CCECFF">**caret**</mark> package.
+|
+| **[B]** The model contains 2 hyperparameters:
+|      **[B.1]** <span style="color: #FF0000">size</span> = number of units in the hidden layer made to vary across a range of values equal to 2, 5, 10. 15 and 20
+|      **[B.2]** <span style="color: #FF0000">decay</span> = parameter for weight decay made to vary across a range of values equal to 0, 0.1, 0.001, 0.0001 and 0.00001
+|
+| **[C]** The 10-fold cross-validated model performance of the optimal model is summarized as follows:
+|      **[C.1]** Optimal model used size=2 and decay=0.1 which demonstrated the lowest root mean square error
+|      **[C.2]** Root Mean Square Error = 2.0701
+|      **[C.3]** R-Squared = 0.9321
+|
+| **[D]** The apparent model performance of the optimal model is summarized as follows:
+|      **[D.1]** Root Mean Square Error = 1.9473
+|      **[D.2]** R-Squared = 0.9387
+|
+| **[E]** The top-performing predictors in the model ranked using the root mean square error loss after permutations are as follows:
+|      **[E.1]** <span style="color: #FF0000">INFMOR</span> (numeric) = 7.70
+|      **[E.2]** <span style="color: #FF0000">NCOMOR</span> (numeric) = 3.67
+|      **[E.3]** <span style="color: #FF0000">CLTECH</span> (numeric) = 3.10
+|      **[E.4]** <span style="color: #FF0000">CONTIN</span> (factor) = 3.07
+|      **[E.5]** <span style="color: #FF0000">GENDER</span> (factor) = 2.51
+|      **[E.6]** <span style="color: #FF0000">PERCAP</span> (numeric) = 2.33
 |
 |
 
