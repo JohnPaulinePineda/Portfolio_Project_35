@@ -1366,6 +1366,31 @@ dotplot(Predictor ~ RV | Metric,
 
 ####  1.3.6.1 Stochastic Gradient Boosting (GBM)
 |
+| **[A]** The stochastic gradient boosting regression model from the  <mark style="background-color: #CCECFF">**gbm**</mark> package was implemented through the <mark style="background-color: #CCECFF">**caret**</mark> package.
+|
+| **[B]** The model contains 4 hyperparameters:
+|      **[B.1]** <span style="color: #FF0000">n.trees</span> =  total number of trees to fit which is equivalent to the number of iterations and the number of basis functions in the additive expansion made to vary across a range of values equal to 100, 200 and 300
+|      **[B.2]** <span style="color: #FF0000">interaction.depth</span> = maximum depth of each tree representing the highest level of variable interactions allowed made to vary across a range of values equal to 1, 2 and 3
+|      **[B.3]** <span style="color: #FF0000">shrinkage</span> = shrinkage parameter applied to each tree in the expansion representing the learning rate or step-size reduction made to vary across a range of values equal to 0.001, 0.01 and 0.1
+|      **[B.4]** <span style="color: #FF0000">n.minobsinnode</span> = minimum number of observations in the terminal nodes of the trees made to vary across a range of values equal to 5, 10 and 15
+|
+| **[C]** The 10-fold cross-validated model performance of the optimal model is summarized as follows:
+|      **[C.1]** Optimal model used n.trees=300, interaction.depth=2, shrinkage=0.1 and n.minobsinnode=5 which demonstrated the lowest root mean square error
+|      **[C.2]** Root Mean Square Error = 2.0978
+|      **[C.3]** R-Squared = 0.9288
+|
+| **[D]** The apparent model performance of the optimal model is summarized as follows:
+|      **[D.1]** Root Mean Square Error = 1.7044
+|      **[D.2]** R-Squared = 0.9530
+|
+| **[E]** The top-performing predictors in the model ranked using the root mean square error loss after permutations are as follows:
+|      **[E.1]** <span style="color: #FF0000">INFMOR</span> (numeric) = 7.07
+|      **[E.2]** <span style="color: #FF0000">NCOMOR</span> (numeric) = 3.57
+|      **[E.3]** <span style="color: #FF0000">CONTIN</span> (factor) = 1.93
+|      **[E.4]** <span style="color: #FF0000">GENDER</span> (factor) = 1.92
+|      **[E.5]** <span style="color: #FF0000">CLTECH</span> (numeric) = 1.84
+|      **[E.6]** <span style="color: #FF0000">PERCAP</span> (numeric) = 1.52
+|
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
@@ -1423,9 +1448,9 @@ KFold_Control <- trainControl(method="cv",
 # for the GBM model
 ##################################
 GBM_Grid = expand.grid(n.trees = c(100, 200, 300),
-                       interaction.depth = c(1, 3, 5),
-                       shrinkage = c(0.10,0.05,0.01),
-                       n.minobsinnode = c(15,10,5))
+                       interaction.depth = c(1, 2, 3),
+                       shrinkage = c(0.001, 0.005, 0.01, 0.05, 0.10),
+                       n.minobsinnode = c(5,10,15))
 
 ##################################
 # Running the GBM model
@@ -1459,10 +1484,10 @@ plot(GBM_DALEX_Diagnostics,
   geom_abline(slope = 1) +
   ggtitle("GBM: Observed and Predicted LIFEXP")
 
-GBM_DALEX_VariableImportance    <- model_parts(GBM_DALEX,
+(GBM_DALEX_VariableImportance    <- model_parts(GBM_DALEX,
                                                loss_function = loss_root_mean_square,
                                                B = 200,
-                                               N = NULL)
+                                               N = NULL))
 
 plot(GBM_DALEX_VariableImportance)
 
@@ -1601,8 +1626,8 @@ RF_Tune$finalModel
 | **[A]** The neural network regression model from the  <mark style="background-color: #CCECFF">**nnet**</mark> package was implemented through the <mark style="background-color: #CCECFF">**caret**</mark> package.
 |
 | **[B]** The model contains 2 hyperparameters:
-|      **[B.1]** <span style="color: #FF0000">size</span> = number of units in the hidden layer made to vary across a range of values equal to 2, 5, 10. 15 and 20
-|      **[B.2]** <span style="color: #FF0000">decay</span> = parameter for weight decay made to vary across a range of values equal to 0, 0.1, 0.001, 0.0001 and 0.00001
+|      **[B.1]** <span style="color: #FF0000">size</span> = number of units in the hidden layer made to vary across a range of values equal to 2, 5, 10, 15 and 20
+|      **[B.2]** <span style="color: #FF0000">decay</span> = parameter for weight decay made to vary across a range of values equal to 0, 0.00001, 0.0001, 0.001 and 0.1
 |
 | **[C]** The 10-fold cross-validated model performance of the optimal model is summarized as follows:
 |      **[C.1]** Optimal model used size=2 and decay=0.1 which demonstrated the lowest root mean square error
@@ -1631,7 +1656,7 @@ RF_Tune$finalModel
 # for the NN model
 ##################################
 NN_Grid = expand.grid(size = c(2, 5, 10, 15, 20),
-                      decay = c(0, 0.1, 0.001, 0.0001, 0.00001))
+                      decay = c(0, 0.00001, 0.0001, 0.001, 0.1))
 
 ##################################
 # Running the NN model
