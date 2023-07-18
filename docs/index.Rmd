@@ -32,25 +32,25 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 | Preliminary data used in the study was evaluated and prepared for analysis and modelling using the following methods: 
 |
-| [**Data Quality Assessment**](http://appliedpredictivemodeling.com/) involves profiling the data to understand its suitability for machine learning tasks. The quality of training data has a huge impact on the efficiency, accuracy and complexity of the predictive modelling methods applied. Data remains susceptible to errors or irregularities that may be introduced during collection, aggregation or annotation stage. Issues such as incorrect labels, synonymous categories in a categorical variable or heterogeneity in columns, among others, which might go undetected by standard pre-processing modules in these frameworks can lead to sub-optimal model performance, inaccurate analysis and unreliable decisions.
+| [Data Quality Assessment](http://appliedpredictivemodeling.com/) involves profiling the data to understand its suitability for machine learning tasks. The quality of training data has a huge impact on the efficiency, accuracy and complexity of the predictive modelling methods applied. Data remains susceptible to errors or irregularities that may be introduced during collection, aggregation or annotation stage. Issues such as incorrect labels, synonymous categories in a categorical variable or heterogeneity in columns, among others, which might go undetected by standard pre-processing modules in these frameworks can lead to sub-optimal model performance, inaccurate analysis and unreliable decisions.
 |
-| [**Data Preprocessing**](http://appliedpredictivemodeling.com/) involves changing the raw feature vectors into a representation that is more suitable for the downstream modelling and estimation processes, including data cleaning, integration, reduction and transformation. Data cleaning aims to identify and correct errors in the dataset that may negatively impact a predictive model such as removing outliers, replacing missing values, smoothing noisy data, and correcting inconsistent data. Data integration addresses potential issues with redundant and inconsistent data obtained from multiple sources through approaches such as detection of tuple duplication and data conflict. The purpose of data reduction is to have a condensed representation of the data set that is smaller in volume, while maintaining the integrity of the original data set. Data transformation converts the data into the most appropriate form for data modeling.
+| [Data Preprocessing](http://appliedpredictivemodeling.com/) involves changing the raw feature vectors into a representation that is more suitable for the downstream modelling and estimation processes, including data cleaning, integration, reduction and transformation. Data cleaning aims to identify and correct errors in the dataset that may negatively impact a predictive model such as removing outliers, replacing missing values, smoothing noisy data, and correcting inconsistent data. Data integration addresses potential issues with redundant and inconsistent data obtained from multiple sources through approaches such as detection of tuple duplication and data conflict. The purpose of data reduction is to have a condensed representation of the data set that is smaller in volume, while maintaining the integrity of the original data set. Data transformation converts the data into the most appropriate form for data modeling.
 |
-| [**Data Exploration**](http://appliedpredictivemodeling.com/) involves analyzing and investigating data sets to summarize their main characteristics, often employing data visualization methods. It helps determine how best to manipulate data sources to discover patterns, spot anomalies, test a hypothesis, or check assumptions. This process is primarily used to see what data can reveal beyond the formal modeling or hypothesis testing task and provides a better understanding of data set variables and the relationships between them.
+| [Data Exploration](http://appliedpredictivemodeling.com/) involves analyzing and investigating data sets to summarize their main characteristics, often employing data visualization methods. It helps determine how best to manipulate data sources to discover patterns, spot anomalies, test a hypothesis, or check assumptions. This process is primarily used to see what data can reveal beyond the formal modeling or hypothesis testing task and provides a better understanding of data set variables and the relationships between them.
 |
 ###  1.2.2 Feature Selection
 |
 | Model-independent feature importance metrics were assessed for the numeric predictors in the study to determine the most optimal subset of variables for the subsequent modelling process which included the following:
 |
-| [**Locally Weighted Scatterplot Smoothing Pseudo-R-Squared**](https://www.tandfonline.com/doi/abs/10.1080/01621459.1979.10481038) computes the R-squared statistic - a goodness-of-fit measure which represents explained variability, improvement from null to fitted model and square of the correlation on predicted values obtained from a locally weighted scatterplot smoothing process. LOWESS consists of computing a series of local linear regressions, with each local regression restricted to a window of x-values. Smoothness is achieved by using overlapping windows and by gradually down-weighting points in each regression according to their distance from the anchor point of the window (tri-cube weighting).
+| [Locally Weighted Scatterplot Smoothing Pseudo-R-Squared](https://www.tandfonline.com/doi/abs/10.1080/01621459.1979.10481038) computes the R-squared statistic - a goodness-of-fit measure which represents explained variability, improvement from null to fitted model and square of the correlation on predicted values obtained from a locally weighted scatterplot smoothing process. LOWESS consists of computing a series of local linear regressions, with each local regression restricted to a window of x-values. Smoothness is achieved by using overlapping windows and by gradually down-weighting points in each regression according to their distance from the anchor point of the window (tri-cube weighting).
 |
-| [**Pearson's Correlation Coefficient**](https://royalsocietypublishing.org/doi/10.1098/rsta.1896.0007) is a parametric measure of the linear correlation for a pair of features by calculating the ratio between their covariance and the product of their standard deviations. The presence of high absolute correlation values indicate the univariate association between the numeric predictors and the numeric response.
+| [Pearson's Correlation Coefficient](https://royalsocietypublishing.org/doi/10.1098/rsta.1896.0007) is a parametric measure of the linear correlation for a pair of features by calculating the ratio between their covariance and the product of their standard deviations. The presence of high absolute correlation values indicate the univariate association between the numeric predictors and the numeric response.
 |
-| [**Spearman's Rank Correlation Coefficient**](https://www.jstor.org/stable/1412159?origin=crossref) is a non-parametric measure of the linear correlation for a pair of features by applying the Spearman's rank equation to the sum of the  squared differences between their ranks. The presence of high absolute correlation values indicate the univariate association between the numeric predictors and the numeric response.
+| [Spearman's Rank Correlation Coefficient](https://www.jstor.org/stable/1412159?origin=crossref) is a non-parametric measure of the linear correlation for a pair of features by applying the Spearman's rank equation to the sum of the  squared differences between their ranks. The presence of high absolute correlation values indicate the univariate association between the numeric predictors and the numeric response.
 |
-| [**Maximal Information Coefficient**](https://www.science.org/doi/10.1126/science.1205438) is an information theory-based measure of two-variable dependence through the computation of the mutual information normalized by the minimum joint entropy. It evaluates the strength of linear or non-linear association using binning as a means to apply mutual information between continuous random variables and selecting the maximum over many possible grids. The presence of high coefficient values indicate the univariate association between the numeric predictors and the numeric response.
+| [Maximal Information Coefficient](https://www.science.org/doi/10.1126/science.1205438) is an information theory-based measure of two-variable dependence through the computation of the mutual information normalized by the minimum joint entropy. It evaluates the strength of linear or non-linear association using binning as a means to apply mutual information between continuous random variables and selecting the maximum over many possible grids. The presence of high coefficient values indicate the univariate association between the numeric predictors and the numeric response.
 |
-| [**Relief Values**](https://link.springer.com/article/10.1023/A:1025667309714) are heuristic measures which estimate the quality of variables according to how well their values compare to instances that are near to each other, but are efficient in detecting contextual information even with strong dependencies between attributes. Random instances and the corresponding K-nearest instances are selected, with the the weights for the different prediction values, different attributes and different prediction consolidated. The rank of the instance in a sequence of instances ordered by the distance is taken into account based on a a user-defined parameter controlling the influence of the distance. The contributions of each K-nearest instances are normalized by dividing the results with the sum of all K contributions. The presence of high relief values indicate the univariate association between the numeric predictors and the numeric response.
+| [Relief Values](https://link.springer.com/article/10.1023/A:1025667309714) are heuristic measures which estimate the quality of variables according to how well their values compare to instances that are near to each other, but are efficient in detecting contextual information even with strong dependencies between attributes. Random instances and the corresponding K-nearest instances are selected, with the the weights for the different prediction values, different attributes and different prediction consolidated. The rank of the instance in a sequence of instances ordered by the distance is taken into account based on a a user-defined parameter controlling the influence of the distance. The contributions of each K-nearest instances are normalized by dividing the results with the sum of all K contributions. The presence of high relief values indicate the univariate association between the numeric predictors and the numeric response.
 |
 ###  1.2.3 Model Formulation
 |
@@ -58,41 +58,41 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 | [Linear Regression](https://link.springer.com/book/10.1007/978-1-4757-3462-1) explores the linear relationship between a scalar response and one or more covariates by having the conditional mean of the dependent variable be an affine function of the independent variables. The relationship is modeled through a disturbance term which represents an unobserved random variable that adds noise. The algorithm is typically formulated from the data using the least squares method which seeks to estimate the coefficients by minimizing the squared residual function. The linear equation assigns one scale factor represented by a coefficient to each covariate and an additional coefficient called the intercept or the bias coefficient which gives the line an additional degree of freedom allowing to move up and down a two-dimensional plot.
 |
-| [**Stochastic Gradient Boosting**](https://www.sciencedirect.com/science/article/abs/pii/S0167947301000652) is an ensemble learning method which combines multiple weak learners in an additive manner to improve prediction. The process is initialized using a decision tree base learner with the aim of minimizing a specified loss function. The negative gradient  of the loss function with respect to the predicted values from the current ensemble is calculated. Residuals are determined as the difference between the actual target values and the learner predictions. A new base learner is subsequently formulated but is trained to predict the residuals. The algorithm involves iteratively improving the ensemble by focusing on the residuals of the previous predictions. Each subsequent base learner is trained to reduce the errors made by the previous ensemble, gradually refining the model's predictive capabilities.
+| [Stochastic Gradient Boosting](https://www.sciencedirect.com/science/article/abs/pii/S0167947301000652) is an ensemble learning method which combines multiple weak learners in an additive manner to improve prediction. The process is initialized using a decision tree base learner with the aim of minimizing a specified loss function. The negative gradient  of the loss function with respect to the predicted values from the current ensemble is calculated. Residuals are determined as the difference between the actual target values and the learner predictions. A new base learner is subsequently formulated but is trained to predict the residuals. The algorithm involves iteratively improving the ensemble by focusing on the residuals of the previous predictions. Each subsequent base learner is trained to reduce the errors made by the previous ensemble, gradually refining the model's predictive capabilities.
 |
-| [**Random Forest**](https://link.springer.com/article/10.1023/A:1010933404324) is an ensemble learning method made up of a large set of small decision trees called estimators, with each producing its own prediction. The random forest model aggregates the predictions of the estimators to produce a more accurate prediction. The algorithm involves bootstrap aggregating (where smaller subsets of the training data are repeatedly subsampled with replacement), random subspacing (where a subset of features are sampled and used to train each individual estimator), estimator training (where unpruned decision trees are formulated for each estimator) and inference (where a final prediction is formilated by aggregating the individual predictions of all estimators).
+| [Random Forest](https://link.springer.com/article/10.1023/A:1010933404324) is an ensemble learning method made up of a large set of small decision trees called estimators, with each producing its own prediction. The random forest model aggregates the predictions of the estimators to produce a more accurate prediction. The algorithm involves bootstrap aggregating (where smaller subsets of the training data are repeatedly subsampled with replacement), random subspacing (where a subset of features are sampled and used to train each individual estimator), estimator training (where unpruned decision trees are formulated for each estimator) and inference (where a final prediction is formilated by aggregating the individual predictions of all estimators).
 |
-| [**Neural Network**](https://www.cambridge.org/core/books/pattern-recognition-and-neural-networks/4E038249C9BAA06C8F4EE6F044D09C5C) comprises of node layers - containing an input layer, one or more hidden layers, and an output layer. Each node, or artificial neuron, connects to another and has an associated weight and threshold. If the output of any individual node is above the specified threshold value, that node is activated, sending data to the next layer of the network. The process involves the initialization of weights and biases for each neuron in the network. Forward propagation computates the output of the neural network, as determined by the weighted sum of the inputs and a bias term. An activation function is applied to introduce non-linearity to the hidden layer. Back propagation is used to update the weights and the biases in the network by calculating the gradients of the loss function using the chain rule with the magnitude determined by a learning rate. This step allows the network to learn from the errors and adjust the parameters to minimize the loss.
+| [Neural Network](https://www.cambridge.org/core/books/pattern-recognition-and-neural-networks/4E038249C9BAA06C8F4EE6F044D09C5C) comprises of node layers - containing an input layer, one or more hidden layers, and an output layer. Each node, or artificial neuron, connects to another and has an associated weight and threshold. If the output of any individual node is above the specified threshold value, that node is activated, sending data to the next layer of the network. The process involves the initialization of weights and biases for each neuron in the network. Forward propagation computates the output of the neural network, as determined by the weighted sum of the inputs and a bias term. An activation function is applied to introduce non-linearity to the hidden layer. Back propagation is used to update the weights and the biases in the network by calculating the gradients of the loss function using the chain rule with the magnitude determined by a learning rate. This step allows the network to learn from the errors and adjust the parameters to minimize the loss.
 |
-| [**Partial Least Squares**](https://epubs.siam.org/doi/10.1137/0905052) applies dimensionality reduction to address high multicollinearity among predictors in a linear regression. The algorithm calculates summary indices termed as partial least squares components which are linear combinations of the original predictors by considering the variation in both the response and the predictor variables. The method of least squares is then applied to fit a linear regression model using the first principal components as predictors, with the optimal number determined using cross-validation.
+| [Partial Least Squares](https://epubs.siam.org/doi/10.1137/0905052) applies dimensionality reduction to address high multicollinearity among predictors in a linear regression. The algorithm calculates summary indices termed as partial least squares components which are linear combinations of the original predictors by considering the variation in both the response and the predictor variables. The method of least squares is then applied to fit a linear regression model using the first principal components as predictors, with the optimal number determined using cross-validation.
 |
-| [**Cubist Regression**](https://www.semanticscholar.org/paper/Learning-With-Continuous-Classes-Quinlan/ead572634c6f7253bf187a3e9a7dc87ae2e34258) is a rule-based model that is an extension of Quinlan’s M5 model tree. A tree is grown where the terminal leaves contain linear regression models. These models are based on the predictors used in previous splits. Also, there are intermediate linear models at each step of the tree. A prediction is made using the linear regression model at the terminal node of the tree, but is smoothed by taking into account the prediction from the linear model in the previous node of the tree (which also occurs recursively up the tree). The tree is reduced to a set of rules, which initially are paths from the top of the tree to the bottom. Rules are eliminated via pruning and/or combined for simplification. The Cubist model can also use a boosting-like scheme called committees where iterative model trees are created in sequence. Another innovation is about using nearest-neighbors to adjust the predictions from the rule-based model.
+| [Cubist Regression](https://www.semanticscholar.org/paper/Learning-With-Continuous-Classes-Quinlan/ead572634c6f7253bf187a3e9a7dc87ae2e34258) is a rule-based model that is an extension of Quinlan’s M5 model tree. A tree is grown where the terminal leaves contain linear regression models. These models are based on the predictors used in previous splits. Also, there are intermediate linear models at each step of the tree. A prediction is made using the linear regression model at the terminal node of the tree, but is smoothed by taking into account the prediction from the linear model in the previous node of the tree (which also occurs recursively up the tree). The tree is reduced to a set of rules, which initially are paths from the top of the tree to the bottom. Rules are eliminated via pruning and/or combined for simplification. The Cubist model can also use a boosting-like scheme called committees where iterative model trees are created in sequence. Another innovation is about using nearest-neighbors to adjust the predictions from the rule-based model.
 |
 ###  1.2.4 Model Hyperparameter Tuning
 |
 | The optimal combination of hyperparameter values which maximized the performance of the various regression models in the study used the following hyperparameter tuning strategy:
 |
-| [**K-Fold Cross-Validation**](http://appliedpredictivemodeling.com/) involves dividing the training set after a random shuffle into a user-defined K number of smaller non-overlapping sets called folds. Each unique fold is assigned as the hold-out test data to assess the model trained from the data set collected from all the remaining K-1 folds. The evaluation score is retained but the model is discarded. The process is recursively performed resulting to a total of K fitted models and evaluated on the K hold-out test sets. All K-computed performance measures reported from the process are then averaged to represent the estimated performance of the model. This approach can be computationally expensive and may be highly dependent on how the data was randomly assigned to their respective folds, but does not waste too much data which is a major advantage in problems where the number of samples is very small.
+| [K-Fold Cross-Validation](http://appliedpredictivemodeling.com/) involves dividing the training set after a random shuffle into a user-defined K number of smaller non-overlapping sets called folds. Each unique fold is assigned as the hold-out test data to assess the model trained from the data set collected from all the remaining K-1 folds. The evaluation score is retained but the model is discarded. The process is recursively performed resulting to a total of K fitted models and evaluated on the K hold-out test sets. All K-computed performance measures reported from the process are then averaged to represent the estimated performance of the model. This approach can be computationally expensive and may be highly dependent on how the data was randomly assigned to their respective folds, but does not waste too much data which is a major advantage in problems where the number of samples is very small.
 |
 ###  1.2.5 Model Performance Evaluation
 |
 | Evaluation metrics applied in the analysis to estimate the generalization performance of the regression models on internally sub-sampled or independent datasets were the following:
 |
-| [**Root Mean Square Error**](https://link.springer.com/book/10.1007/978-0-387-84858-7) computes the square root of the average squared difference between the predicted and target values which ranges from zero to infinity. A value of zero indicates perfect prediction of the target values. The metric is weighted according to the square of the error - putting greater influence on large errors than smaller errors which makes it sensitive to outliers but may also encourage conservative prediction.
+| [Root Mean Square Error](https://link.springer.com/book/10.1007/978-0-387-84858-7) computes the square root of the average squared difference between the predicted and target values which ranges from zero to infinity. A value of zero indicates perfect prediction of the target values. The metric is weighted according to the square of the error - putting greater influence on large errors than smaller errors which makes it sensitive to outliers but may also encourage conservative prediction.
 |
-| [**R-Squared**](https://link.springer.com/book/10.1007/978-0-387-84858-7) computes the normalized version of the root mean squared error and also referred to as the coefficient of determination. With a value ranging from zero to infinity, a value of one indicates perfect prediction of the target values. The metric can also be interpreted as the fraction of the total variance in the response variable which can be explained by the model.  
+| [R-Squared](https://link.springer.com/book/10.1007/978-0-387-84858-7) computes the normalized version of the root mean squared error and also referred to as the coefficient of determination. With a value ranging from zero to infinity, a value of one indicates perfect prediction of the target values. The metric can also be interpreted as the fraction of the total variance in the response variable which can be explained by the model.  
 |
 ###  1.2.6 Model Presentation
 |
 | Due to the black-box nature of most regression models considered in the study, model presentation was conducted post-hoc and focused on model-agnostic techniques which did not consider any assumptions about the model structures. These methods were grouped into two categories.
 |
-| Dataset level exploration techniques used model level global explanations which included the following: 
+| [Dataset Level Exploration Techniques](https://ema.drwhy.ai/) used model level global explanations which included the following: 
 |
-| [**Variable Importance**](https://jmlr.org/papers/volume20/18-760/18-760.pdf) pertains to model-agnostic methods which allow the comparison of an explanatory variable’s importance between models with different structures. The process involves measuring how much a model’s performance change if the effect of a selected explanatory variable, or of a group of variables, is removed. To remove the effect, perturbations are applied including resampling from an empirical distribution or permutation of the values of the variable. If a variable is important, the model’s performance is expected to worsen after permuting the values of the variable. A larger change in performance indicates the greater importance of the variable.
+| [Variable Importance](https://jmlr.org/papers/volume20/18-760/18-760.pdf) pertains to model-agnostic methods which allow the comparison of an explanatory variable’s importance between models with different structures. The process involves measuring how much a model’s performance change if the effect of a selected explanatory variable, or of a group of variables, is removed. To remove the effect, perturbations are applied including resampling from an empirical distribution or permutation of the values of the variable. If a variable is important, the model’s performance is expected to worsen after permuting the values of the variable. A larger change in performance indicates the greater importance of the variable.
 |
-| [**Partial Dependence Plots**](https://www.semanticscholar.org/paper/Greedy-function-approximation%3A-A-gradient-boosting-Friedman/1679beddda3a183714d380e944fe6bf586c083cd) show how the expected values of model prediction behave as a function of a selected explanatory variable using the average of a set of individual ceteris paribus profiles. While a ceteris paribus profile shows the dependence of an instance-level prediction on an explanatory variable, a partial dependence profile is estimated by the mean of the ceteris paribus profiles for all instances in a data set.
+| [Partial Dependence Plots](https://www.semanticscholar.org/paper/Greedy-function-approximation%3A-A-gradient-boosting-Friedman/1679beddda3a183714d380e944fe6bf586c083cd) show how the expected values of model prediction behave as a function of a selected explanatory variable using the average of a set of individual ceteris paribus profiles. While a ceteris paribus profile shows the dependence of an instance-level prediction on an explanatory variable, a partial dependence profile is estimated by the mean of the ceteris paribus profiles for all instances in a data set.
 |
-| Instance level exploration techniques used prediction level local explanations with descriptions given below: 
+| [Instance Level Exploration Techniques](https://ema.drwhy.ai/) used prediction level local explanations with descriptions given below: 
 |
 | [**Breakdown Plots**](https://ieeexplore.ieee.org/document/4407709) present variable attributions by decomposing the model's prediction into contributions that can be attributed to the different explanatory variables. Given a prediction which is an approximation of the expected value of the dependent variable driven by the values of explanatory variables, the process involves capturing the contribution of an explanatory variable to the model’s prediction by computing the shift in the expected value of the response, while fixing the values of other variables.
 |
@@ -1124,6 +1124,7 @@ featurePlot(x = PME.Numeric,
 
 ###  1.3.5 Feature Selection
 |
+|
 ####  1.3.5.1 Locally Weighted Scatterplot Smoothing Pseudo-R-Squared (LOWESSPR)
 |
 | **[A]** The numeric predictors which demonstrated the best feature importance in terms of the locally weighted scatterplot smoothing pseudo-r-squared statistic as obtained using the <mark style="background-color: #CCECFF">**caret**</mark> package included:
@@ -1385,7 +1386,7 @@ dotplot(Predictor ~ RV | Metric,
 
 |
 |
-####  1.3.5.6 Model Predictors
+####  1.3.5.6 Pre-Modelling Dataset
 |
 | **[A]** The final list of predictors to be applied during the modelling process involved 4 numeric predictors (which consistently demonstrated the best feature importance in terms of the aforementioned metrics) and 2 factor predictors enumerated as follows:
 |      **[A.1]** <span style="color: #FF0000">INFMOR</span> (numeric)
@@ -1395,9 +1396,98 @@ dotplot(Predictor ~ RV | Metric,
 |      **[A.5]** <span style="color: #FF0000">GENDER</span> (factor)
 |      **[A.6]** <span style="color: #FF0000">CONTIN</span> (factor)
 |
+| **[B]** The dataset was divided into two groups using a fixed random seed.
+|      **[B.1]** 80% were allocated for the model development set.
+|             **[B.1.1]** 10 folds were formulated for the model development set using a fixed random seed.
+|             **[B.1.2]** Fold assignments will be used for internal 10-fold cross-validation and hyperparameter tuning.
+|      **[B.2]** 20% were allocated for the model test set.
+|             **[B.2.1]** Model test will be used for external.
+|
+| **[C]** The model development set was comprised of 292 observations and 8 variables (including 1 metadata, 1 response and 6 predictors). 
+|      **[C.1]** 292 rows (observations)
+|      **[C.2]** 8 columns (variables)
+|             **[C.2.1]** 1/8 instance labels = <span style="color: #FF0000">COUNTRY</span> variable (character)
+|             **[C.2.2]** 1/8 response = <span style="color: #FF0000">LIFEXP</span> variable (numeric)
+|             **[C.2.3]** 6/8 predictors = 4/6 numeric + 2/6 factor
+|                      **[C.2.3.1]** <span style="color: #FF0000">INFMOR</span> (numeric)
+|                      **[C.2.3.2]** <span style="color: #FF0000">PERCAP</span> (numeric)
+|                      **[C.2.3.3]** <span style="color: #FF0000">NCOMOR</span> (numeric)
+|                      **[C.2.3.4]** <span style="color: #FF0000">CLTECH</span> (numeric)
+|                      **[C.2.3.5]** <span style="color: #FF0000">GENDER</span> (factor)
+|                      **[C.2.3.6]** <span style="color: #FF0000">CONTIN</span> (factor)
+|
+| **[D]** The model test set was comprised of 72 observations and 8 variables (including 1 metadata, 1 response and 6 predictors). 
+|      **[D.1]** 72 rows (observations)
+|      **[D.2]** 8 columns (variables)
+|             **[D.2.1]** 1/8 instance labels = <span style="color: #FF0000">COUNTRY</span> variable (character)
+|             **[D.2.2]** 1/8 response = <span style="color: #FF0000">LIFEXP</span> variable (numeric)
+|             **[D.2.3]** 6/8 predictors = 4/6 numeric + 2/6 factor
+|                      **[D.2.3.1]** <span style="color: #FF0000">INFMOR</span> (numeric)
+|                      **[D.2.3.2]** <span style="color: #FF0000">PERCAP</span> (numeric)
+|                      **[D.2.3.3]** <span style="color: #FF0000">NCOMOR</span> (numeric)
+|                      **[D.2.3.4]** <span style="color: #FF0000">CLTECH</span> (numeric)
+|                      **[D.2.3.5]** <span style="color: #FF0000">GENDER</span> (factor)
+|                      **[D.2.3.6]** <span style="color: #FF0000">CONTIN</span> (factor)
+|
 |
 
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.5.6, warning=FALSE, message=FALSE}
+##################################
+# Preparing the dataset for
+# model development and test
+##################################
+set.seed(12345678)
+trainIndex <- createDataPartition(PME$LIFEXP,
+                                  p = 0.8, 
+                                  list = FALSE, 
+                                  times = 1)
+
+##################################
+# Formulating the model development data
+##################################
+MD <- PME[ trainIndex,]
+
+##################################
+# Formulating the model test data
+##################################
+MT <- PME[-trainIndex,]
+
+##################################
+# Preparing the dataset for
+# model development
+##################################
+MD <- MD[,c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR","LIFEXP")]
+dim(MD)
+
+MD.Model.Predictors <- MD[,c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR")]
+
+##################################
+# Preparing the dataset for
+# model test
+##################################
+MT <- MT[,c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR","LIFEXP")]
+dim(MT)
+
+MT.Model.Predictors <- MT[,c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR")]
+
+##################################
+# Creating consistent fold assignments
+# for the 10-Fold Cross Validation process
+##################################
+set.seed(12345678)
+KFold_Indices <- createFolds(MD$LIFEXP,
+                             k = 10,
+                             returnTrain=TRUE)
+KFold_Control <- trainControl(method="cv",
+                              index=KFold_Indices)
+```
+
+</details>
+
 ###  1.3.6 Model Development and Performance Estimation
+|
 |
 ####  1.3.6.1 Linear Regression (LR)
 |
@@ -1428,53 +1518,6 @@ dotplot(Predictor ~ RV | Metric,
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
 ```{r section_1.3.6.1, warning=FALSE, message=FALSE}
-##################################
-# Preparing the dataset for
-# model development and test
-##################################
-set.seed(12345678)
-trainIndex <- createDataPartition(PME$LIFEXP,
-                                  p = 0.8, 
-                                  list = FALSE, 
-                                  times = 1)
-
-##################################
-# Formulating the model development data
-##################################
-MD <- PME[ trainIndex,]
-
-##################################
-# Formulating the model test data
-##################################
-MT <- PME[-trainIndex,]
-
-##################################
-# Preparing the dataset for
-# model development
-##################################
-MD <- MD[,c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR","LIFEXP")]
-
-MD.Model.Predictors <- MD[,c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR")]
-
-##################################
-# Preparing the dataset for
-# model test
-##################################
-MT <- MT[,c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR","LIFEXP")]
-
-MT.Model.Predictors <- MT[,c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR")]
-
-##################################
-# Creating consistent fold assignments
-# for the 10-Fold Cross Validation process
-##################################
-set.seed(12345678)
-KFold_Indices <- createFolds(MD$LIFEXP,
-                             k = 10,
-                             returnTrain=TRUE)
-KFold_Control <- trainControl(method="cv",
-                              index=KFold_Indices)
-
 ##################################
 # No hyperparameter tuning process conducted
 # for the LR model
@@ -1571,53 +1614,6 @@ LR_Tune$finalModel
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
 ```{r section_1.3.6.2, warning=FALSE, message=FALSE}
-##################################
-# Preparing the dataset for
-# model development and test
-##################################
-set.seed(12345678)
-trainIndex <- createDataPartition(PME$LIFEXP,
-                                  p = 0.8, 
-                                  list = FALSE, 
-                                  times = 1)
-
-##################################
-# Formulating the model development data
-##################################
-MD <- PME[ trainIndex,]
-
-##################################
-# Formulating the model test data
-##################################
-MT <- PME[-trainIndex,]
-
-##################################
-# Preparing the dataset for
-# model development
-##################################
-MD <- MD[,c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR","LIFEXP")]
-
-MD.Model.Predictors <- MD[,c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR")]
-
-##################################
-# Preparing the dataset for
-# model test
-##################################
-MT <- MT[,c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR","LIFEXP")]
-
-MT.Model.Predictors <- MT[,c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR")]
-
-##################################
-# Creating consistent fold assignments
-# for the 10-Fold Cross Validation process
-##################################
-set.seed(12345678)
-KFold_Indices <- createFolds(MD$LIFEXP,
-                             k = 10,
-                             returnTrain=TRUE)
-KFold_Control <- trainControl(method="cv",
-                              index=KFold_Indices)
-
 ##################################
 # Defining the model hyperparameter values
 # for the GBM model
