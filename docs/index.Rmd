@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 ##  1.1 Introduction
 |
-| All subsequent analysis and modelling steps were individually detailed below with the results consolidated using a [**Summary**](#summary) at the end of the document. 
+| Subsequent analysis and modelling steps were individually detailed below, with all results consolidated in a [**Summary**](#summary) provided at the end of the document. 
 |
 ###  1.1.1 Study Objectives
 |
@@ -94,13 +94,13 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 | [Instance Level Exploration Techniques](https://ema.drwhy.ai/) used prediction level local explanations with descriptions given below: 
 |
-| [**Breakdown Plots**](https://ieeexplore.ieee.org/document/4407709) present variable attributions by decomposing the model's prediction into contributions that can be attributed to the different explanatory variables. Given a prediction which is an approximation of the expected value of the dependent variable driven by the values of explanatory variables, the process involves capturing the contribution of an explanatory variable to the model’s prediction by computing the shift in the expected value of the response, while fixing the values of other variables.
+| [Breakdown Plots](https://ieeexplore.ieee.org/document/4407709) present variable attributions by decomposing the model's prediction into contributions that can be attributed to the different explanatory variables. Given a prediction which is an approximation of the expected value of the dependent variable driven by the values of explanatory variables, the process involves capturing the contribution of an explanatory variable to the model’s prediction by computing the shift in the expected value of the response, while fixing the values of other variables.
 |
-| [**Shapley Additive Explanations**](https://dl.acm.org/doi/10.5555/1756006.1756007) are based on Shapley values developed in the cooperative game theory. The process involves explaining a prediction by assuming that each explanatory variable for an instance is a player in a game where the prediction is the payout. The game is the prediction task for a single instance of the data set. The gain is the actual prediction for this instance minus the average prediction for all instances. The players are the explanatory variable values of the instance that collaborate to receive the gain (predict a certain value). The determined value is the average marginal contribution of an explanatory variable across all possible coalitions.
+| [Shapley Additive Explanations](https://dl.acm.org/doi/10.5555/1756006.1756007) are based on Shapley values developed in the cooperative game theory. The process involves explaining a prediction by assuming that each explanatory variable for an instance is a player in a game where the prediction is the payout. The game is the prediction task for a single instance of the data set. The gain is the actual prediction for this instance minus the average prediction for all instances. The players are the explanatory variable values of the instance that collaborate to receive the gain (predict a certain value). The determined value is the average marginal contribution of an explanatory variable across all possible coalitions.
 |
-| [**Ceteris Paribus Profiles**](https://www.tandfonline.com/doi/full/10.1080/10618600.2014.907095) examine the influence of an explanatory variable by assuming that the values of all other variables do not change. The main objective is to understand how changes in the values of the variable affect the model’s predictions. The process involves evaluating the dependence of the conditional expectation of the response on the values of the particular explanatory variable.
+| [Ceteris Paribus Profiles](https://www.tandfonline.com/doi/full/10.1080/10618600.2014.907095) examine the influence of an explanatory variable by assuming that the values of all other variables do not change. The main objective is to understand how changes in the values of the variable affect the model’s predictions. The process involves evaluating the dependence of the conditional expectation of the response on the values of the particular explanatory variable.
 |
-| [**Local Fidelity Plots**](https://ema.drwhy.ai/) evaluate the local predictive performance of the model around the observation of interest. The process involves summarizing two distributions of residuals including the residuals for the neighbors of the observation of interest and residuals for the entire training dataset except for neighbors. The results help evaluate whether the model-fit for the instance of interest is unbiased (based on small residuals with distributions symmetric around 0).
+| [Local Fidelity Plots](https://ema.drwhy.ai/) evaluate the local predictive performance of the model around the observation of interest. The process involves summarizing two distributions of residuals including the residuals for the neighbors of the observation of interest and residuals for the entire training dataset except for neighbors. The results help evaluate whether the model-fit for the instance of interest is unbiased (based on small residuals with distributions symmetric around 0).
 |
 | [**Local Stability Plots**](https://ema.drwhy.ai/) assess the local stability of predictions around the observation of interest. The process involves checking whether small changes in the explanatory variables, as represented by the changes within the set of neighbors, induce much influence on the predictions. The results help evaluate whether the model is locally additive (based on parallel ceteris paribus profiles) and locally stable (based on adjacent ceteris paribus profiles).
 |
@@ -2400,6 +2400,26 @@ plot(LR_DALEX_VariableImportance,
 |
 ####  1.3.9.1 Dataset Level Exploration : Variable Importance (DLE_VARIMP)
 |
+| **[A]** The predictors for the **GBM: Stochastic Gradient Boosting** model ranked based on importance were given as follows:
+|      **[A.1]** <span style="color: #FF0000">INFMOR</span> (numeric)
+|      **[A.2]** <span style="color: #FF0000">NCOMOR</span> (numeric)
+|      **[A.3]** <span style="color: #FF0000">CONTIN</span> (factor)
+|      **[A.4]** <span style="color: #FF0000">GENDER</span> (factor)
+|      **[A.5]** <span style="color: #FF0000">CLTECH</span> (numeric)
+|      **[A.6]** <span style="color: #FF0000">PERCAP</span> (numeric)
+|
+| **[A]** The most dominant predictors for the model were the following:
+|      **[A.1]**  <span style="color: #FF0000">INFMOR</span> (numeric)
+|      **[A.2]**  <span style="color: #FF0000">NCOMOR</span> (numeric)
+|
+| **[B]** Comparable contributions were observed for the following predictors:
+|      **[B.1]** <span style="color: #FF0000">CONTIN</span> (factor)
+|      **[B.2]** <span style="color: #FF0000">GENDER</span> (factor)
+|      **[B.3]** <span style="color: #FF0000">CLTECH</span> (numeric)
+|
+| **[C]** The predictor which showed the least contribution in the model was:
+|      **[C.1]** <span style="color: #FF0000">PERCAP</span> (numeric)
+|
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
@@ -2420,6 +2440,14 @@ plot(GBM_DALEX_VariableImportance)
 |
 |
 ####  1.3.9.2 Dataset Level Exploration : Partial Dependence Plots (DLE_PDP)
+|
+| **[A]** The average effects of the individual **GBM: Stochastic Gradient Boosting** model predictors on the response variable <span style="color: #FF0000">LIFEXP</span>, as conditioned by the other predictors in the model,  are described as follows:
+|      **[A.1]** Lower values of <span style="color: #FF0000">INFMOR</span> (numeric) lead to higher <span style="color: #FF0000">LIFEXP</span> (numeric)
+|      **[A.2]** Lower values of <span style="color: #FF0000">NCOMOR</span> (numeric) lead to higher <span style="color: #FF0000">LIFEXP</span> (numeric)
+|      **[A.3]** <span style="color: #FF0000">CONTIN=Africa</span> (numeric) lead to lower <span style="color: #FF0000">LIFEXP</span> (numeric)
+|      **[A.4]** <span style="color: #FF0000">GENDER=Female</span> (factor) lead to higher <span style="color: #FF0000">LIFEXP</span> (numeric)
+|      **[A.5]** Higher values of <span style="color: #FF0000">CLTECH</span> (numeric) lead to higher <span style="color: #FF0000">LIFEXP</span> (numeric)
+|      **[A.6]** Minimal effect for <span style="color: #FF0000">PERCAP</span> (numeric) on <span style="color: #FF0000">LIFEXP</span> (numeric)
 |
 |
 
@@ -2529,6 +2557,50 @@ GBM_DALEX_PartialDependencePlot_CONTIN <- model_profile(GBM_DALEX,
 |
 ####  1.3.9.3 Instance Level Exploration : Breakdown Plots (ILE_BP)
 |
+| **[A]** The decomposition of the **GBM: Stochastic Gradient Boosting** model’s prediction for the response variable <span style="color: #FF0000">LIFEXP</span>, into contributions that can be attributed to different explanatory variables were demonstrated using two illustrated instances:
+|      **[A.1]** Instance 1
+|             **[A.1.1]** <span style="color: #FF0000">COUNTRY=Philippines</span> (character)
+|             **[A.1.2]** <span style="color: #FF0000">INFMOR=2.944</span> (numeric)
+|             **[A.1.3]** <span style="color: #FF0000">NCOMOR=4.704</span> (numeric)
+|             **[A.1.4]** <span style="color: #FF0000">CONTIN=Asia</span> (factor)
+|             **[A.1.5]** <span style="color: #FF0000">GENDER=Female</span> (factor)
+|             **[A.1.6]** <span style="color: #FF0000">CLTECH=47.4</span> (numeric)
+|             **[A.1.7]** <span style="color: #FF0000">PERCAP=1.249</span> (numeric)
+|      **[A.2]** Instance 2
+|             **[A.2.1]** <span style="color: #FF0000">COUNTRY=Philippines</span> (character)
+|             **[A.2.2]** <span style="color: #FF0000">INFMOR=3.174</span> (numeric)
+|             **[A.2.3]** <span style="color: #FF0000">NCOMOR=5.951</span> (numeric)
+|             **[A.2.4]** <span style="color: #FF0000">CONTIN=Asia</span> (factor)
+|             **[A.2.5]** <span style="color: #FF0000">GENDER=Male</span> (factor)
+|             **[A.2.6]** <span style="color: #FF0000">CLTECH=47.4</span> (numeric)
+|             **[A.2.7]** <span style="color: #FF0000">PERCAP=1.249</span> (numeric)
+|
+| **[B]** Variable attributions for Instance 1 were described as follows:
+|      **[B.1]** Target response: <span style="color: #FF0000">LIFEXP=75.505</span> (numeric)
+|      **[B.2]** Predicted response: 75.616
+|      **[B.3]** Variable attributions conditioned on the previous predictor(s) are given below:
+|             **[B.3.1]** Average response: 72.475
+|             **[B.3.2]** <span style="color: #FF0000">GENDER=Female</span> (factor): + 1.286
+|             **[B.3.3]** <span style="color: #FF0000">INFMOR=2.944</span> (numeric): + 0.996
+|             **[B.3.4]** <span style="color: #FF0000">CONTIN=Asia</span> (factor): + 0.629
+|             **[B.3.5]** <span style="color: #FF0000">PERCAP=1.249</span> (numeric): + 0.866
+|             **[B.3.6]** <span style="color: #FF0000">NCOMOR=4.704</span> (numeric): -0.065
+|             **[B.3.7]** <span style="color: #FF0000">CLTECH=47.4</span> (numeric): -0.571
+|             **[B.3.8]** Predicted response: 75.616
+|
+| **[C]** Variable attributions for Instance 1 were described as follows:
+|      **[C.1]** Target response: <span style="color: #FF0000">LIFEXP=67.263</span> (numeric)
+|      **[C.2]** Predicted response: 68.103
+|      **[C.3]** Variable attributions conditioned on the previous predictor(s) are given below:
+|             **[C.3.1]** Average response: 72.475
+|             **[C.3.6]** <span style="color: #FF0000">NCOMOR=5.951</span> (numeric): -3.294
+|             **[C.3.3]** <span style="color: #FF0000">INFMOR=3.174</span> (numeric): -1.208
+|             **[C.3.2]** <span style="color: #FF0000">GENDER=Male</span> (factor): -0.972
+|             **[C.3.4]** <span style="color: #FF0000">CONTIN=Asia</span> (factor): + 0.675
+|             **[C.3.5]** <span style="color: #FF0000">PERCAP=1.249</span> (numeric): + 1.088
+|             **[C.3.7]** <span style="color: #FF0000">CLTECH=47.4</span> (numeric): -0.662
+|             **[C.3.8]** Predicted response: 68.103
+|
 |
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
@@ -2569,10 +2641,10 @@ plot(Instance_2_GBM_BDP)
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
 ```{r section_1.3.9.4, warning=FALSE, message=FALSE}
-##################################
+#################################
 # Obtaining the shapley additive explanations
 # for the individual instances
-##################################
+#################################
 (Instance_1_GBM_SHAP <- DALEX::predict_parts(explainer = GBM_DALEX,
                                            new_observation = Instance_1_Philippines_Female[,c(1:6)],
                                            type = "shap",
@@ -2606,12 +2678,12 @@ plot(Instance_2_GBM_SHAP)
                                            new_observation = Instance_1_Philippines_Female[,c(1:6)]))
 plot(Instance_1_GBM_CPP,
      variables = c("INFMOR","PERCAP","CLTECH","NCOMOR")) +
-  ggtitle("Ceteris-paribus profile", "") + 
+  ggtitle("Ceteris-paribus profile", "") +
   ylim(55, 80)
 
 plot(Instance_1_GBM_CPP,
-     variables = c("GENDER","CONTIN"), 
-     variable_type = "categorical", 
+     variables = c("GENDER","CONTIN"),
+     variable_type = "categorical",
      categorical_type = "bars") +
   ggtitle("Ceteris-paribus profile", "")
 
@@ -2619,12 +2691,12 @@ plot(Instance_1_GBM_CPP,
                                            new_observation = Instance_2_Philippines_Male[,c(1:6)]))
 plot(Instance_2_GBM_CPP,
      variables = c("INFMOR","PERCAP","CLTECH","NCOMOR")) +
-  ggtitle("Ceteris-paribus profile", "") + 
+  ggtitle("Ceteris-paribus profile", "") +
   ylim(55, 80)
 
 plot(Instance_2_GBM_CPP,
-     variables = c("GENDER","CONTIN"), 
-     variable_type = "categorical", 
+     variables = c("GENDER","CONTIN"),
+     variable_type = "categorical",
      categorical_type = "bars") +
   ggtitle("Ceteris-paribus profile", "")
 
