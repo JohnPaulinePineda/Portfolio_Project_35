@@ -1401,7 +1401,7 @@ dotplot(Predictor ~ RV | Metric,
 |             **[B.1.1]** 10 folds were formulated for the model development set using a fixed random seed.
 |             **[B.1.2]** Fold assignments will be used for internal 10-fold cross-validation and hyperparameter tuning.
 |      **[B.2]** 20% were allocated for the model test set.
-|             **[B.2.1]** Model test will be used for external.
+|             **[B.2.1]** Model test will be used for external validation.
 |
 | **[C]** The model development set was comprised of 292 observations and 8 variables (including 1 metadata, 1 response and 6 predictors). 
 |      **[C.1]** 292 rows (observations)
@@ -2588,7 +2588,7 @@ GBM_DALEX_PartialDependencePlot_CONTIN <- model_profile(GBM_DALEX,
 |             **[B.3.7]** <span style="color: #FF0000">CLTECH=47.4</span> (numeric): -0.571
 |             **[B.3.8]** Predicted response: 75.616
 |
-| **[C]** Variable attributions for Instance 1 were described as follows:
+| **[C]** Variable attributions for Instance 2 were described as follows:
 |      **[C.1]** Target response: <span style="color: #FF0000">LIFEXP=67.263</span> (numeric)
 |      **[C.2]** Predicted response: 68.103
 |      **[C.3]** Variable attributions conditioned on the previous predictor(s) are given below:
