@@ -2644,7 +2644,7 @@ plot(Instance_2_GBM_BDP)
 |      **[A.5]** <span style="color: #FF0000">CLTECH=47.4</span> (numeric): -0.419
 |      **[A.6]** <span style="color: #FF0000">NCOMOR=4.704</span> (numeric): -0.195
 |
-| **[B]** Using 25 random orderings of predictors, the average variable attributions for Instance 2 were described as follows:
+| **[B]** Using 25 random orderings of predictors, the average variable attributions for Instance 2,ranked from highest to lowest, were described as follows:
 |      **[B.1]** <span style="color: #FF0000">NCOMOR=5.951</span> (numeric): -2.957
 |      **[B.2]** <span style="color: #FF0000">INFMOR=3.174</span> (numeric): -1.654
 |      **[B.3]** <span style="color: #FF0000">GENDER=Male</span> (factor): -0.889
@@ -2680,6 +2680,23 @@ plot(Instance_2_GBM_SHAP)
 |
 |
 ####  1.3.9.5 Instance Level Exploration : Ceteris Paribus Profiles (ILE_CPP)
+|
+|
+| **[A]** Assuming all other predictors remain unchanged, the effects of the individual predictors to the model predictions for Instance 1 were described as follows:
+|      **[A.1]** Decreasing <span style="color: #FF0000">INFMOR</span> (numeric) by 2 percent increases <span style="color: #FF0000">LIFEXP</span> (numeric) by 5 years
+|      **[A.2]** Decreasing <span style="color: #FF0000">PERCAP</span> (numeric) by USD1K did not have a considerable effect on <span style="color: #FF0000">LIFEXP</span> (numeric)
+|      **[A.3]** Increasing <span style="color: #FF0000">CLTECH</span> (numeric) by 50% increases <span style="color: #FF0000">LIFEXP</span> (numeric) by 2 years
+|      **[A.4]** Decreasing <span style="color: #FF0000">NCOMOR</span> (numeric) by 2 percent increases <span style="color: #FF0000">LIFEXP</span> (numeric) by 5 years
+|      **[A.5]** Shifting factor level from <span style="color: #FF0000">GENDER=Female</span> to <span style="color: #FF0000">GENDER=Male</span> decreases <span style="color: #FF0000">LIFEXP</span> (numeric) by 2 years
+|      **[A.6]** Shifting factor level from <span style="color: #FF0000">CONTIN=Asia</span> to <span style="color: #FF0000">CONTIN=Africa</span> decreases <span style="color: #FF0000">LIFEXP</span> (numeric) by 2 years
+|
+| **[B]** Assuming all other predictors remain unchanged, the effects of the individual predictors to the model predictions for Instance 2 were described as follows:
+|      **[B.1]** Decreasing <span style="color: #FF0000">INFMOR</span> (numeric) by 2 percent increases <span style="color: #FF0000">LIFEXP</span> (numeric) by 5 years
+|      **[B.2]** Decreasing <span style="color: #FF0000">PERCAP</span> (numeric) by USD1K did not have a considerable effect on <span style="color: #FF0000">LIFEXP</span> (numeric)
+|      **[B.3]** Increasing <span style="color: #FF0000">CLTECH</span> (numeric) by 50% increases <span style="color: #FF0000">LIFEXP</span> (numeric) by 2 years
+|      **[B.4]** Decreasing <span style="color: #FF0000">NCOMOR</span> (numeric) by 2 percent increases <span style="color: #FF0000">LIFEXP</span> (numeric) by 5 years
+|      **[B.5]** Shifting factor level from <span style="color: #FF0000">GENDER=Male</span> to <span style="color: #FF0000">GENDER=Female</span> increases <span style="color: #FF0000">LIFEXP</span> (numeric) by 2 years
+|      **[B.6]** Shifting factor level from <span style="color: #FF0000">CONTIN=Asia</span> to <span style="color: #FF0000">CONTIN=Africa</span> decreases <span style="color: #FF0000">LIFEXP</span> (numeric) by 2 years
 |
 |
 
@@ -2722,6 +2739,11 @@ plot(Instance_2_GBM_CPP,
 |
 |
 ####  1.3.9.6 Instance Level Exploration : Local Fidelity Plots (ILE_LFP)
+|
+|
+| **[A]** The histograms of residuals for the entire dataset and for a selected set of 50 neighbors for Instance 1 were almost parallel and very close to each other suggesting that the model predictions were stable around this particular instance of interest.
+|
+| **[B]** The histograms of residuals for the entire dataset and for a selected set of 50 neighbors for Instance 2 were almost parallel and very close to each other suggesting that the model predictions were stable around this particular instance of interest.
 |
 |
 
