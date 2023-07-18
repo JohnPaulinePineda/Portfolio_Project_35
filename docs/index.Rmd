@@ -54,7 +54,9 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 ###  1.2.3 Model Formulation
 |
-| This study implemented various black-box regression modelling procedures with complex structures involving large numbers of model coefficients or mathematical transformations which lacked transparency in terms of the internal processes and weighted factors used in reaching a decision. Models applied in the analysis for predicting the numeric response were the following:
+| In addition to a standard glass-box model, this study implemented predominantly black-box regression modelling procedures with complex structures involving large numbers of model coefficients or mathematical transformations which lacked transparency in terms of the internal processes and weighted factors used in reaching a decision. Models applied in the analysis for predicting the numeric response were the following:
+|
+| [Linear Regression](https://link.springer.com/book/10.1007/978-1-4757-3462-1) explores the linear relationship between a scalar response and one or more covariates by having the conditional mean of the dependent variable be an affine function of the independent variables. The relationship is modeled through a disturbance term which represents an unobserved random variable that adds noise. The algorithm is typically formulated from the data using the least squares method which seeks to estimate the coefficients by minimizing the squared residual function. The linear equation assigns one scale factor represented by a coefficient to each covariate and an additional coefficient called the intercept or the bias coefficient which gives the line an additional degree of freedom allowing to move up and down a two-dimensional plot.
 |
 | [**Stochastic Gradient Boosting**](https://www.sciencedirect.com/science/article/abs/pii/S0167947301000652) is an ensemble learning method which combines multiple weak learners in an additive manner to improve prediction. The process is initialized using a decision tree base learner with the aim of minimizing a specified loss function. The negative gradient  of the loss function with respect to the predicted values from the current ensemble is calculated. Residuals are determined as the difference between the actual target values and the learner predictions. A new base learner is subsequently formulated but is trained to predict the residuals. The algorithm involves iteratively improving the ensemble by focusing on the residuals of the previous predictions. Each subsequent base learner is trained to reduce the errors made by the previous ensemble, gradually refining the model's predictive capabilities.
 |
@@ -82,7 +84,7 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 ###  1.2.6 Model Presentation
 |
-| Due to the black-box nature of the regression models considered in the study, model presentation was conducted post-hoc and focused on model-agnostic techniques which did not consider any assumptions about the model structures. These methods were grouped into two categories:
+| Due to the black-box nature of most regression models considered in the study, model presentation was conducted post-hoc and focused on model-agnostic techniques which did not consider any assumptions about the model structures. These methods were grouped into two categories.
 |
 | Dataset level exploration techniques used model level global explanations which included the following: 
 |
@@ -1397,8 +1399,147 @@ dotplot(Predictor ~ RV | Metric,
 
 ###  1.3.6 Model Development and Performance Estimation
 |
+####  1.3.6.1 Linear Regression (LR)
+|
+| **[A]** The linear regression model from the  <mark style="background-color: #CCECFF">**stats**</mark> package was implemented through the <mark style="background-color: #CCECFF">**caret**</mark> package.
+|
+| **[B]** The model contains 1 hyperparameter:
+|      **[B.1]** <span style="color: #FF0000">intercept</span> =  intercept held constant at a value of TRUE
+|
+| **[C]** The 10-fold cross-validated model performance of the optimal model is summarized as follows:
+|      **[C.1]** Optimal model used intercept=TRUE
+|      **[C.2]** Root Mean Square Error = 2.4078
+|      **[C.3]** R-Squared = 0.9116
+|
+| **[D]** The apparent model performance of the optimal model is summarized as follows:
+|      **[D.1]** Root Mean Square Error = 2.3622
+|      **[D.2]** R-Squared = 0.9098
+|
+| **[E]** The top-performing predictors in the model ranked using the root mean square error loss after permutations are as follows:
+|      **[E.1]** <span style="color: #FF0000">INFMOR</span> (numeric) = 7.15
+|      **[E.2]** <span style="color: #FF0000">NCOMOR</span> (numeric) = 3.23
+|      **[E.3]** <span style="color: #FF0000">CONTIN</span> (factor) = 3.18
+|      **[E.5]** <span style="color: #FF0000">CLTECH</span> (numeric) = 3.10
+|      **[E.4]** <span style="color: #FF0000">GENDER</span> (factor) = 3.06
+|      **[E.6]** <span style="color: #FF0000">PERCAP</span> (numeric) = 2.43
+|
+|
 
-####  1.3.6.1 Stochastic Gradient Boosting (GBM)
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.6.1, warning=FALSE, message=FALSE}
+##################################
+# Preparing the dataset for
+# model development and test
+##################################
+set.seed(12345678)
+trainIndex <- createDataPartition(PME$LIFEXP,
+                                  p = 0.8, 
+                                  list = FALSE, 
+                                  times = 1)
+
+##################################
+# Formulating the model development data
+##################################
+MD <- PME[ trainIndex,]
+
+##################################
+# Formulating the model test data
+##################################
+MT <- PME[-trainIndex,]
+
+##################################
+# Preparing the dataset for
+# model development
+##################################
+MD <- MD[,c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR","LIFEXP")]
+
+MD.Model.Predictors <- MD[,c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR")]
+
+##################################
+# Preparing the dataset for
+# model test
+##################################
+MT <- MT[,c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR","LIFEXP")]
+
+MT.Model.Predictors <- MT[,c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR")]
+
+##################################
+# Creating consistent fold assignments
+# for the 10-Fold Cross Validation process
+##################################
+set.seed(12345678)
+KFold_Indices <- createFolds(MD$LIFEXP,
+                             k = 10,
+                             returnTrain=TRUE)
+KFold_Control <- trainControl(method="cv",
+                              index=KFold_Indices)
+
+##################################
+# No hyperparameter tuning process conducted
+# for the LR model
+# hyperparameter=intercept fixed to TRUE
+##################################
+
+##################################
+# Running the LR model
+# by setting the caret method to 'lm'
+##################################
+set.seed(12345678)
+LR_Tune <- train(x = MD.Model.Predictors,
+                  y = MD$LIFEXP,
+                  method = "lm",
+                  trControl = KFold_Control)
+
+##################################
+# Reporting the apparent results
+# for the LR model
+##################################
+LR_DALEX <- DALEX::explain(LR_Tune,
+                            data = MD.Model.Predictors,
+                            y = MD$LIFEXP,
+                            verbose = FALSE,
+                            label = "LR")
+
+(LR_DALEX_Performance <- model_performance(LR_DALEX))
+(LR_DALEX_Diagnostics <- model_diagnostics(LR_DALEX))
+plot(LR_DALEX_Diagnostics,
+     variable = "y",
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") +
+  scale_y_continuous("Predicted LIFEXP") +
+  geom_abline(slope = 1) +
+  ggtitle("LR: Observed and Predicted LIFEXP")
+
+(LR_DALEX_VariableImportance    <- model_parts(LR_DALEX,
+                                               loss_function = loss_root_mean_square,
+                                               B = 200,
+                                               N = NULL))
+
+plot(LR_DALEX_VariableImportance)
+
+##################################
+# Reporting the cross-validation results
+# for the LR model
+##################################
+LR_Tune
+
+LR_Tune$finalModel
+
+(LR_Tune_RMSE <- LR_Tune$results$RMSE)
+
+(LR_Tune_Rsquared <- LR_Tune$results$Rsquared)
+
+(LR_Tune_MAE <- LR_Tune$results$MAE)
+
+```
+
+</details>
+
+|
+|
+####  1.3.6.2 Stochastic Gradient Boosting (GBM)
 |
 | **[A]** The stochastic gradient boosting regression model from the  <mark style="background-color: #CCECFF">**gbm**</mark> package was implemented through the <mark style="background-color: #CCECFF">**caret**</mark> package.
 |
@@ -1429,7 +1570,7 @@ dotplot(Predictor ~ RV | Metric,
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
-```{r section_1.3.6.1, warning=FALSE, message=FALSE}
+```{r section_1.3.6.2, warning=FALSE, message=FALSE}
 ##################################
 # Preparing the dataset for
 # model development and test
@@ -1557,7 +1698,7 @@ GBM_Tune$finalModel
 
 |
 |
-####  1.3.6.2 Random Forest (RF)
+####  1.3.6.3 Random Forest (RF)
 |
 | **[A]** The random forest model from the  <mark style="background-color: #CCECFF">**randomForest**</mark> package was implemented through the <mark style="background-color: #CCECFF">**caret**</mark> package.
 |
@@ -1585,7 +1726,7 @@ GBM_Tune$finalModel
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
-```{r section_1.3.6.2, warning=FALSE, message=FALSE}
+```{r section_1.3.6.3, warning=FALSE, message=FALSE}
 ##################################
 # Defining the model hyperparameter values
 # for the RF model
@@ -1655,7 +1796,7 @@ RF_Tune$finalModel
 
 |
 |
-####  1.3.6.3 Neural Network (NN)
+####  1.3.6.4 Neural Network (NN)
 |
 | **[A]** The neural network regression model from the  <mark style="background-color: #CCECFF">**nnet**</mark> package was implemented through the <mark style="background-color: #CCECFF">**caret**</mark> package.
 |
@@ -1684,7 +1825,7 @@ RF_Tune$finalModel
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
-```{r section_1.3.6.3, warning=FALSE, message=FALSE}
+```{r section_1.3.6.4, warning=FALSE, message=FALSE}
 ##################################
 # Defining the model hyperparameter values
 # for the NN model
@@ -1760,7 +1901,7 @@ NN_Tune$finalModel
 
 |
 |
-####  1.3.6.4 Partial Least Squares Regression (PLS)
+####  1.3.6.5 Partial Least Squares Regression (PLS)
 |
 | **[A]** The partial least squares regression model from the  <mark style="background-color: #CCECFF">**pls**</mark> package was implemented through the <mark style="background-color: #CCECFF">**caret**</mark> package.
 |
@@ -1788,7 +1929,7 @@ NN_Tune$finalModel
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
-```{r section_1.3.6.4, warning=FALSE, message=FALSE}
+```{r section_1.3.6.5, warning=FALSE, message=FALSE}
 ##################################
 # Defining the model hyperparameter values
 # for the PLS model
@@ -1857,7 +1998,7 @@ PLS_Tune$finalModel
 
 |
 |
-####  1.3.6.5 Cubist Regression (CUBIST)
+####  1.3.6.6 Cubist Regression (CUBIST)
 |
 | **[A]** The cubist regression model from the  <mark style="background-color: #CCECFF">**Cubist**</mark> package was implemented through the <mark style="background-color: #CCECFF">**caret**</mark> package.
 |
@@ -1886,7 +2027,7 @@ PLS_Tune$finalModel
 
 <details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
 
-```{r section_1.3.6.5, warning=FALSE, message=FALSE}
+```{r section_1.3.6.6, warning=FALSE, message=FALSE}
 ##################################
 # Defining the model hyperparameter values
 # for the CUBIST model
@@ -1973,9 +2114,12 @@ CUBIST_Tune$finalModel
 |      **[A.4]** **NN: Neural Network** (<mark style="background-color: #CCECFF">**nnet**</mark> package)
 |             **[A.4.1]** Root Mean Square Error = 1.9473
 |             **[A.4.2]** R-Squared = 0.9387 
-|      **[A.5]** **PLS: Partial Least Squares** (<mark style="background-color: #CCECFF">**pls**</mark> package)
-|             **[A.5.1]** Root Mean Square Error = 2.4242
-|             **[A.5.2]** R-Squared = 0.9050
+|      **[A.5]** **LR: Linear Regression** (<mark style="background-color: #CCECFF">**stats**</mark> package)
+|             **[A.5.1]** Root Mean Square Error = 2.3622
+|             **[A.5.2]** R-Squared = 0.9098 
+|      **[A.6]** **PLS: Partial Least Squares** (<mark style="background-color: #CCECFF">**pls**</mark> package)
+|             **[A.6.1]** Root Mean Square Error = 2.4242
+|             **[A.6.2]** R-Squared = 0.9050
 |
 | **[B]** 10-fold cross-validated performance ranked from best to worst among the candidate optimal models are provided as follows:
 |      **[B.1]** **NN: Neural Network** (<mark style="background-color: #CCECFF">**nnet**</mark> package)
@@ -1990,9 +2134,12 @@ CUBIST_Tune$finalModel
 |      **[B.4]** **RF: Random Forest** (<mark style="background-color: #CCECFF">**randomForest**</mark> package)
 |             **[B.4.1]** Root Mean Square Error = 2.2390
 |             **[B.4.2]** R-Squared = 0.9201 
-|      **[B.5]** **PLS: Partial Least Squares** (<mark style="background-color: #CCECFF">**pls**</mark> package)
-|             **[B.5.1]** Root Mean Square Error = 2.4632
-|             **[B.5.2]** R-Squared = 0.9087
+|      **[B.5]** **LR: Linear Regression** (<mark style="background-color: #CCECFF">**stats**</mark> package)
+|             **[B.5.1]** Root Mean Square Error = 2.4078
+|             **[B.5.2]** R-Squared = 0.9116 
+|      **[B.6]** **PLS: Partial Least Squares** (<mark style="background-color: #CCECFF">**pls**</mark> package)
+|             **[B.6.1]** Root Mean Square Error = 2.4632
+|             **[B.6.2]** R-Squared = 0.9087
 |
 | **[C]** Externally-validated performance ranked from best to worst among the candidate optimal models are provided as follows:
 |      **[C.1]** **GBM: Stochastic Gradient Boosting** (<mark style="background-color: #CCECFF">**gbm**</mark> package)
@@ -2007,9 +2154,12 @@ CUBIST_Tune$finalModel
 |      **[C.4]** **RF: Random Forest** (<mark style="background-color: #CCECFF">**randomForest**</mark> package)
 |             **[C.4.1]** Root Mean Square Error = 2.5012
 |             **[C.4.2]** R-Squared = 0.8825 
-|      **[C.5]** **PLS: Partial Least Squares** (<mark style="background-color: #CCECFF">**pls**</mark> package)
-|             **[C.5.1]** Root Mean Square Error = 2.6870
-|             **[C.5.2]** R-Squared = 0.8644
+|      **[C.5]** **LR: Linear Regression** (<mark style="background-color: #CCECFF">**stats**</mark> package)
+|             **[C.5.1]** Root Mean Square Error = 2.5330
+|             **[C.5.2]** R-Squared = 0.8795
+|      **[C.6]** **PLS: Partial Least Squares** (<mark style="background-color: #CCECFF">**pls**</mark> package)
+|             **[C.6.1]** Root Mean Square Error = 2.6870
+|             **[C.6.2]** R-Squared = 0.8644
 |
 | **[D]** The formulated models below demonstrated consistently good performance from both internal and external validation.
 |      **[D.1]** **GBM: Stochastic Gradient Boosting** (<mark style="background-color: #CCECFF">**gbm**</mark> package)
@@ -2019,8 +2169,9 @@ CUBIST_Tune$finalModel
 | **[E]** The formulated model below showed signs of overfitting due to the huge difference in performance as observed between internal and external validation.
 |      **[E.1]** **RF: Random Forest** (<mark style="background-color: #CCECFF">**randomForest**</mark> package)
 |
-| **[F]** The formulated model below showed consistently worse performance from both internal and external validation.  
-|      **[F.1]** **PLS: Partial Least Squares** (<mark style="background-color: #CCECFF">**pls**</mark> package)
+| **[F]** The formulated models below showed consistently worse performance from both internal and external validation. 
+|      **[F.1]** **LR: Linear Regression** (<mark style="background-color: #CCECFF">**stats**</mark> package)
+|      **[F.2]** **PLS: Partial Least Squares** (<mark style="background-color: #CCECFF">**pls**</mark> package)
 |
 |
 
@@ -2031,6 +2182,28 @@ CUBIST_Tune$finalModel
 # Evaluating the models
 # on the model test data
 ##################################
+
+##################################
+# Formulating the DALEX object
+# for the Best LR model
+# as applied to the model test data
+##################################
+LR_DALEX <- DALEX::explain(LR_Tune,
+                            data = MT.Model.Predictors,
+                            y = MT$LIFEXP,
+                            verbose = FALSE,
+                            label = "LR")
+
+(LR_DALEX_Performance <- model_performance(LR_DALEX))
+(LR_DALEX_Diagnostics <- model_diagnostics(LR_DALEX))
+plot(LR_DALEX_Diagnostics,
+     variable = "y",
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") +
+  scale_y_continuous("Predicted LIFEXP") +
+  geom_abline(slope = 1) +
+  ggtitle("LR: Observed and Predicted LIFEXP")
 
 ##################################
 # Formulating the DALEX object
@@ -2162,21 +2335,24 @@ plot(CUBIST_DALEX_Diagnostics,
 # Consolidating the performance
 # on the model test data
 ##################################
-plot(GBM_DALEX_Performance,
+plot(LR_DALEX_Performance,
+     GBM_DALEX_Performance,
      RF_DALEX_Performance,
      NN_DALEX_Performance,
      PLS_DALEX_Performance,
      CUBIST_DALEX_Performance)
 
 
-plot(GBM_DALEX_Performance,
+plot(LR_DALEX_Performance,
+     GBM_DALEX_Performance,
      RF_DALEX_Performance,
      NN_DALEX_Performance,
      PLS_DALEX_Performance,
      CUBIST_DALEX_Performance,
      geom = "boxplot")
 
-plot(GBM_DALEX_Performance,
+plot(LR_DALEX_Performance,
+     GBM_DALEX_Performance,
      RF_DALEX_Performance,
      NN_DALEX_Performance,
      PLS_DALEX_Performance,
@@ -2187,6 +2363,10 @@ plot(GBM_DALEX_Performance,
 # Consolidating the variable importance
 # on the model test data
 ##################################
+LR_DALEX_VariableImportance    <- model_parts(LR_DALEX,
+                                              loss_function = loss_root_mean_square,
+                                              B = 200,
+                                              N = NULL)
 GBM_DALEX_VariableImportance    <- model_parts(GBM_DALEX,
                                                loss_function = loss_root_mean_square,
                                                B = 200,
@@ -2208,7 +2388,8 @@ CUBIST_DALEX_VariableImportance <- model_parts(CUBIST_DALEX,
                                                B = 200,
                                                N = NULL)
 
-plot(GBM_DALEX_VariableImportance,
+plot(LR_DALEX_VariableImportance,
+     GBM_DALEX_VariableImportance,
      RF_DALEX_VariableImportance,
      NN_DALEX_VariableImportance,
      PLS_DALEX_VariableImportance,
@@ -2524,6 +2705,7 @@ plot(Instance_2_GBM_LFP)
 | **[Book]** [Applied Predictive Modeling](http://appliedpredictivemodeling.com/) by Max Kuhn and Kjell Johnson
 | **[Book]** [The Elements of Statistical Learning](https://link.springer.com/book/10.1007/978-0-387-84858-7) by Trevor Hastie , Robert Tibshirani and Jerome Friedman
 | **[Book]** [Pattern Recognition and Neural Networks](https://www.cambridge.org/core/books/pattern-recognition-and-neural-networks/4E038249C9BAA06C8F4EE6F044D09C5C) by Brian Ripley
+| **[Book]** [Regression Modeling Strategies](https://link.springer.com/book/10.1007/978-1-4757-3462-1) by Frank Harrel
 | **[R Package]** [DALEX](https://cran.r-project.org/web/packages/DALEX/index.html) by Przemyslaw Biecek, Szymon Maksymiuk and Hubert Baniecki
 | **[R Package]** [iml](https://cran.r-project.org/web/packages/iml/index.html) by Christoph Molnar
 | **[R Package]** [ALEPlot](https://cran.r-project.org/web/packages/ALEPlot/index.html) by Dan Apley
