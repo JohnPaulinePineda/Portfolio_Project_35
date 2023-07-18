@@ -24,7 +24,58 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 ###  1.1.2 Outcome
 |
+| The analysis endpoint for the study is described below:
+|
+| **[A]** <span style="color: #FF0000">LIFEXP</span> (numeric):
+|
 ###  1.1.3 Predictors
+|
+| Detailed descriptions for each individual predictor used in the study are provided as follows:
+|
+| **[A]** <span style="color: #FF0000">COUNTRY</span> (character):
+|
+| **[B]** <span style="color: #FF0000">YEAR</span> (numeric):
+|
+| **[C]** <span style="color: #FF0000">GENDER</span> (factor):
+|
+| **[D]** <span style="color: #FF0000">CONTIN</span> (factor):
+|
+| **[E]** <span style="color: #FF0000">UNEMPR</span> (numeric):
+|
+| **[F]** <span style="color: #FF0000">INFMOR</span> (numeric):
+|
+| **[G]** <span style="color: #FF0000">GDP</span> (numeric):
+|
+| **[H]** <span style="color: #FF0000">GNI</span> (numeric):
+|
+| **[I]** <span style="color: #FF0000">CLTECH</span> (numeric):
+|
+| **[J]** <span style="color: #FF0000">PERCAP</span> (numeric):
+|
+| **[K]** <span style="color: #FF0000">RTIMOR</span> (numeric):
+|
+| **[L]** <span style="color: #FF0000">TUBINC</span> (numeric):
+|
+| **[M]** <span style="color: #FF0000">DPTIMM</span> (numeric):
+|
+| **[N]** <span style="color: #FF0000">HEPIMM</span> (numeric):
+|
+| **[O]** <span style="color: #FF0000">MEAIMM</span> (numeric):
+|
+| **[P]** <span style="color: #FF0000">HOSBED</span> (numeric):
+|
+| **[Q]** <span style="color: #FF0000">SANSER</span> (numeric):
+|
+| **[R]** <span style="color: #FF0000">TUBTRT</span> (numeric):
+|
+| **[S]** <span style="color: #FF0000">URBPOP</span> (numeric):
+|
+| **[T]** <span style="color: #FF0000">RURPOP</span> (numeric):
+|
+| **[U]** <span style="color: #FF0000">NCOMOR</span> (numeric):
+|
+| **[V]** <span style="color: #FF0000">SUIRAT</span> (numeric):
+|
 |
 ##  1.2 Methodology
 |
@@ -102,7 +153,7 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 | [Local Fidelity Plots](https://ema.drwhy.ai/) evaluate the local predictive performance of the model around the observation of interest. The process involves summarizing two distributions of residuals including the residuals for the neighbors of the observation of interest and residuals for the entire training dataset except for neighbors. The results help evaluate whether the model-fit for the instance of interest is unbiased (based on small residuals with distributions symmetric around 0).
 |
-| [**Local Stability Plots**](https://ema.drwhy.ai/) assess the local stability of predictions around the observation of interest. The process involves checking whether small changes in the explanatory variables, as represented by the changes within the set of neighbors, induce much influence on the predictions. The results help evaluate whether the model is locally additive (based on parallel ceteris paribus profiles) and locally stable (based on adjacent ceteris paribus profiles).
+| [Local Stability Plots](https://ema.drwhy.ai/) assess the local stability of predictions around the observation of interest. The process involves checking whether small changes in the explanatory variables, as represented by the changes within the set of neighbors, induce much influence on the predictions. The results help evaluate whether the model is locally additive (based on parallel ceteris paribus profiles) and locally stable (based on adjacent ceteris paribus profiles).
 |
 ##  1.3 Results
 |
@@ -111,9 +162,9 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 | **[A]** The initial tabular dataset was comprised of 394 observations and 23 variables (including 2 metadata, 1 response and 20 predictors). 
 |      **[A.1]** 394 rows (observations)
 |      **[A.2]** 23 columns (variables)
-|             **[A.2.1]** 1/23 instance labels = <span style="color: #FF0000">COUNTRY</span> variable (character)
-|             **[A.2.2]** 1/23 supplementary information = <span style="color: #FF0000">YEAR</span> variable (numeric)
-|             **[A.2.3]** 1/23 response = <span style="color: #FF0000">LIFEXP</span> variable (numeric)
+|             **[A.2.1]** 1/23 instance labels = <span style="color: #FF0000">COUNTRY</span> (character)
+|             **[A.2.2]** 1/23 supplementary information = <span style="color: #FF0000">YEAR</span> (numeric)
+|             **[A.2.3]** 1/23 response = <span style="color: #FF0000">LIFEXP</span> (numeric)
 |             **[A.2.4]** 20/23 predictors = 18/20 numeric + 2/20 factor
 |                      **[A.2.4.1]** <span style="color: #FF0000">GENDER</span> (factor)
 |                      **[A.2.4.2]** <span style="color: #FF0000">CONTIN</span> (factor)
@@ -136,7 +187,7 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |                      **[A.2.4.19]** <span style="color: #FF0000">NCOMOR</span> (numeric)
 |                      **[A.2.4.20]** <span style="color: #FF0000">SUIRAT</span> (numeric)
 |
-| **[B]** Preliminary transformation was applied to the <span style="color: #FF0000">GDP</span>, <span style="color: #FF0000">GNI</span>  and <span style="color: #FF0000">PERCAP</span> variables noted with high ranges. 
+| **[B]** Preliminary transformation was applied to the <span style="color: #FF0000">GDP</span>, <span style="color: #FF0000">GNI</span>  and <span style="color: #FF0000">PERCAP</span> predictors which were noted with high range of values. 
 |      **[B.1]** <span style="color: #FF0000">GDP</span> (numeric)
 |      **[B.2]** <span style="color: #FF0000">GNI</span> (numeric)
 |      **[B.3]** <span style="color: #FF0000">PERCAP</span> (numeric)
@@ -1000,8 +1051,8 @@ DPA_BoxCoxTransformed <- cbind(DPA_BoxCoxTransformed,DPA[,c("COUNTRY",
 | **[C]** The preprocessed tabular dataset was comprised of 364 observations and 14 variables (including 1 metadata, 1 response and 12 predictors). 
 |      **[C.1]** 364 rows (observations)
 |      **[C.2]** 14 columns (variables)
-|             **[C.2.1]** 1/14 instance labels = <span style="color: #FF0000">COUNTRY</span> variable (character)
-|             **[C.2.2]** 1/14 response = <span style="color: #FF0000">LIFEXP</span> variable (numeric)
+|             **[C.2.1]** 1/14 instance labels = <span style="color: #FF0000">COUNTRY</span> (character)
+|             **[C.2.2]** 1/14 response = <span style="color: #FF0000">LIFEXP</span> (numeric)
 |             **[C.2.3]** 12/14 predictors = 10/12 numeric + 2/12 factor
 |                      **[C.2.3.1]** <span style="color: #FF0000">GENDER</span> (factor)
 |                      **[C.2.3.2]** <span style="color: #FF0000">CONTIN</span> (factor)
@@ -2681,7 +2732,6 @@ plot(Instance_2_GBM_SHAP)
 |
 ####  1.3.9.5 Instance Level Exploration : Ceteris Paribus Profiles (ILE_CPP)
 |
-|
 | **[A]** Assuming all other predictors remain unchanged, the effects of the individual predictors to the model predictions for Instance 1 were described as follows:
 |      **[A.1]** Decreasing <span style="color: #FF0000">INFMOR</span> (numeric) by 2 percent increases <span style="color: #FF0000">LIFEXP</span> (numeric) by 5 years
 |      **[A.2]** Decreasing <span style="color: #FF0000">PERCAP</span> (numeric) by USD1K did not have a considerable effect on <span style="color: #FF0000">LIFEXP</span> (numeric)
@@ -2736,10 +2786,10 @@ plot(Instance_2_GBM_CPP,
 ```
 
 </details>
+
 |
 |
 ####  1.3.9.6 Instance Level Exploration : Local Fidelity Plots (ILE_LFP)
-|
 |
 | **[A]** The histograms of residuals for the entire dataset and for a selected set of 50 neighbors for Instance 1 were almost parallel and very close to each other suggesting that the model predictions were stable around this particular instance of interest.
 |
@@ -2763,9 +2813,14 @@ plot(Instance_2_GBM_LFP)
 ```
 
 </details>
+
 |
 |
 ####  1.3.9.7 Instance Level Exploration : Local Stability Plots (ILE_LSP)
+|
+| **[A]** The profiles obtained for the 5 nearest neighbors for Instance 1 were relatively close to each other, suggesting the stability of predictions. However, there were relatively more negative than positive residuals, which may have indicated a (local) positive bias of the predictions.
+|
+| **[B]** The profiles obtained for the 5 nearest neighbors for Instance 2 were relatively close to each other, suggesting the stability of predictions. However, there were relatively more negative than positive residuals, which may have indicated a (local) positive bias of the predictions.
 |
 |
 
