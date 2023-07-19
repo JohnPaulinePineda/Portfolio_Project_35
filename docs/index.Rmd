@@ -18,7 +18,9 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 ##  1.1 Introduction
 |
-| Subsequent analysis and modelling steps were individually detailed below, with all results consolidated in a [**Summary**](#summary) provided at the end of the document. 
+| Subsequent analysis and modelling steps were individually detailed below, with all results consolidated in a [**Summary**](#summary) provided at the end of the document.
+|
+| Dataset used for the study was obtained from [Kaggle](https://www.kaggle.com/datasets/kiranshahi/life-expectancy-dataset) with all credits attributed to [Kiran Shahi](https://www.kaggle.com/kiranshahi). World [development](https://datatopics.worldbank.org/world-development-indicators/) and [health](https://data.worldbank.org/indicator/?tab=all) indicators in the dataset were primarily sourced from [The World Bank](https://www.worldbank.org/en/home).
 |
 ###  1.1.1 Study Objectives
 |
