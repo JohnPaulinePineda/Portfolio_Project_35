@@ -20,7 +20,9 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 | Subsequent analysis and modelling steps were individually detailed below, with all results consolidated in a [**Summary**](#summary) provided at the end of the document.
 |
-| Dataset used for the study was obtained from [Kaggle](https://www.kaggle.com/datasets/kiranshahi/life-expectancy-dataset) with all credits attributed to [Kiran Shahi](https://www.kaggle.com/kiranshahi). World [development](https://datatopics.worldbank.org/world-development-indicators/) and [health](https://data.worldbank.org/indicator/?tab=all) indicators in the dataset were primarily sourced from [The World Bank](https://www.worldbank.org/en/home).
+| Dataset used for the study was obtained from [Kaggle](https://www.kaggle.com/datasets/kiranshahi/life-expectancy-dataset) with all credits attributed to [Kiran Shahi](https://www.kaggle.com/kiranshahi). 
+|
+| World [development](https://datatopics.worldbank.org/world-development-indicators/) and [health](https://data.worldbank.org/indicator/?tab=all) indicators in the dataset were primarily sourced from [The World Bank](https://www.worldbank.org/en/home).
 |
 ###  1.1.1 Study Objectives
 |
@@ -28,41 +30,41 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 | The analysis endpoint for the study is described below:
 |
-| **[A]** <span style="color: #FF0000">LIFEXP</span> (numeric):
+| **[A]** <span style="color: #FF0000">LIFEXP</span> (numeric, in years): Life expectancy at birth which refers to the average number of years a newborn is expected to live if mortality patterns at the time of its birth remain constant in the future.
 |
 ###  1.1.3 Predictors
 |
 | Detailed descriptions for each individual predictor used in the study are provided as follows:
 |
-| **[A]** <span style="color: #FF0000">COUNTRY</span> (character):
+| **[A]** <span style="color: #FF0000">COUNTRY</span> (character): Political unit with sovereignty (legitimate and total political power) over a territory and inhabitants within its borders.
 |
-| **[B]** <span style="color: #FF0000">YEAR</span> (numeric):
+| **[B]** <span style="color: #FF0000">YEAR</span> (numeric): Year when all relevant data were gathered, fixed at 2019 for this analysis. 
 |
-| **[C]** <span style="color: #FF0000">GENDER</span> (factor):
+| **[C]** <span style="color: #FF0000">GENDER</span> (factor): Biological categorization group upon which all relevant data are associated with.
 |
-| **[D]** <span style="color: #FF0000">CONTIN</span> (factor):
+| **[D]** <span style="color: #FF0000">CONTIN</span> (factor): Collective region where the specified country belongs to.
 |
-| **[E]** <span style="color: #FF0000">UNEMPR</span> (numeric):
+| **[E]** <span style="color: #FF0000">UNEMPR</span> (numeric, in %): Proportion of unemployed individuals in a group among individuals currently in the labor force.
 |
-| **[F]** <span style="color: #FF0000">INFMOR</span> (numeric):
+| **[F]** <span style="color: #FF0000">INFMOR</span> (numeric, in number of deaths): Number of infants dying before reaching one year of age in agroup per 1,000 live births in a given year
 |
-| **[G]** <span style="color: #FF0000">GDP</span> (numeric):
+| **[G]** <span style="color: #FF0000">GDP</span> (numeric, in USD): Monetary value of goods and services annually produced within a country which includes national output, expenditures, and income.
 |
-| **[H]** <span style="color: #FF0000">GNI</span> (numeric):
+| **[H]** <span style="color: #FF0000">GNI</span> (numeric, in USD): Equivalent to the annual GDP plus wages, salaries, and property income of the country's residents earned abroad and at home, including net taxes and subsidies receivable from abroad.
 |
-| **[I]** <span style="color: #FF0000">CLTECH</span> (numeric):
+| **[I]** <span style="color: #FF0000">CLTECH</span> (numeric, in %): Proportion of the population in a group with access to clean fuels and technologies for cooking.
 |
-| **[J]** <span style="color: #FF0000">PERCAP</span> (numeric):
+| **[J]** <span style="color: #FF0000">PERCAP</span> (numeric, in USD): Measure of the amount of money earned per person within a group which seeks to determine the standard of living and quality of life of a population.
 |
-| **[K]** <span style="color: #FF0000">RTIMOR</span> (numeric):
+| **[K]** <span style="color: #FF0000">RTIMOR</span> (numeric, in number of deaths): Road traffic fatal injury deaths in a group per 100,000 population.
 |
-| **[L]** <span style="color: #FF0000">TUBINC</span> (numeric):
+| **[L]** <span style="color: #FF0000">TUBINC</span> (numeric, in %): Proportion of all new tuberculosis cases registered under a national tuberculosis control programme within a group in a given year that successfully completed treatment, with or without bacteriological evidence of success ("cured" and "treatment completed" respectively).
 |
-| **[M]** <span style="color: #FF0000">DPTIMM</span> (numeric):
+| **[M]** <span style="color: #FF0000">DPTIMM</span> (numeric, in %): Proportion of children ages 12-23 months within a group who received diphtheria, pertussis (or whooping cough) and tetanus (DPT) vaccinations before 12 months or at any time before the survey. 
 |
-| **[N]** <span style="color: #FF0000">HEPIMM</span> (numeric):
+| **[N]** <span style="color: #FF0000">HEPIMM</span> (numeric): Proportion of children ages 12-23 months within a group who received hepatitis B vaccinations before 12 months or at any time before the survey. 
 |
-| **[O]** <span style="color: #FF0000">MEAIMM</span> (numeric):
+| **[O]** <span style="color: #FF0000">MEAIMM</span> (numeric): Proportion of children ages 12-23 months within a group who received measles vaccinations before 12 months or at any time before the survey.
 |
 | **[P]** <span style="color: #FF0000">HOSBED</span> (numeric):
 |
