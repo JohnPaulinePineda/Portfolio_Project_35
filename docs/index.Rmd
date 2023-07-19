@@ -18,68 +18,67 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 ##  1.1 Introduction
 |
-| Subsequent analysis and modelling steps were individually detailed below, with all results consolidated in a [**Summary**](#summary) provided at the end of the document.
+| Life expectancy is a statistical measure that represents the average number of years a person is expected to live from birth, assuming current mortality rates remain constant along the entire life course. It provides an [estimation of the overall health and well-being of a population](https://ourworldindata.org/life-expectancy) and is [often reflective of the local conditions encompassing numerous factors including demographic, socio-economic, healthcare access and healthcare quality](https://link.springer.com/article/10.1007/s10754-022-09338-5).
 |
-| Dataset used for the study was obtained from [Kaggle](https://www.kaggle.com/datasets/kiranshahi/life-expectancy-dataset) with all credits attributed to [Kiran Shahi](https://www.kaggle.com/kiranshahi). 
+| Using an open dataset from [Kaggle](https://www.kaggle.com/datasets/kiranshahi/life-expectancy-dataset) (with all credits attributed to [Kiran Shahi](https://www.kaggle.com/kiranshahi)) which was primarily sourced from [The World Bank](https://www.worldbank.org/en/home), this study hypothesized that various world [development](https://datatopics.worldbank.org/world-development-indicators/) and [health](https://data.worldbank.org/indicator/?tab=all) indicators influence life expectancy across countries. A number of regression models was formulated to explore the relationship between life expectancy and these factors. 
 |
-| World [development](https://datatopics.worldbank.org/world-development-indicators/) and [health](https://data.worldbank.org/indicator/?tab=all) indicators in the dataset were primarily sourced from [The World Bank](https://www.worldbank.org/en/home).
+| Subsequent analysis and modelling steps involving data understanding, data preparation, data exploration, model development, model validation and model presentation were individually detailed below, with all the results consolidated in a [<span style="color: #FF0000">Summary</span>](#summary) provided at the end of the document.
 |
 ###  1.1.1 Study Objectives
 |
 ###  1.1.2 Outcome
 |
-| The analysis endpoint for the study is described below:
+| The analysis endpoint for the study was described below:
 |
-| **[A]** <span style="color: #FF0000">LIFEXP</span> (numeric, in years): Life expectancy at birth which refers to the average number of years a newborn is expected to live if mortality patterns at the time of its birth remain constant in the future.
+| **[A]** <span style="color: #FF0000">LIFEXP</span> (numeric, in years): **Life Expectancy**; Number of years a newborn infant would live if prevailing patterns of mortality at the time of its birth were to stay the same throughout its life.
 |
 ###  1.1.3 Predictors
 |
-| Detailed descriptions for each individual predictor used in the study are provided as follows:
+| Detailed descriptions for each individual predictor used in the study were provided as follows:
 |
-| **[A]** <span style="color: #FF0000">COUNTRY</span> (character): Political unit with sovereignty (legitimate and total political power) over a territory and inhabitants within its borders.
+| **[A]** <span style="color: #FF0000">COUNTRY</span> (character): **Country**; Political unit with sovereignty (legitimate and total political power) over a territory and inhabitants within its borders.
 |
-| **[B]** <span style="color: #FF0000">YEAR</span> (numeric): Year when all relevant data were gathered, fixed at 2019 for this analysis. 
+| **[B]** <span style="color: #FF0000">YEAR</span> (numeric): **Year**; Year when all relevant data were gathered, fixed at 2019 for this analysis. 
 |
-| **[C]** <span style="color: #FF0000">GENDER</span> (factor): Biological categorization group upon which all relevant data are associated with.
+| **[C]** <span style="color: #FF0000">GENDER</span> (factor): **Gender**, Biological categorization group upon which all relevant data are associated with.
 |
-| **[D]** <span style="color: #FF0000">CONTIN</span> (factor): Collective region where the specified country belongs to.
+| **[D]** <span style="color: #FF0000">CONTIN</span> (factor): **Continent**; Collective region where the specified country belongs to.
 |
-| **[E]** <span style="color: #FF0000">UNEMPR</span> (numeric, in %): Proportion of unemployed individuals in a group among individuals currently in the labor force.
+| **[E]** <span style="color: #FF0000">UNEMPR</span> (numeric, in %): **Unemployment Rate**; Proportion of unemployed individuals in a group among individuals currently in the labor force.
 |
-| **[F]** <span style="color: #FF0000">INFMOR</span> (numeric, in number of deaths): Number of infants dying before reaching one year of age in agroup per 1,000 live births in a given year
+| **[F]** <span style="color: #FF0000">INFMOR</span> (numeric, in number of deaths): **Infant Mortality**;  Number of infants dying before reaching one year of age in agroup per 1,000 live births in a given year
 |
-| **[G]** <span style="color: #FF0000">GDP</span> (numeric, in USD): Monetary value of goods and services annually produced within a country which includes national output, expenditures, and income.
+| **[G]** <span style="color: #FF0000">GDP</span> (numeric, in USD): **Gross Domestic Product**; Sum of gross value added by all resident producers in the economy plus any product taxes and minus any subsidies not included in the value of the products. It is calculated without making deductions for depreciation of fabricated assets or for depletion and degradation of natural resources..
 |
-| **[H]** <span style="color: #FF0000">GNI</span> (numeric, in USD): Equivalent to the annual GDP plus wages, salaries, and property income of the country's residents earned abroad and at home, including net taxes and subsidies receivable from abroad.
+| **[H]** <span style="color: #FF0000">GNI</span> (numeric, in USD): **Gross National Income**; Sum of value added by all resident producers plus any product taxes (less subsidies) not included in the valuation of output plus net receipts of primary income (compensation of employees and property income) from abroad.
 |
-| **[I]** <span style="color: #FF0000">CLTECH</span> (numeric, in %): Proportion of the population in a group with access to clean fuels and technologies for cooking.
+| **[I]** <span style="color: #FF0000">CLTECH</span> (numeric, in %): **Access to Clean Fuels and Technologies for Cooking**; Proportion of the population in a group with access to clean fuels and technologies for cooking. Under WHO guidelines, kerosene is excluded from clean cooking fuels.
 |
-| **[J]** <span style="color: #FF0000">PERCAP</span> (numeric, in USD): Measure of the amount of money earned per person within a group which seeks to determine the standard of living and quality of life of a population.
+| **[J]** <span style="color: #FF0000">PERCAP</span> (numeric, in USD): **Gross Domestic Product Per Capita**; Annual gross domestic product divided by midyear population within a group.
 |
-| **[K]** <span style="color: #FF0000">RTIMOR</span> (numeric, in number of deaths): Road traffic fatal injury deaths in a group per 100,000 population.
+| **[K]** <span style="color: #FF0000">RTIMOR</span> (numeric, in number of deaths): **Mortality Caused by Road Traffic Injury**; Road traffic fatal injury deaths in a group per 100,000 population.
 |
-| **[L]** <span style="color: #FF0000">TUBINC</span> (numeric, in %): Proportion of all new tuberculosis cases registered under a national tuberculosis control programme within a group in a given year that successfully completed treatment, with or without bacteriological evidence of success ("cured" and "treatment completed" respectively).
+| **[L]** <span style="color: #FF0000">TUBINC</span> (numeric, in number of cases): **Incidence of Tuberculosis**; Estimated number of new and relapse tuberculosis cases in a group arising in a given year per 100,000 population.
 |
-| **[M]** <span style="color: #FF0000">DPTIMM</span> (numeric, in %): Proportion of children ages 12-23 months within a group who received diphtheria, pertussis (or whooping cough) and tetanus (DPT) vaccinations before 12 months or at any time before the survey. 
+| **[M]** <span style="color: #FF0000">DPTIMM</span> (numeric, in %): **DPT Immunization**; Proportion of children ages 12-23 months within a group who received diphtheria, pertussis (or whooping cough) and tetanus (DPT) vaccinations before 12 months or at any time before the survey. 
 |
-| **[N]** <span style="color: #FF0000">HEPIMM</span> (numeric): Proportion of children ages 12-23 months within a group who received hepatitis B vaccinations before 12 months or at any time before the survey. 
+| **[N]** <span style="color: #FF0000">HEPIMM</span> (numeric, in %): **Hepatitis B Immunization**; Proportion of children ages 12-23 months within a group who received hepatitis B vaccinations before 12 months or at any time before the survey. 
 |
-| **[O]** <span style="color: #FF0000">MEAIMM</span> (numeric): Proportion of children ages 12-23 months within a group who received measles vaccinations before 12 months or at any time before the survey.
+| **[O]** <span style="color: #FF0000">MEAIMM</span> (numeric, in %): **Measles Immunization**; Proportion of children ages 12-23 months within a group who received measles vaccinations before 12 months or at any time before the survey.
 |
-| **[P]** <span style="color: #FF0000">HOSBED</span> (numeric):
+| **[P]** <span style="color: #FF0000">HOSBED</span> (numeric, in number of beds): **Hospital Beds**; Number of hospital beds per 1,000 people in a group which include inpatient beds available in public, private, general, and specialized hospitals and rehabilitation centers.
 |
-| **[Q]** <span style="color: #FF0000">SANSER</span> (numeric):
+| **[Q]** <span style="color: #FF0000">SANSER</span> (numeric, in %): **People Using At Least Basic Sanitation Services**; Proportion of people in a group using at least basic sanitation services, that is, improved sanitation facilities that are not shared with other households including basic sanitation services as well as those using safely managed sanitation services.
 |
-| **[R]** <span style="color: #FF0000">TUBTRT</span> (numeric):
+| **[R]** <span style="color: #FF0000">TUBTRT</span> (numeric, in %): **Tuberculosis Treatment Success Rate**; Proportion of all new tuberculosis cases registered under a national tuberculosis control programme within a group in a given year that successfully completed treatment, with or without bacteriological evidence of success ("cured" and "treatment completed" respectively).
 |
-| **[S]** <span style="color: #FF0000">URBPOP</span> (numeric):
+| **[S]** <span style="color: #FF0000">URBPOP</span> (numeric, in %): **Urban Population**; Proportion of people in a group living in urban areas as defined by national statistical offices.
 |
-| **[T]** <span style="color: #FF0000">RURPOP</span> (numeric):
+| **[T]** <span style="color: #FF0000">RURPOP</span> (numeric, in %): **Rural Population**; Proportion of people in a group living in rural areas as defined by national statistical offices:
 |
-| **[U]** <span style="color: #FF0000">NCOMOR</span> (numeric):
+| **[U]** <span style="color: #FF0000">NCOMOR</span> (numeric, in %): **Deaths due to Non-Communicable Diseases**; Proportion of deaths for all ages by underlying causes in a group which was attributed to non-communicable diseases including cancer, diabetes mellitus, cardiovascular diseases, digestive diseases, skin diseases, musculoskeletal diseases, and congenital anomalies.
 |
-| **[V]** <span style="color: #FF0000">SUIRAT</span> (numeric):
-|
+| **[V]** <span style="color: #FF0000">SUIRAT</span> (numeric, in number of deaths): **Suicide Mortality Rate**; Number of suicide deaths annually in a group per 100,000 population.
 |
 ##  1.2 Methodology
 |
