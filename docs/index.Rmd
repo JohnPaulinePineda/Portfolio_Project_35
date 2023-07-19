@@ -22,9 +22,11 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 | Using an open dataset from [Kaggle](https://www.kaggle.com/datasets/kiranshahi/life-expectancy-dataset) (with all credits attributed to [Kiran Shahi](https://www.kaggle.com/kiranshahi)) which was primarily sourced from [The World Bank](https://www.worldbank.org/en/home), this study hypothesized that various world [development](https://datatopics.worldbank.org/world-development-indicators/) and [health](https://data.worldbank.org/indicator/?tab=all) indicators influence life expectancy across countries. A number of regression models was formulated to explore the relationship between life expectancy and these factors. 
 |
-| Subsequent analysis and modelling steps involving data understanding, data preparation, data exploration, model development, model validation and model presentation were individually detailed below, with all the results consolidated in a [<span style="color: #FF0000">Summary</span>](#summary) provided at the end of the document.
+| Subsequent analysis and modelling steps involving data understanding, data preparation, data exploration, model development, model validation and model presentation were individually detailed below, with all the results consolidated in a [<span style="color: #FF0000">**Summary**</span>](#summary) provided at the end of the document.
 |
 ###  1.1.1 Study Objectives
+|
+| **The main objective of the study is to develop an interpretable regression model which could provide robust and reliable estimates of life expectancy from an optimal set of factors, while delivering accurate predictions when applied to new unseen data.**
 |
 ###  1.1.2 Outcome
 |
