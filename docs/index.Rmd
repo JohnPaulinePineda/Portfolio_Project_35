@@ -1,7 +1,7 @@
 ---
 title: "Supervised Learning : Characterizing Life Expectancy Drivers Across Countries Using Model-Agnostic Interpretation Methods for Black-Box Models"
 author: "John Pauline Pineda"
-date: "July 20, 2023"
+date: "July 22, 2023"
 output: 
   html_document:
     toc: true
@@ -18,33 +18,33 @@ knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
 |
 ##  1.1 Introduction
 |
-| Life expectancy is a statistical measure that represents the average number of years a person is expected to live from birth, assuming current mortality rates remain constant along the entire life course. It provides an [estimation of the overall health and well-being of a population](https://ourworldindata.org/life-expectancy) and is [often reflective of the local conditions encompassing numerous factors including demographic, socio-economic, healthcare access and healthcare quality](https://link.springer.com/article/10.1007/s10754-022-09338-5).
+| Life expectancy is a statistical measure that represents the average number of years a person is expected to live from birth, assuming current mortality rates remain constant along the entire life course. It provides an [estimation of the overall health and well-being of a population](https://ourworldindata.org/life-expectancy) and is [often reflective of the local conditions](https://link.springer.com/article/10.1007/s10754-022-09338-5) encompassing numerous factors including demographic, socio-economic, healthcare access and healthcare quality.
 |
-| Using an open dataset from [Kaggle](https://www.kaggle.com/datasets/kiranshahi/life-expectancy-dataset) (with all credits attributed to [Kiran Shahi](https://www.kaggle.com/kiranshahi)) which was primarily sourced from [The World Bank](https://www.worldbank.org/en/home), this study hypothesized that various world [development](https://datatopics.worldbank.org/world-development-indicators/) and [health](https://data.worldbank.org/indicator/?tab=all) indicators influence life expectancy across countries. A number of regression models was formulated to explore the relationship between life expectancy and these factors. 
+| Using an open dataset from [Kaggle](https://www.kaggle.com/datasets/kiranshahi/life-expectancy-dataset) (with all credits attributed to [Kiran Shahi](https://www.kaggle.com/kiranshahi)) as primarily sourced from [The World Bank](https://www.worldbank.org/en/home), this study hypothesized that various world [development](https://datatopics.worldbank.org/world-development-indicators/) and [health](https://data.worldbank.org/indicator/?tab=all) indicators influence life expectancy across countries. A number of regression models was formulated to explore the relationship between life expectancy and these factors. 
 |
 | Subsequent analysis and modelling steps involving data understanding, data preparation, data exploration, model development, model validation and model presentation were individually detailed below, with all the results consolidated in a [<span style="color: #FF0000">**Summary**</span>](#summary) provided at the end of the document.
 |
 ###  1.1.1 Study Objectives
 |
-| **The main objective of the study is to develop an interpretable regression model which could provide robust and reliable estimates of life expectancy from an optimal set of observations and factors, while delivering accurate predictions when applied to new unseen data.**
+| **The main objective of the study is to develop an interpretable regression model which could provide robust and reliable estimates of life expectancy from an optimal set of observations and predictors, while delivering accurate predictions when applied to new unseen data.**
 |
 | Specific objectives are given as follows:
 |
-| **[A]** Obtain an optimal subset of observations and predictors by conducting a quality assessment of the dataset, excluding cases or variables noted with irregularities and applying the most appropriate preprocessing operation most suitable for the downstream analysis
+| **[A]** Obtain an optimal subset of observations and predictors by conducting data quality assessment and feature selection, excluding cases or variables noted with irregularities and applying preprocessing operations most suitable for the downstream analysis
 |
-| **[B]** Develop multiple regression models with optimized relevant hyperparameters through internal resampling validation
+| **[B]** Develop multiple regression models with optimized hyperparameters through internal resampling validation
 |
 | **[C]** Select the final regression model among candidates based on robust performance estimates
 |
 | **[D]** Evaluate the final model performance and generalization ability through external validation in an independent set
 |
-| **[E]** Conduct a post-hoc exploration of the model results, even for black-box models, to provide insights on the contributions and effects of the various factors to model prediction
+| **[E]** Conduct a post-hoc exploration of the model results, even for black-box models, to provide general insights on the importance, contribution and effect of the various predictors to model prediction
 |
 ###  1.1.2 Outcome
 |
 | The analysis endpoint for the study is described below:
 |
-| **[A]** <span style="color: #FF0000">LIFEXP</span> (numeric, in years): **Life Expectancy**; Number of years a newborn infant would live if prevailing patterns of mortality at the time of its birth were to stay the same throughout its life.
+| **[A]** <span style="color: #FF0000">LIFEXP</span> (numeric): **Life Expectancy**; Number of years a newborn infant would live if prevailing patterns of mortality at the time of its birth were to stay the same throughout its life.
 |
 ###  1.1.3 Predictors
 |
@@ -2874,6 +2874,7 @@ plot(Instance_2_GBM_LFP)
 
 # **2. Summary** <a name="summary"></a>
 |
+| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/docs/summary_1.png)
 |
 # **3. References**
 |
