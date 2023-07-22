@@ -1,7 +1,7 @@
 ---
 title: "Supervised Learning : Characterizing Life Expectancy Drivers Across Countries Using Model-Agnostic Interpretation Methods for Black-Box Models"
 author: "John Pauline Pineda"
-date: "July 22, 2023"
+date: "July 24, 2023"
 output: 
   html_document:
     toc: true
@@ -2423,6 +2423,36 @@ plot(LR_DALEX_Performance,
      CUBIST_DALEX_Performance,
      geom = "histogram")
 
+plot(LR_DALEX_Performance,
+     geom = "histogram") +
+  scale_x_continuous(limits=c(-8, 8)) +
+  scale_y_continuous(limits=c(0, 8))
+
+plot(GBM_DALEX_Performance,
+     geom = "histogram") +
+  scale_x_continuous(limits=c(-8, 8)) +
+  scale_y_continuous(limits=c(0, 8))
+
+plot(RF_DALEX_Performance,
+     geom = "histogram") +
+  scale_x_continuous(limits=c(-8, 8)) +
+  scale_y_continuous(limits=c(0, 8))
+
+plot(NN_DALEX_Performance,
+     geom = "histogram") +
+  scale_x_continuous(limits=c(-8, 8)) +
+  scale_y_continuous(limits=c(0, 8))
+
+plot(PLS_DALEX_Performance,
+     geom = "histogram") +
+  scale_x_continuous(limits=c(-8, 8)) +
+  scale_y_continuous(limits=c(0, 8))
+
+plot(CUBIST_DALEX_Performance,
+     geom = "histogram") +
+  scale_x_continuous(limits=c(-8, 8)) +
+  scale_y_continuous(limits=c(0, 8))
+
 ##################################
 # Consolidating the variable importance
 # on the model test data
@@ -2880,6 +2910,8 @@ plot(Instance_2_GBM_LFP)
 | ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/docs/summary_2.png)
 |
 | ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/docs/summary_3.png)
+|
+| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/docs/summary_4.png)
 |
 # **3. References**
 |
