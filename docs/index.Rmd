@@ -2387,7 +2387,7 @@ plot(CUBIST_DALEX_Diagnostics,
 |
 | **[A]** The formulated model using **GBM: Stochastic Gradient Boosting** was selected as the final model among others for the following reasons:
 |      **[A.1]** It demonstrated the best RMSE and R-Squared performance  based on external validation. 
-|      **[A.2]** No excessive overfitting observed when comparing the apparent and cross-validated performance. 
+|      **[A.2]** No excessive overfitting observed when comparing the internal and external validation performance. 
 |      **[A.3]** It generated the most stable residual distribution with the lowest variance. 
 |
 |
@@ -2912,6 +2912,8 @@ plot(Instance_2_GBM_LFP)
 | ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/docs/summary_3.png)
 |
 | ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/docs/summary_4.png)
+|
+| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/docs/summary_5.png)
 |
 # **3. References**
 |
