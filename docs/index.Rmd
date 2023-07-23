@@ -2691,11 +2691,11 @@ GBM_DALEX_PartialDependencePlot_CONTIN <- model_profile(GBM_DALEX,
 |      **[C.2]** Predicted response: 68.103
 |      **[C.3]** Variable attributions conditioned on the previous predictor(s) are given below:
 |             **[C.3.1]** Average response: 72.475
-|             **[C.3.6]** <span style="color: #FF0000">NCOMOR=5.951</span> (numeric): -3.294
+|             **[C.3.2]** <span style="color: #FF0000">NCOMOR=5.951</span> (numeric): -3.294
 |             **[C.3.3]** <span style="color: #FF0000">INFMOR=3.174</span> (numeric): -1.208
-|             **[C.3.2]** <span style="color: #FF0000">GENDER=Male</span> (factor): -0.972
-|             **[C.3.4]** <span style="color: #FF0000">CONTIN=Asia</span> (factor): +0.675
-|             **[C.3.5]** <span style="color: #FF0000">PERCAP=1.249</span> (numeric): +1.088
+|             **[C.3.4]** <span style="color: #FF0000">GENDER=Male</span> (factor): -0.972
+|             **[C.3.5]** <span style="color: #FF0000">CONTIN=Asia</span> (factor): +0.675
+|             **[C.3.6]** <span style="color: #FF0000">PERCAP=1.249</span> (numeric): +1.088
 |             **[C.3.7]** <span style="color: #FF0000">CLTECH=47.4</span> (numeric): -0.662
 |             **[C.3.8]** Predicted response: 68.103
 |
@@ -2913,7 +2913,7 @@ plot(Instance_2_GBM_LFP)
 |
 | **[C]** The final model selected among candidates used **Stochastic Gradient Boosting** with optimal hyperparameters: **total number of trees (n.trees=300)**, **maximum depth of each tree (interaction.depth=2)**, **learning rate (shrinkage=0.1)** and **minimum number of observations in the terminal node (n.minobsinnode=5)**. This model demonstrated the best externally validated RMSE and R-Squared (**RMSE=2.1007**, **R-Squared=0.9171**); no excessive overfitting comparing the external and internal validation metrics (**RMSE=2.0978**, **R-Squared=0.9288**); and stable residual distribution with lowest variation.
 |
-| **[E]** Owing to the black-box nature of the selected model, post-hoc exploration of the model results involved model agnostic methods including **Dataset-Level Exploration** using model-level global explanations (Permutated Mean Dropout Loss-Based Variable Importance, Partial Dependence Plots) and **Instance-Level Exploration** using prediction-level local explanations (Breakdown Plots, Shapley Additive Explanations, Ceteris Paribus Plots, Local Fidelity Plots, Local Stability Plots). These results helped provide dataset-level and instance-level insights on the importance, contribution and effect of the various predictors to model prediction.
+| **[D]** Owing to the black-box nature of the selected model, post-hoc exploration of the model results involved model agnostic methods including **Dataset-Level Exploration** using model-level global explanations (Permutated Mean Dropout Loss-Based Variable Importance, Partial Dependence Plots) and **Instance-Level Exploration** using prediction-level local explanations (Breakdown Plots, Shapley Additive Explanations, Ceteris Paribus Plots, Local Fidelity Plots, Local Stability Plots). These results helped provide dataset-level and instance-level insights on the importance, contribution and effect of the various predictors to model prediction.
 |
 | ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/docs/summary_1.png)
 |
@@ -2963,9 +2963,14 @@ plot(Instance_2_GBM_LFP)
 | **[R Package]** [pls](https://cran.r-project.org/web/packages/pls/pls.pdf) by Kristian Hovde Liland
 | **[R Package]** [Cubist](https://cran.r-project.org/web/packages/Cubist/Cubist.pdf) by Max Kuhn
 | **[R Package]** [patchwork](https://cran.r-project.org/web/packages/patchwork/patchwork.pdf) by Thomas Lin Pedersen
-| **[Article]** [Interpretation Methods for Black-Box Machine Learning Models in Insurance Rating-Type Applications ](https://support.sas.com/resources/papers/proceedings20/5116-2020.pdf) by Gabe Taylor, Sunish Menon, Huimin Ru, Ray Wright, Xin Hunt and Ralph Abbey
+| **[Article]** [Life Expectancy](https://ourworldindata.org/life-expectancy) by Max Roser, Esteban Ortiz-Ospina and Hannah Ritchie
+| **[Article]** [Interpretation Methods for Black-Box Machine Learning Models in Insurance Rating-Type Applications](https://support.sas.com/resources/papers/proceedings20/5116-2020.pdf) by Gabe Taylor, Sunish Menon, Huimin Ru, Ray Wright, Xin Hunt and Ralph Abbey
+| **[Article]** [Interpretation Methods for Black-Box Machine Learning Models in Insurance Rating-Type Applications](https://support.sas.com/resources/papers/proceedings20/5116-2020.pdf) by Gabe Taylor, Sunish Menon, Huimin Ru, Ray Wright, Xin Hunt and Ralph Abbey
 | **[Article]** [4 Model-Agnostic Interpretability Techniques for Complex Models ](https://blogs.sas.com/content/subconsciousmusings/2020/05/07/model-agnostic-interpretability/) by Funda Gunes
 | **[Article]** [How Can We Provide Post-Hoc Explanations for Black-Box AI Models? ](https://aisingapore.github.io/ai-practitioner-handbook/book/6-modelling/post-hoc-explanation.html) by Joy Lin
+| **[Article]** [An introduction to Explainable AI with Shapley Values ](https://shap.readthedocs.io/en/latest/example_notebooks/overviews/An%20introduction%20to%20explainable%20AI%20with%20Shapley%20values.html) by SHAP Team
+| **[Article]** [Partial Dependence and Individual Conditional Expectation plots ](https://scikit-learn.org/stable/modules/partial_dependence.html) by Sci-Kit Learn Team
+| **[Article]** [Interpret Model Predictions with Partial Dependence and Individual Conditional Expectation plots ](https://blogs.sas.com/content/subconsciousmusings/2018/06/12/interpret-model-predictions-with-partial-dependence-and-individual-conditional-expectation-plots/#:~:text=A%20partial%20dependence%20%28PD%29%20plot%20depicts%20the%20functional,the%20probability%20of%20flu%20increases%20linearly%20with%20fever.) by Ilknur Kaynar Kabul
 | **[Article]** [Correlation in R: Pearson and Spearman Correlation Matrix](https://www.guru99.com/r-pearson-spearman-correlation.html) by Daniel Johnson
 | **[Article]** [Correlation (Pearson, Kendall, Spearman)](https://www.statisticssolutions.com/free-resources/directory-of-statistical-analyses/correlation-pearson-kendall-spearman/) by Statistics Solutions Team
 | **[Article]** [A Comparison of the Pearson and Spearman Correlation Methods](https://support.minitab.com/en-us/minitab/21/help-and-how-to/statistics/basic-statistics/supporting-topics/correlation-and-covariance/a-comparison-of-the-pearson-and-spearman-correlation-methods/#:~:text=The%20Pearson%20and%20Spearman%20correlation%20coefficients%20can%20range,correlation%20coefficient%20is%20also%20%2B1%20in%20this%20case.) by Minitab Support Team
@@ -2977,6 +2982,7 @@ plot(Instance_2_GBM_LFP)
 | **[Article]** [Random Forest](https://support.bccvl.org.au/support/solutions/articles/6000083217-random-forest) by BCCVL Team
 | **[Article]** [Artificial Neural Network](https://support.bccvl.org.au/support/solutions/articles/6000083200-artificial-neural-network) by BCCVL Team
 | **[Article]** [Cubist Regression Models](https://cran.r-project.org/web/packages/Cubist/vignettes/cubist.html) by Max Kuhn
+| **[Publication]** [Determinants of Life Expectancy at Birth: A Longitudinal Study on OECD Countries](https://link.springer.com/article/10.1007/s10754-022-09338-5) by Paolo Roffia, Alessandro Bucciol and Sara Hashlamoun 
 | **[Publication]** [Robust Locally Weighted Regression and Smoothing Scatterplots](https://www.tandfonline.com/doi/abs/10.1080/01621459.1979.10481038) by William Cleveland (Journal of the American Statistical Association)
 | **[Publication]** [Mathematical Contributions to the Theory of Evolution: Regression, Heredity and Panmixia](https://royalsocietypublishing.org/doi/10.1098/rsta.1896.0007) by Karl Pearson (Royal Society)
 | **[Publication]** [The Proof and Measurement of Association between Two Things](https://www.jstor.org/stable/1412159?origin=crossref) by Charles Spearman (The American Journal of Psychology)
