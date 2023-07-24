@@ -2965,10 +2965,13 @@ plot(Instance_2_GBM_LFP)
 | **[R Package]** [patchwork](https://cran.r-project.org/web/packages/patchwork/patchwork.pdf) by Thomas Lin Pedersen
 | **[Article]** [Life Expectancy](https://ourworldindata.org/life-expectancy) by Max Roser, Esteban Ortiz-Ospina and Hannah Ritchie
 | **[Article]** [Interpretation Methods for Black-Box Machine Learning Models in Insurance Rating-Type Applications](https://support.sas.com/resources/papers/proceedings20/5116-2020.pdf) by Gabe Taylor, Sunish Menon, Huimin Ru, Ray Wright, Xin Hunt and Ralph Abbey
-| **[Article]** [Interpretation Methods for Black-Box Machine Learning Models in Insurance Rating-Type Applications](https://support.sas.com/resources/papers/proceedings20/5116-2020.pdf) by Gabe Taylor, Sunish Menon, Huimin Ru, Ray Wright, Xin Hunt and Ralph Abbey
 | **[Article]** [4 Model-Agnostic Interpretability Techniques for Complex Models ](https://blogs.sas.com/content/subconsciousmusings/2020/05/07/model-agnostic-interpretability/) by Funda Gunes
 | **[Article]** [How Can We Provide Post-Hoc Explanations for Black-Box AI Models? ](https://aisingapore.github.io/ai-practitioner-handbook/book/6-modelling/post-hoc-explanation.html) by Joy Lin
 | **[Article]** [An introduction to Explainable AI with Shapley Values ](https://shap.readthedocs.io/en/latest/example_notebooks/overviews/An%20introduction%20to%20explainable%20AI%20with%20Shapley%20values.html) by SHAP Team
+| **[Article]** [A Gentle Introduction to SHAP Values in R ](https://www.r-bloggers.com/2019/03/a-gentle-introduction-to-shap-values-in-r/) by Pablo Casas
+| **[Article]** [SHAP Values with Examples Applied to a Multi-Classification Problem ](https://harpomaxx.github.io/post/shap-values/) byHarpo Maxx
+| **[Article]** [SHAP Values - Interpret Predictions Of ML Models using Game-Theoretic Approach ](https://coderzcolumn.com/tutorials/machine-learning/shap-explain-machine-learning-model-predictions-using-game-theoretic-approach) by Sunny Solanki
+| **[Article]** [How to Interpret Machine Learning (ML) Models with SHAP Values ](https://www.mage.ai/blog/how-to-interpret-explain-machine-learning-models-using-shap-values) by Xiaoyou Wang
 | **[Article]** [Partial Dependence and Individual Conditional Expectation plots ](https://scikit-learn.org/stable/modules/partial_dependence.html) by Sci-Kit Learn Team
 | **[Article]** [Interpret Model Predictions with Partial Dependence and Individual Conditional Expectation plots ](https://blogs.sas.com/content/subconsciousmusings/2018/06/12/interpret-model-predictions-with-partial-dependence-and-individual-conditional-expectation-plots/#:~:text=A%20partial%20dependence%20%28PD%29%20plot%20depicts%20the%20functional,the%20probability%20of%20flu%20increases%20linearly%20with%20fever.) by Ilknur Kaynar Kabul
 | **[Article]** [Correlation in R: Pearson and Spearman Correlation Matrix](https://www.guru99.com/r-pearson-spearman-correlation.html) by Daniel Johnson
