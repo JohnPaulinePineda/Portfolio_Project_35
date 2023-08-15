@@ -801,7 +801,7 @@ if ((nrow(DPA_LowVariance[DPA_LowVariance$nzv,]))==0){
 |
 ####  1.3.3.3 Collinearity
 |
-| **[A]** High correlation were noted for 7 pairs of numeric predictors with Pearson correlation coefficients >80% as confirmed using the preprocessing summaries from the <mark style="background-color: #CCECFF">**caret**</mark> package.
+| **[A]** High correlation values were noted for 7 pairs of numeric predictors with Pearson correlation coefficients >80% as confirmed using the preprocessing summaries from the <mark style="background-color: #CCECFF">**caret**</mark> package.
 |      **[A.1]** <span style="color: #FF0000">URBPOP</span> and <span style="color: #FF0000">RURPOP</span>  = -100.00%
 |      **[A.2]** <span style="color: #FF0000">GDP</span> and <span style="color: #FF0000">GNI</span>  = +99.99%
 |      **[A.3]** <span style="color: #FF0000">DPTIMM</span> and <span style="color: #FF0000">HEPIMM</span>  = +95.03%
