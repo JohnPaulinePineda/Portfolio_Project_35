@@ -522,7 +522,7 @@ if (length(names(DQA.Predictors.Numeric))==0) {
 ###  1.3.3 Data Preprocessing
 |
 |
-####  1.3.3.1 Outlier Treatment
+####  1.3.3.1 Outlier Detection
 |
 | **[A]** Outliers noted for 15 out of the 18 numeric predictors. Predictor values were visualized through a boxplot including observations classified as suspected outliers using the IQR criterion. The IQR criterion means that all observations above the (75th percentile + 1.5 x IQR) or below the (25th percentile - 1.5 x IQR) are suspected outliers, where IQR is the difference between the third quartile (75th percentile) and first quartile (25th percentile).
 |      **[A.1]** <span style="color: #FF0000">UNEMPR</span> = 30
