@@ -2905,7 +2905,21 @@ plot(Instance_2_GBM_LFP)
 |
 # **2. Summary** <a name="summary"></a>
 |
-| **A Stochastic Gradient Boosted model provided a set of robust and reliable estimates of life expectancy, primarily characterized by healthcare access (infant mortality, non-communicable disease-related mortality), demographic (gender, continent) and socio-economic (access to clean cooking, GDP per capita) factors. As a black-box model, various model-agnostic methods were used to interpret the model predictions.**
+| **A Stochastic Gradient Boosted model provided a set of robust and reliable estimates of life expectancy, primarily characterized by healthcare access (infant mortality, non-communicable disease-related mortality), demographic (gender, continent) and socio-economic (access to clean cooking, GDP per capita) factors. As a black-box model, various model-agnostic methods were used to interpret the model predictions. The key drivers identified for high life expectancy levels ranked by feature importance with their conditioned effects indicated were given as follows:**
+|
+| **[1] Infant mortality (-)**
+|
+| **[2] Non-communicable disease-related mortality (-)**
+|
+| **[3] Belonging to the Non-African continent**
+|
+| **[4] Belonging to the female gender**
+|
+| **[5] Access to clean fuels and technologies for cooking (+)**
+|
+| **[6] Gross domestic product per capita (+)**
+|
+| **Overall, progressive economies tend to have higher life expectancy potentially influenced by a complex interplay of various factors. Developed countries typically invest heavily in healthcare infrastructure, ensuring that their populations have access to quality medical services. Adequate healthcare contributes to early diagnosis, effective treatment, and improved overall health outcomes. Similarly, stable economies lead to higher standards of living. Economic stability is linked to improved living conditions, better nutrition, and reduced exposure to environmental hazards, all of which contribute to increased life expectancy. Interestingly, gender differences in life expectancy was generally observed across countries favoring women. However, it is essential to recognize that causation is multifaceted and each country's unique circumstances might contribute differently to its life expectancy outcomes.**
 |
 | **[A]** From an initial dataset comprised of 394 observations and 22 predictors, an optimal subset of **364 observations and 6 predictors** representing healthcare access, demographic and socio-economic factors were determined after conducting data quality assessment and feature selection, excluding cases or variables noted with irregularities and applying preprocessing operations most suitable for the downstream analysis.
 |
