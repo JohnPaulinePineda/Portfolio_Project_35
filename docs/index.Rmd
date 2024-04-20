@@ -2907,21 +2907,21 @@ plot(Instance_2_GBM_LFP)
 |
 # **2. Summary** <a name="summary"></a>
 |
-| **A Stochastic Gradient Boosted model provided a set of robust and reliable estimates of life expectancy, primarily characterized by healthcare access (infant mortality, non-communicable disease-related mortality), demographic (gender, continent) and socio-economic (access to clean cooking, GDP per capita) factors. As a black-box model, various model-agnostic methods were used to interpret the model predictions. The key drivers identified for high life expectancy levels ranked by feature importance with their conditioned effects indicated were given as follows:**
+| **A stochastic gradient boosted model provided a set of robust and reliable estimates of life expectancy, primarily characterized by healthcare access (infant mortality, non-communicable disease-related mortality), demographic (gender, continent) and socio-economic (access to clean cooking, GDP per capita) factors. As a black-box model, various model-agnostic methods were used to interpret the model predictions. The key drivers identified for high life expectancy levels ranked by feature importance with their conditioned effects indicated were given as follows:**
 |
 | **[1] Infant mortality (-)**
 |
 | **[2] Non-communicable disease-related mortality (-)**
 |
-| **[3] Belonging to the Non-African continent**
+| **[3] Belonging to the Non-African continent (+)**
 |
-| **[4] Belonging to the female gender**
+| **[4] Belonging to the female gender (+)**
 |
 | **[5] Access to clean fuels and technologies for cooking (+)**
 |
 | **[6] Gross domestic product per capita (+)**
 |
-| **Overall, progressive economies tend to have higher life expectancy potentially influenced by a complex interplay of various factors. Developed countries typically invest heavily in healthcare infrastructure, ensuring that their populations have access to quality medical services. Adequate healthcare contributes to early diagnosis, effective treatment, and improved overall health outcomes. Similarly, stable economies lead to higher standards of living. Economic stability is linked to improved living conditions, better nutrition, and reduced exposure to environmental hazards, all of which contribute to increased life expectancy. Interestingly, gender differences in life expectancy was generally observed across countries favoring women. However, it is essential to recognize that causation is multifaceted and each country's unique circumstances might contribute differently to its life expectancy outcomes.**
+| **Overall, progressive economies tend to have higher life expectancy potentially influenced by a complex interplay of various factors. Developed countries typically invest heavily in healthcare infrastructure, ensuring that their populations have access to quality medical services. Adequate healthcare contributes to early diagnosis, effective treatment, and improved overall health outcomes. Similarly, stable economies lead to higher standards of living. Economic stability is linked to improved living conditions, better nutrition, and reduced exposure to environmental hazards, all of which contribute to increased life expectancy. Interestingly, gender differences in life expectancy were generally observed across countries favoring women. However, it is essential to recognize that causation is multifaceted and each country's unique circumstances might contribute differently to its life expectancy outcomes.**
 |
 | **[A]** From an initial dataset comprised of 394 observations and 22 predictors, an optimal subset of **364 observations and 6 predictors** representing healthcare access, demographic and socio-economic factors were determined after conducting data quality assessment and feature selection, excluding cases or variables noted with irregularities and applying preprocessing operations most suitable for the downstream analysis.
 |
@@ -2930,6 +2930,18 @@ plot(Instance_2_GBM_LFP)
 | **[C]** The final model selected among candidates used **Stochastic Gradient Boosting** with optimal hyperparameters: **total number of trees (n.trees=300)**, **maximum depth of each tree (interaction.depth=2)**, **learning rate (shrinkage=0.1)** and **minimum number of observations in the terminal node (n.minobsinnode=5)**. This model demonstrated the best externally validated RMSE and R-Squared (**RMSE=2.1007**, **R-Squared=0.9171**); no excessive overfitting comparing the external and internal validation metrics (**RMSE=2.0978**, **R-Squared=0.9288**); and stable residual distribution with lowest variation.
 |
 | **[D]** Owing to the black-box nature of the selected model, post-hoc exploration of the model results involved model agnostic methods including **Dataset-Level Exploration** using model-level global explanations (Permutated Mean Dropout Loss-Based Variable Importance, Partial Dependence Plots) and **Instance-Level Exploration** using prediction-level local explanations (Breakdown Plots, Shapley Additive Explanations, Ceteris Paribus Plots, Local Fidelity Plots, Local Stability Plots). These results helped provide dataset-level and instance-level insights on the importance, contribution and effect of the various predictors to model prediction.
+|
+| **The current results have limitations which can be further addressed by extending the study to include the following actions:**
+|
+| **[1]** Considering the detection and treatment of multivariate outliers to develop robust and reliable predictive models that accurately capture the underlying patterns in the data rather than noise or anomalies
+|
+| **[2]** Conducting sensitivity analysis to assess the impact of outliers on model predictions and performance metrics - whether removing outliers improves model accuracy without sacrificing generalizability
+|
+| **[3]** Accounting for potential non-linearity and interactions among independent variables to gain insights into their influence on model prediction
+|
+| **[4]** Applying training and test data splitting prior to data transformation or scaling to avoid data snooping or inadvertently using information from the testing set in the model training process
+|
+| **[5]** Exploring stacking model structures by leveraging the strengths of diverse learning algorithms and mitigating the weaknesses of individual models to produce more robust predictions
 |
 | ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/docs/summary_1.png)
 |
