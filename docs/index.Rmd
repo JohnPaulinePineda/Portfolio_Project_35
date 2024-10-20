@@ -1,6 +1,6 @@
 ---
 title: "Supervised Learning : Characterizing Life Expectancy Drivers Across Countries Using Model-Agnostic Interpretation Methods for Black-Box Models"
-author: "John Pauline Pineda"
+author: "<b><a href='https://github.com/JohnPaulinePineda'>John Pauline Pineda</a></b>"
 date: "July 23, 2023"
 output: 
   html_document:
@@ -235,10 +235,15 @@ library(lime)
 library(DALEXtra)
 
 ##################################
+# Defining file paths
+##################################
+DATASETS_ORIGINAL_PATH <- file.path("datasets","original")
+
+##################################
 # Loading source and
 # formulating the analysis set
 ##################################
-LED <- read.csv("Life_Expectancy_Data.csv",
+LED <- read.csv(file.path("..", DATASETS_ORIGINAL_PATH, "Life_Expectancy_Data.csv"),
                 na.strings=c("NA","NaN"," ",""),
                 stringsAsFactors = FALSE)
 LED <- as.data.frame(LED)
@@ -2943,17 +2948,17 @@ plot(Instance_2_GBM_LFP)
 |
 | **[5]** Exploring stacking model structures by leveraging the strengths of diverse learning algorithms and mitigating the weaknesses of individual models to produce more robust predictions
 |
-| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/docs/summary_1.png)
+| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/images/summary_1.png)
 |
-| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/docs/summary_2.png)
+| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/images/summary_2.png)
 |
-| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/docs/summary_3.png)
+| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/images/summary_3.png)
 |
-| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/docs/summary_4.png)
+| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/images/summary_4.png)
 |
-| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/docs/summary_5.png)
+| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/images/summary_5.png)
 |
-| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/docs/summary_6.png)
+| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/images/summary_6.png)
 |
 # **3. References**
 |

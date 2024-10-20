@@ -1,0 +1,3041 @@
+---
+title: "Supervised Learning : Characterizing Life Expectancy Drivers Across Countries Using Model-Agnostic Interpretation Methods for Black-Box Models"
+author: "<b><a href='https://github.com/JohnPaulinePineda'>John Pauline Pineda</a></b>"
+date: "July 23, 2023"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 4
+    theme: readable
+    highlight: tango
+    css: doc.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width=15, fig.height=10)
+```
+# **1. Table of Contents**
+|
+##  1.1 Introduction
+|
+| Life expectancy is a statistical measure that represents the average number of years a person is expected to live from birth, assuming current mortality rates remain constant along the entire life course. It provides an [estimation of the overall health and well-being of a population](https://ourworldindata.org/life-expectancy) and is [often reflective of the local conditions](https://link.springer.com/article/10.1007/s10754-022-09338-5) encompassing numerous factors including demographic, socio-economic, healthcare access and healthcare quality.
+|
+| Using an open dataset from [Kaggle](https://www.kaggle.com/datasets/kiranshahi/life-expectancy-dataset) (with all credits attributed to [Kiran Shahi](https://www.kaggle.com/kiranshahi)) as primarily sourced from [The World Bank](https://www.worldbank.org/en/home), this study hypothesized that various world [development](https://datatopics.worldbank.org/world-development-indicators/) and [health](https://data.worldbank.org/indicator/?tab=all) indicators influence life expectancy across countries. A number of regression models was formulated to explore the relationship between life expectancy and these factors. 
+|
+| Subsequent analysis and modelling steps involving data understanding, data preparation, data exploration, model development, model validation and model presentation were individually detailed below, with all the results consolidated in a [<span style="color: #FF0000">**Summary**</span>](#summary) provided at the end of the document.
+|
+###  1.1.1 Study Objectives
+|
+| **The main objective of the study is to develop an interpretable regression model which could provide robust and reliable estimates of life expectancy from an optimal set of observations and predictors, while delivering accurate predictions when applied to new unseen data.**
+|
+| Specific objectives are given as follows:
+|
+| **[A]** Obtain an optimal subset of observations and predictors by conducting data quality assessment and feature selection, excluding cases or variables noted with irregularities and applying preprocessing operations most suitable for the downstream analysis
+|
+| **[B]** Develop multiple regression models with optimized hyperparameters through internal resampling validation
+|
+| **[C]** Select the final regression model among candidates based on robust performance estimates
+|
+| **[D]** Evaluate the final model performance and generalization ability through external validation in an independent set
+|
+| **[E]** Conduct a post-hoc exploration of the model results, even for black-box models, to provide general insights on the importance, contribution and effect of the various predictors to model prediction
+|
+###  1.1.2 Outcome
+|
+| The analysis endpoint for the study is described below:
+|
+| **[A]** <span style="color: #FF0000">LIFEXP</span> (numeric): **Life Expectancy**; Number of years a newborn infant would live if prevailing patterns of mortality at the time of its birth were to stay the same throughout its life.
+|
+###  1.1.3 Predictors
+|
+| Detailed descriptions for each individual predictor used in the study are provided as follows:
+|
+| **[A]** <span style="color: #FF0000">COUNTRY</span> (character): **Country**; Political unit with sovereignty (legitimate and total political power) over a territory and inhabitants within its borders.
+|
+| **[B]** <span style="color: #FF0000">YEAR</span> (numeric): **Year**; Year when all relevant data were gathered, fixed at 2019 for this analysis. 
+|
+| **[C]** <span style="color: #FF0000">GENDER</span> (factor): **Gender**, Biological categorization group upon which all relevant data are associated with.
+|
+| **[D]** <span style="color: #FF0000">CONTIN</span> (factor): **Continent**; Collective region where the specified country belongs to.
+|
+| **[E]** <span style="color: #FF0000">UNEMPR</span> (numeric, in %): **Unemployment Rate**; Proportion of unemployed individuals in a group among individuals currently in the labor force.
+|
+| **[F]** <span style="color: #FF0000">INFMOR</span> (numeric, in number of deaths): **Infant Mortality**;  Number of infants dying before reaching one year of age in agroup per 1,000 live births in a given year
+|
+| **[G]** <span style="color: #FF0000">GDP</span> (numeric, in USD): **Gross Domestic Product**; Sum of gross value added by all resident producers in the economy plus any product taxes and minus any subsidies not included in the value of the products. It is calculated without making deductions for depreciation of fabricated assets or for depletion and degradation of natural resources..
+|
+| **[H]** <span style="color: #FF0000">GNI</span> (numeric, in USD): **Gross National Income**; Sum of value added by all resident producers plus any product taxes (less subsidies) not included in the valuation of output plus net receipts of primary income (compensation of employees and property income) from abroad.
+|
+| **[I]** <span style="color: #FF0000">CLTECH</span> (numeric, in %): **Access to Clean Fuels and Technologies for Cooking**; Proportion of the population in a group with access to clean fuels and technologies for cooking. Under WHO guidelines, kerosene is excluded from clean cooking fuels.
+|
+| **[J]** <span style="color: #FF0000">PERCAP</span> (numeric, in USD): **Gross Domestic Product Per Capita**; Annual gross domestic product divided by midyear population within a group.
+|
+| **[K]** <span style="color: #FF0000">RTIMOR</span> (numeric, in number of deaths): **Mortality Caused by Road Traffic Injury**; Road traffic fatal injury deaths in a group per 100,000 population.
+|
+| **[L]** <span style="color: #FF0000">TUBINC</span> (numeric, in number of cases): **Incidence of Tuberculosis**; Estimated number of new and relapse tuberculosis cases in a group arising in a given year per 100,000 population.
+|
+| **[M]** <span style="color: #FF0000">DPTIMM</span> (numeric, in %): **DPT Immunization**; Proportion of children ages 12-23 months within a group who received diphtheria, pertussis (or whooping cough) and tetanus (DPT) vaccinations before 12 months or at any time before the survey. 
+|
+| **[N]** <span style="color: #FF0000">HEPIMM</span> (numeric, in %): **Hepatitis B Immunization**; Proportion of children ages 12-23 months within a group who received hepatitis B vaccinations before 12 months or at any time before the survey. 
+|
+| **[O]** <span style="color: #FF0000">MEAIMM</span> (numeric, in %): **Measles Immunization**; Proportion of children ages 12-23 months within a group who received measles vaccinations before 12 months or at any time before the survey.
+|
+| **[P]** <span style="color: #FF0000">HOSBED</span> (numeric, in number of beds): **Hospital Beds**; Number of hospital beds per 1,000 people in a group which include inpatient beds available in public, private, general, and specialized hospitals and rehabilitation centers.
+|
+| **[Q]** <span style="color: #FF0000">SANSER</span> (numeric, in %): **People Using At Least Basic Sanitation Services**; Proportion of people in a group using at least basic sanitation services, that is, improved sanitation facilities that are not shared with other households including basic sanitation services as well as those using safely managed sanitation services.
+|
+| **[R]** <span style="color: #FF0000">TUBTRT</span> (numeric, in %): **Tuberculosis Treatment Success Rate**; Proportion of all new tuberculosis cases registered under a national tuberculosis control programme within a group in a given year that successfully completed treatment, with or without bacteriological evidence of success ("cured" and "treatment completed" respectively).
+|
+| **[S]** <span style="color: #FF0000">URBPOP</span> (numeric, in %): **Urban Population**; Proportion of people in a group living in urban areas as defined by national statistical offices.
+|
+| **[T]** <span style="color: #FF0000">RURPOP</span> (numeric, in %): **Rural Population**; Proportion of people in a group living in rural areas as defined by national statistical offices:
+|
+| **[U]** <span style="color: #FF0000">NCOMOR</span> (numeric, in %): **Deaths due to Non-Communicable Diseases**; Proportion of deaths for all ages by underlying causes in a group which was attributed to non-communicable diseases including cancer, diabetes mellitus, cardiovascular diseases, digestive diseases, skin diseases, musculoskeletal diseases, and congenital anomalies.
+|
+| **[V]** <span style="color: #FF0000">SUIRAT</span> (numeric, in number of deaths): **Suicide Mortality Rate**; Number of suicide deaths annually in a group per 100,000 population.
+|
+##  1.2 Methodology
+|
+###  1.2.1 Data Assessment
+|
+| Preliminary data used in the study was evaluated and prepared for analysis and modelling using the following methods: 
+|
+| [Data Quality Assessment](http://appliedpredictivemodeling.com/) involves profiling the data to understand its suitability for machine learning tasks. The quality of training data has a huge impact on the efficiency, accuracy and complexity of the predictive modelling methods applied. Data remains susceptible to errors or irregularities that may be introduced during collection, aggregation or annotation stage. Issues such as incorrect labels, synonymous categories in a categorical variable or heterogeneity in columns, among others, which might go undetected by standard pre-processing modules in these frameworks can lead to sub-optimal model performance, inaccurate analysis and unreliable decisions.
+|
+| [Data Preprocessing](http://appliedpredictivemodeling.com/) involves changing the raw feature vectors into a representation that is more suitable for the downstream modelling and estimation processes, including data cleaning, integration, reduction and transformation. Data cleaning aims to identify and correct errors in the dataset that may negatively impact a predictive model such as removing outliers, replacing missing values, smoothing noisy data, and correcting inconsistent data. Data integration addresses potential issues with redundant and inconsistent data obtained from multiple sources through approaches such as detection of tuple duplication and data conflict. The purpose of data reduction is to have a condensed representation of the data set that is smaller in volume, while maintaining the integrity of the original data set. Data transformation converts the data into the most appropriate form for data modeling.
+|
+| [Data Exploration](http://appliedpredictivemodeling.com/) involves analyzing and investigating data sets to summarize their main characteristics, often employing data visualization methods. It helps determine how best to manipulate data sources to discover patterns, spot anomalies, test a hypothesis, or check assumptions. This process is primarily used to see what data can reveal beyond the formal modeling or hypothesis testing task and provides a better understanding of data set variables and the relationships between them.
+|
+###  1.2.2 Feature Selection
+|
+| Model-independent feature importance metrics were assessed for the numeric predictors in the study to determine the most optimal subset of variables for the subsequent modelling process which included the following:
+|
+| [Locally Weighted Scatterplot Smoothing Pseudo-R-Squared](https://www.tandfonline.com/doi/abs/10.1080/01621459.1979.10481038) computes the R-squared statistic - a goodness-of-fit measure which represents explained variability, improvement from null to fitted model and square of the correlation on predicted values obtained from a locally weighted scatterplot smoothing process. LOWESS consists of computing a series of local linear regressions, with each local regression restricted to a window of x-values. Smoothness is achieved by using overlapping windows and by gradually down-weighting points in each regression according to their distance from the anchor point of the window (tri-cube weighting).
+|
+| [Pearson's Correlation Coefficient](https://royalsocietypublishing.org/doi/10.1098/rsta.1896.0007) is a parametric measure of the linear correlation for a pair of features by calculating the ratio between their covariance and the product of their standard deviations. The presence of high absolute correlation values indicate the univariate association between the numeric predictors and the numeric response.
+|
+| [Spearman's Rank Correlation Coefficient](https://www.jstor.org/stable/1412159?origin=crossref) is a non-parametric measure of the linear correlation for a pair of features by applying the Spearman's rank equation to the sum of the  squared differences between their ranks. The presence of high absolute correlation values indicate the univariate association between the numeric predictors and the numeric response.
+|
+| [Maximal Information Coefficient](https://www.science.org/doi/10.1126/science.1205438) is an information theory-based measure of two-variable dependence through the computation of the mutual information normalized by the minimum joint entropy. It evaluates the strength of linear or non-linear association using binning as a means to apply mutual information between continuous random variables and selecting the maximum over many possible grids. The presence of high coefficient values indicate the univariate association between the numeric predictors and the numeric response.
+|
+| [Relief Values](https://link.springer.com/article/10.1023/A:1025667309714) are heuristic measures which estimate the quality of variables according to how well their values compare to instances that are near to each other, but are efficient in detecting contextual information even with strong dependencies between attributes. Random instances and the corresponding K-nearest instances are selected, with the the weights for the different prediction values, different attributes and different prediction consolidated. The rank of the instance in a sequence of instances ordered by the distance is taken into account based on a a user-defined parameter controlling the influence of the distance. The contributions of each K-nearest instances are normalized by dividing the results with the sum of all K contributions. The presence of high relief values indicate the univariate association between the numeric predictors and the numeric response.
+|
+###  1.2.3 Model Formulation
+|
+| [Machine Learning Regression Models](http://appliedpredictivemodeling.com/) are algorithms that learn to predict a continuous numeric value (output or target) based on input features. Regression is a supervised learning task where the models are trained on a labeled dataset, and their goal is to establish a relationship between the input features and the continuous target variable. Once trained, these models can make predictions for new, unseen instances.
+|
+| In addition to a standard glass-box model, this study implemented predominantly black-box regression modelling procedures with complex structures involving large numbers of model coefficients or mathematical transformations which lacked transparency in terms of the internal processes and weighted factors used in reaching a decision. Models applied in the analysis for predicting the numeric response were the following:
+|
+| [Linear Regression](https://link.springer.com/book/10.1007/978-1-4757-3462-1) explores the linear relationship between a scalar response and one or more covariates by having the conditional mean of the dependent variable be an affine function of the independent variables. The relationship is modeled through a disturbance term which represents an unobserved random variable that adds noise. The algorithm is typically formulated from the data using the least squares method which seeks to estimate the coefficients by minimizing the squared residual function. The linear equation assigns one scale factor represented by a coefficient to each covariate and an additional coefficient called the intercept or the bias coefficient which gives the line an additional degree of freedom allowing to move up and down a two-dimensional plot.
+|
+| [Stochastic Gradient Boosting](https://www.sciencedirect.com/science/article/abs/pii/S0167947301000652) is an ensemble learning method which combines multiple weak learners in an additive manner to improve prediction. The process is initialized using a decision tree base learner with the aim of minimizing a specified loss function. The negative gradient  of the loss function with respect to the predicted values from the current ensemble is calculated. Residuals are determined as the difference between the actual target values and the learner predictions. A new base learner is subsequently formulated but is trained to predict the residuals. The algorithm involves iteratively improving the ensemble by focusing on the residuals of the previous predictions. Each subsequent base learner is trained to reduce the errors made by the previous ensemble, gradually refining the model's predictive capabilities.
+|
+| [Random Forest](https://link.springer.com/article/10.1023/A:1010933404324) is an ensemble learning method made up of a large set of small decision trees called estimators, with each producing its own prediction. The random forest model aggregates the predictions of the estimators to produce a more accurate prediction. The algorithm involves bootstrap aggregating (where smaller subsets of the training data are repeatedly subsampled with replacement), random subspacing (where a subset of features are sampled and used to train each individual estimator), estimator training (where unpruned decision trees are formulated for each estimator) and inference (where a final prediction is formilated by aggregating the individual predictions of all estimators).
+|
+| [Neural Network](https://www.cambridge.org/core/books/pattern-recognition-and-neural-networks/4E038249C9BAA06C8F4EE6F044D09C5C) comprises of node layers - containing an input layer, one or more hidden layers, and an output layer. Each node, or artificial neuron, connects to another and has an associated weight and threshold. If the output of any individual node is above the specified threshold value, that node is activated, sending data to the next layer of the network. The process involves the initialization of weights and biases for each neuron in the network. Forward propagation computates the output of the neural network, as determined by the weighted sum of the inputs and a bias term. An activation function is applied to introduce non-linearity to the hidden layer. Back propagation is used to update the weights and the biases in the network by calculating the gradients of the loss function using the chain rule with the magnitude determined by a learning rate. This step allows the network to learn from the errors and adjust the parameters to minimize the loss.
+|
+| [Partial Least Squares](https://epubs.siam.org/doi/10.1137/0905052) applies dimensionality reduction to address high multicollinearity among predictors in a linear regression. The algorithm calculates summary indices termed as partial least squares components which are linear combinations of the original predictors by considering the variation in both the response and the predictor variables. The method of least squares is then applied to fit a linear regression model using the first principal components as predictors, with the optimal number determined using cross-validation.
+|
+| [Cubist Regression](https://www.semanticscholar.org/paper/Learning-With-Continuous-Classes-Quinlan/ead572634c6f7253bf187a3e9a7dc87ae2e34258) is a rule-based model that is an extension of Quinlan’s M5 model tree. A tree is grown where the terminal leaves contain linear regression models. These models are based on the predictors used in previous splits. Also, there are intermediate linear models at each step of the tree. A prediction is made using the linear regression model at the terminal node of the tree, but is smoothed by taking into account the prediction from the linear model in the previous node of the tree (which also occurs recursively up the tree). The tree is reduced to a set of rules, which initially are paths from the top of the tree to the bottom. Rules are eliminated via pruning and/or combined for simplification. The Cubist model can also use a boosting-like scheme called committees where iterative model trees are created in sequence. Another innovation is about using nearest-neighbors to adjust the predictions from the rule-based model.
+|
+###  1.2.4 Model Hyperparameter Tuning
+|
+| The optimal combination of hyperparameter values which maximized the performance of the various regression models in the study used the following hyperparameter tuning strategy:
+|
+| [K-Fold Cross-Validation](http://appliedpredictivemodeling.com/) involves dividing the training set after a random shuffle into a user-defined K number of smaller non-overlapping sets called folds. Each unique fold is assigned as the hold-out test data to assess the model trained from the data set collected from all the remaining K-1 folds. The evaluation score is retained but the model is discarded. The process is recursively performed resulting to a total of K fitted models and evaluated on the K hold-out test sets. All K-computed performance measures reported from the process are then averaged to represent the estimated performance of the model. This approach can be computationally expensive and may be highly dependent on how the data was randomly assigned to their respective folds, but does not waste too much data which is a major advantage in problems where the number of samples is very small.
+|
+###  1.2.5 Model Performance Evaluation
+|
+| Evaluation metrics applied in the analysis to estimate the generalization performance of the regression models on internally sub-sampled or independent datasets were the following:
+|
+| [Root Mean Square Error](https://link.springer.com/book/10.1007/978-0-387-84858-7) computes the square root of the average squared difference between the predicted and target values which ranges from zero to infinity. A value of zero indicates perfect prediction of the target values. The metric is weighted according to the square of the error - putting greater influence on large errors than smaller errors which makes it sensitive to outliers but may also encourage conservative prediction.
+|
+| [R-Squared](https://link.springer.com/book/10.1007/978-0-387-84858-7) computes the normalized version of the root mean squared error and also referred to as the coefficient of determination. With a value ranging from zero to infinity, a value of one indicates perfect prediction of the target values. The metric can also be interpreted as the fraction of the total variance in the response variable which can be explained by the model.  
+|
+###  1.2.6 Model Presentation
+|
+| Due to the black-box nature of most regression models considered in the study, model presentation was conducted post-hoc and focused on model-agnostic techniques which did not consider any assumptions about the model structures. These methods were grouped into two categories.
+|
+| [Dataset Level Exploration Techniques](https://ema.drwhy.ai/) used model level global explanations which included the following: 
+|
+| [Variable Importance](https://jmlr.org/papers/volume20/18-760/18-760.pdf) pertains to model-agnostic methods which allow the comparison of an explanatory variable’s importance between models with different structures. The process involves measuring how much a model’s performance change if the effect of a selected explanatory variable, or of a group of variables, is removed. To remove the effect, perturbations are applied including resampling from an empirical distribution or permutation of the values of the variable. If a variable is important, the model’s performance is expected to worsen after permuting the values of the variable. A larger change in performance indicates the greater importance of the variable.
+|
+| [Partial Dependence Plots](https://www.semanticscholar.org/paper/Greedy-function-approximation%3A-A-gradient-boosting-Friedman/1679beddda3a183714d380e944fe6bf586c083cd) show how the expected values of model prediction behave as a function of a selected explanatory variable using the average of a set of individual ceteris paribus profiles. While a ceteris paribus profile shows the dependence of an instance-level prediction on an explanatory variable, a partial dependence profile is estimated by the mean of the ceteris paribus profiles for all instances in a data set.
+|
+| [Instance Level Exploration Techniques](https://ema.drwhy.ai/) used prediction level local explanations with descriptions given below: 
+|
+| [Breakdown Plots](https://ieeexplore.ieee.org/document/4407709) present variable attributions by decomposing the model's prediction into contributions that can be attributed to the different explanatory variables. Given a prediction which is an approximation of the expected value of the dependent variable driven by the values of explanatory variables, the process involves capturing the contribution of an explanatory variable to the model’s prediction by computing the shift in the expected value of the response, while fixing the values of other variables.
+|
+| [Shapley Additive Explanations](https://dl.acm.org/doi/10.5555/1756006.1756007) are based on Shapley values developed in the cooperative game theory. The process involves explaining a prediction by assuming that each explanatory variable for an instance is a player in a game where the prediction is the payout. The game is the prediction task for a single instance of the data set. The gain is the actual prediction for this instance minus the average prediction for all instances. The players are the explanatory variable values of the instance that collaborate to receive the gain (predict a certain value). The determined value is the average marginal contribution of an explanatory variable across all possible coalitions.
+|
+| [Ceteris Paribus Profiles](https://www.tandfonline.com/doi/full/10.1080/10618600.2014.907095) examine the influence of an explanatory variable by assuming that the values of all other variables do not change. The main objective is to understand how changes in the values of the variable affect the model’s predictions. The process involves evaluating the dependence of the conditional expectation of the response on the values of the particular explanatory variable.
+|
+| [Local Fidelity Plots](https://ema.drwhy.ai/) evaluate the local predictive performance of the model around the observation of interest. The process involves summarizing two distributions of residuals including the residuals for the neighbors of the observation of interest and residuals for the entire training dataset except for neighbors. The results help evaluate whether the model-fit for the instance of interest is unbiased (based on small residuals with distributions symmetric around 0).
+|
+| [Local Stability Plots](https://ema.drwhy.ai/) assess the local stability of predictions around the observation of interest. The process involves checking whether small changes in the explanatory variables, as represented by the changes within the set of neighbors, induce much influence on the predictions. The results help evaluate whether the model is locally additive (based on parallel ceteris paribus profiles) and locally stable (based on adjacent ceteris paribus profiles).
+|
+##  1.3 Results
+|
+###  1.3.1 Data Preparation
+|
+| **[A]** The initial tabular dataset was comprised of 394 observations and 23 variables (including 2 metadata, 1 response and 20 predictors). 
+|      **[A.1]** 394 rows (observations)
+|      **[A.2]** 23 columns (variables)
+|             **[A.2.1]** 1/23 instance labels = <span style="color: #FF0000">COUNTRY</span> (character)
+|             **[A.2.2]** 1/23 supplementary information = <span style="color: #FF0000">YEAR</span> (numeric)
+|             **[A.2.3]** 1/23 response = <span style="color: #FF0000">LIFEXP</span> (numeric)
+|             **[A.2.4]** 20/23 predictors = 18/20 numeric + 2/20 factor
+|                      **[A.2.4.1]** <span style="color: #FF0000">GENDER</span> (factor)
+|                      **[A.2.4.2]** <span style="color: #FF0000">CONTIN</span> (factor)
+|                      **[A.2.4.3]** <span style="color: #FF0000">UNEMPR</span> (numeric)
+|                      **[A.2.4.4]** <span style="color: #FF0000">INFMOR</span> (numeric)
+|                      **[A.2.4.5]** <span style="color: #FF0000">GDP</span> (numeric)
+|                      **[A.2.4.6]** <span style="color: #FF0000">GNI</span> (numeric)
+|                      **[A.2.4.7]** <span style="color: #FF0000">CLTECH</span> (numeric)
+|                      **[A.2.4.8]** <span style="color: #FF0000">PERCAP</span> (numeric)
+|                      **[A.2.4.9]** <span style="color: #FF0000">RTIMOR</span> (numeric)
+|                      **[A.2.4.10]** <span style="color: #FF0000">TUBINC</span> (numeric)
+|                      **[A.2.4.11]** <span style="color: #FF0000">DPTIMM</span> (numeric)
+|                      **[A.2.4.12]** <span style="color: #FF0000">HEPIMM</span> (numeric)
+|                      **[A.2.4.13]** <span style="color: #FF0000">MEAIMM</span> (numeric)
+|                      **[A.2.4.14]** <span style="color: #FF0000">HOSBED</span> (numeric)
+|                      **[A.2.4.15]** <span style="color: #FF0000">SANSER</span> (numeric)
+|                      **[A.2.4.16]** <span style="color: #FF0000">TUBTRT</span> (numeric)
+|                      **[A.2.4.17]** <span style="color: #FF0000">URBPOP</span> (numeric)
+|                      **[A.2.4.18]** <span style="color: #FF0000">RURPOP</span> (numeric)
+|                      **[A.2.4.19]** <span style="color: #FF0000">NCOMOR</span> (numeric)
+|                      **[A.2.4.20]** <span style="color: #FF0000">SUIRAT</span> (numeric)
+|
+| **[B]** Preliminary transformation was applied to the <span style="color: #FF0000">GDP</span>, <span style="color: #FF0000">GNI</span>  and <span style="color: #FF0000">PERCAP</span> predictors which were noted with high range of values. 
+|      **[B.1]** <span style="color: #FF0000">GDP</span> (numeric)
+|      **[B.2]** <span style="color: #FF0000">GNI</span> (numeric)
+|      **[B.3]** <span style="color: #FF0000">PERCAP</span> (numeric)
+|
+| 
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.1, warning=FALSE, message=FALSE}
+##################################
+# Loading R libraries
+##################################
+library(DALEX)
+library(caret)
+library(randomForest)
+library(e1071)
+library(gbm)
+library(skimr)
+library(corrplot)
+library(lares)
+library(dplyr)
+library(minerva)
+library(CORElearn)
+library(patchwork)
+library(lime)
+library(DALEXtra)
+
+##################################
+# Defining file paths
+##################################
+DATASETS_ORIGINAL_PATH <- file.path("datasets","original")
+
+##################################
+# Loading source and
+# formulating the analysis set
+##################################
+LED <- read.csv(file.path("..", DATASETS_ORIGINAL_PATH, "Life_Expectancy_Data.csv"),
+                na.strings=c("NA","NaN"," ",""),
+                stringsAsFactors = FALSE)
+LED <- as.data.frame(LED)
+
+##################################
+# Performing a general exploration of the data set
+##################################
+dim(LED)
+str(LED)
+summary(LED)
+
+##################################
+# Transforming to appropriate data types
+##################################
+LED$YEAR <- factor(LED$YEAR,
+                      levels = c("2019"))
+LED$GENDER <- factor(LED$GENDER,
+                      levels = c("Male","Female"))
+LED$CONTIN <- as.factor(LED$CONTIN)
+
+##################################
+# Reducing the range of values
+# for certain numeric predictors
+##################################
+LED$GDP     <- LED$GDP/1000000000
+LED$GNI     <- LED$GNI/1000000000
+LED$PERCAP  <- LED$PERCAP/1000
+
+##################################
+# Formulating a data type assessment summary
+##################################
+PDA <- LED
+(PDA.Summary <- data.frame(
+  Column.Index=c(1:length(names(PDA))),
+  Column.Name= names(PDA), 
+  Column.Type=sapply(PDA, function(x) class(x)), 
+  row.names=NULL)
+)
+
+```
+
+</details>
+
+###  1.3.2 Data Quality Assessment
+|
+| **[A]** No missing observations noted for any variable.
+|
+| **[B]** Low variance observed for 3 numeric predictors with First.Second.Mode.Ratio>5.
+|      **[B.1]** <span style="color: #FF0000">SANSER</span> = 12.00
+|      **[B.2]** <span style="color: #FF0000">UNEMPR</span> = 11.00
+|      **[B.3]** <span style="color: #FF0000">NCOMOR</span> = 6.00
+|
+| **[C]** No low variance observed for any predictor with Unique.Count.Ratio<0.01.
+|
+| **[D]** High skewness observed for 3 numeric predictors with Skewness>3 or Skewness<(-3). 
+|      **[D.1]** <span style="color: #FF0000">GDP</span> = 8.62
+|      **[D.2]** <span style="color: #FF0000">GNI</span> = 8.55
+|      **[D.3]** <span style="color: #FF0000">SUIRAT</span> = 4.08
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.2, warning=FALSE, message=FALSE}
+##################################
+# Loading dataset
+##################################
+DQA <- LED
+
+##################################
+# Formulating an overall data quality assessment summary
+##################################
+(DQA.Summary <- data.frame(
+  Column.Index=c(1:length(names(DQA))),
+  Column.Name= names(DQA),
+  Column.Type=sapply(DQA, function(x) class(x)),
+  Row.Count=sapply(DQA, function(x) nrow(DQA)),
+  NA.Count=sapply(DQA,function(x)sum(is.na(x))),
+  Fill.Rate=sapply(DQA,function(x)format(round((sum(!is.na(x))/nrow(DQA)),3),nsmall=3)),
+  row.names=NULL)
+)
+
+##################################
+# Listing all Predictors
+##################################
+DQA.Predictors <- DQA[,!names(DQA) %in% c("COUNTRY","YEAR","LIFEXP")]
+
+##################################
+# Listing all numeric Predictors
+##################################
+DQA.Predictors.Numeric <- DQA.Predictors[,sapply(DQA.Predictors, is.numeric), drop = FALSE]
+
+if (length(names(DQA.Predictors.Numeric))>0) {
+    print(paste0("There is (are) ",
+               (length(names(DQA.Predictors.Numeric))),
+               " numeric descriptor variable(s)."))
+} else {
+  print("There are no numeric descriptor variables.")
+}
+
+##################################
+# Listing all factor Predictors
+##################################
+DQA.Predictors.Factor <- DQA.Predictors[,sapply(DQA.Predictors, is.factor), drop = FALSE]
+
+if (length(names(DQA.Predictors.Factor))>0) {
+    print(paste0("There is (are) ",
+               (length(names(DQA.Predictors.Factor))),
+               " factor descriptor variable(s)."))
+} else {
+  print("There are no factor descriptor variables.")
+}
+
+##################################
+# Formulating a data quality assessment summary for factor Predictors
+##################################
+if (length(names(DQA.Predictors.Factor))>0) {
+
+  ##################################
+  # Formulating a function to determine the first mode
+  ##################################
+  FirstModes <- function(x) {
+    ux <- unique(na.omit(x))
+    tab <- tabulate(match(x, ux))
+    ux[tab == max(tab)]
+  }
+
+  ##################################
+  # Formulating a function to determine the second mode
+  ##################################
+  SecondModes <- function(x) {
+    ux <- unique(na.omit(x))
+    tab <- tabulate(match(x, ux))
+    fm = ux[tab == max(tab)]
+    sm = x[!(x %in% fm)]
+    usm <- unique(sm)
+    tabsm <- tabulate(match(sm, usm))
+    ifelse(is.na(usm[tabsm == max(tabsm)])==TRUE,
+           return("x"),
+           return(usm[tabsm == max(tabsm)]))
+  }
+
+  (DQA.Predictors.Factor.Summary <- data.frame(
+  Column.Name= names(DQA.Predictors.Factor),
+  Column.Type=sapply(DQA.Predictors.Factor, function(x) class(x)),
+  Unique.Count=sapply(DQA.Predictors.Factor, function(x) length(unique(x))),
+  First.Mode.Value=sapply(DQA.Predictors.Factor, function(x) as.character(FirstModes(x)[1])),
+  Second.Mode.Value=sapply(DQA.Predictors.Factor, function(x) as.character(SecondModes(x)[1])),
+  First.Mode.Count=sapply(DQA.Predictors.Factor, function(x) sum(na.omit(x) == FirstModes(x)[1])),
+  Second.Mode.Count=sapply(DQA.Predictors.Factor, function(x) sum(na.omit(x) == SecondModes(x)[1])),
+  Unique.Count.Ratio=sapply(DQA.Predictors.Factor, function(x) format(round((length(unique(x))/nrow(DQA.Predictors.Factor)),3), nsmall=3)),
+  First.Second.Mode.Ratio=sapply(DQA.Predictors.Factor, function(x) format(round((sum(na.omit(x) == FirstModes(x)[1])/sum(na.omit(x) == SecondModes(x)[1])),3), nsmall=3)),
+  row.names=NULL)
+  )
+
+}
+
+##################################
+# Formulating a data quality assessment summary for numeric Predictors
+##################################
+if (length(names(DQA.Predictors.Numeric))>0) {
+
+  ##################################
+  # Formulating a function to determine the first mode
+  ##################################
+  FirstModes <- function(x) {
+    ux <- unique(na.omit(x))
+    tab <- tabulate(match(x, ux))
+    ux[tab == max(tab)]
+  }
+
+  ##################################
+  # Formulating a function to determine the second mode
+  ##################################
+  SecondModes <- function(x) {
+    ux <- unique(na.omit(x))
+    tab <- tabulate(match(x, ux))
+    fm = ux[tab == max(tab)]
+    sm = na.omit(x)[!(na.omit(x) %in% fm)]
+    usm <- unique(sm)
+    tabsm <- tabulate(match(sm, usm))
+    ifelse(is.na(usm[tabsm == max(tabsm)])==TRUE,
+           return(0.00001),
+           return(usm[tabsm == max(tabsm)]))
+  }
+
+  (DQA.Predictors.Numeric.Summary <- data.frame(
+  Column.Name= names(DQA.Predictors.Numeric),
+  Column.Type=sapply(DQA.Predictors.Numeric, function(x) class(x)),
+  Unique.Count=sapply(DQA.Predictors.Numeric, function(x) length(unique(x))),
+  Unique.Count.Ratio=sapply(DQA.Predictors.Numeric, function(x) format(round((length(unique(x))/nrow(DQA.Predictors.Numeric)),3), nsmall=3)),
+  First.Mode.Value=sapply(DQA.Predictors.Numeric, function(x) format(round((FirstModes(x)[1]),3),nsmall=3)),
+  Second.Mode.Value=sapply(DQA.Predictors.Numeric, function(x) format(round((SecondModes(x)[1]),3),nsmall=3)),
+  First.Mode.Count=sapply(DQA.Predictors.Numeric, function(x) sum(na.omit(x) == FirstModes(x)[1])),
+  Second.Mode.Count=sapply(DQA.Predictors.Numeric, function(x) sum(na.omit(x) == SecondModes(x)[1])),
+  First.Second.Mode.Ratio=sapply(DQA.Predictors.Numeric, function(x) format(round((sum(na.omit(x) == FirstModes(x)[1])/sum(na.omit(x) == SecondModes(x)[1])),3), nsmall=3)),
+  Minimum=sapply(DQA.Predictors.Numeric, function(x) format(round(min(x,na.rm = TRUE),3), nsmall=3)),
+  Mean=sapply(DQA.Predictors.Numeric, function(x) format(round(mean(x,na.rm = TRUE),3), nsmall=3)),
+  Median=sapply(DQA.Predictors.Numeric, function(x) format(round(median(x,na.rm = TRUE),3), nsmall=3)),
+  Maximum=sapply(DQA.Predictors.Numeric, function(x) format(round(max(x,na.rm = TRUE),3), nsmall=3)),
+  Skewness=sapply(DQA.Predictors.Numeric, function(x) format(round(skewness(x,na.rm = TRUE),3), nsmall=3)),
+  Kurtosis=sapply(DQA.Predictors.Numeric, function(x) format(round(kurtosis(x,na.rm = TRUE),3), nsmall=3)),
+  Percentile25th=sapply(DQA.Predictors.Numeric, function(x) format(round(quantile(x,probs=0.25,na.rm = TRUE),3), nsmall=3)),
+  Percentile75th=sapply(DQA.Predictors.Numeric, function(x) format(round(quantile(x,probs=0.75,na.rm = TRUE),3), nsmall=3)),
+  row.names=NULL)
+  )
+
+}
+
+##################################
+# Identifying potential data quality issues
+##################################
+
+##################################
+# Checking for missing observations
+##################################
+if ((nrow(DQA.Summary[DQA.Summary$NA.Count>0,]))>0){
+  print(paste0("Missing observations noted for ",
+               (nrow(DQA.Summary[DQA.Summary$NA.Count>0,])),
+               " variable(s) with NA.Count>0 and Fill.Rate<1.0."))
+  DQA.Summary[DQA.Summary$NA.Count>0,]
+} else {
+  print("No missing observations noted.")
+}
+
+##################################
+# Checking for zero or near-zero variance Predictors
+##################################
+if (length(names(DQA.Predictors.Factor))==0) {
+  print("No factor Predictors noted.")
+} else if (nrow(DQA.Predictors.Factor.Summary[as.numeric(as.character(DQA.Predictors.Factor.Summary$First.Second.Mode.Ratio))>5,])>0){
+  print(paste0("Low variance observed for ",
+               (nrow(DQA.Predictors.Factor.Summary[as.numeric(as.character(DQA.Predictors.Factor.Summary$First.Second.Mode.Ratio))>5,])),
+               " factor variable(s) with First.Second.Mode.Ratio>5."))
+  DQA.Predictors.Factor.Summary[as.numeric(as.character(DQA.Predictors.Factor.Summary$First.Second.Mode.Ratio))>5,]
+} else {
+  print("No low variance factor Predictors due to high first-second mode ratio noted.")
+}
+
+if (length(names(DQA.Predictors.Numeric))==0) {
+  print("No numeric Predictors noted.")
+} else if (nrow(DQA.Predictors.Numeric.Summary[as.numeric(as.character(DQA.Predictors.Numeric.Summary$First.Second.Mode.Ratio))>5,])>0){
+  print(paste0("Low variance observed for ",
+               (nrow(DQA.Predictors.Numeric.Summary[as.numeric(as.character(DQA.Predictors.Numeric.Summary$First.Second.Mode.Ratio))>5,])),
+               " numeric variable(s) with First.Second.Mode.Ratio>5."))
+  DQA.Predictors.Numeric.Summary[as.numeric(as.character(DQA.Predictors.Numeric.Summary$First.Second.Mode.Ratio))>5,]
+} else {
+  print("No low variance numeric Predictors due to high first-second mode ratio noted.")
+}
+
+if (length(names(DQA.Predictors.Numeric))==0) {
+  print("No numeric Predictors noted.")
+} else if (nrow(DQA.Predictors.Numeric.Summary[as.numeric(as.character(DQA.Predictors.Numeric.Summary$Unique.Count.Ratio))<0.01,])>0){
+  print(paste0("Low variance observed for ",
+               (nrow(DQA.Predictors.Numeric.Summary[as.numeric(as.character(DQA.Predictors.Numeric.Summary$Unique.Count.Ratio))<0.01,])),
+               " numeric variable(s) with Unique.Count.Ratio<0.01."))
+  DQA.Predictors.Numeric.Summary[as.numeric(as.character(DQA.Predictors.Numeric.Summary$Unique.Count.Ratio))<0.01,]
+} else {
+  print("No low variance numeric Predictors due to low unique count ratio noted.")
+}
+
+##################################
+# Checking for skewed Predictors
+##################################
+if (length(names(DQA.Predictors.Numeric))==0) {
+  print("No numeric Predictors noted.")
+} else if (nrow(DQA.Predictors.Numeric.Summary[as.numeric(as.character(DQA.Predictors.Numeric.Summary$Skewness))>3 |
+                                               as.numeric(as.character(DQA.Predictors.Numeric.Summary$Skewness))<(-3),])>0){
+  print(paste0("High skewness observed for ",
+  (nrow(DQA.Predictors.Numeric.Summary[as.numeric(as.character(DQA.Predictors.Numeric.Summary$Skewness))>3 |
+                                               as.numeric(as.character(DQA.Predictors.Numeric.Summary$Skewness))<(-3),])),
+  " numeric variable(s) with Skewness>3 or Skewness<(-3)."))
+  DQA.Predictors.Numeric.Summary[as.numeric(as.character(DQA.Predictors.Numeric.Summary$Skewness))>3 |
+                                 as.numeric(as.character(DQA.Predictors.Numeric.Summary$Skewness))<(-3),]
+} else {
+  print("No skewed numeric Predictors noted.")
+}
+
+```
+
+</details>
+
+###  1.3.3 Data Preprocessing
+|
+|
+####  1.3.3.1 Outlier Detection
+|
+| **[A]** Outliers noted for 15 out of the 18 numeric predictors. Predictor values were visualized through a boxplot including observations classified as suspected outliers using the IQR criterion. The IQR criterion means that all observations above the (75th percentile + 1.5 x IQR) or below the (25th percentile - 1.5 x IQR) are suspected outliers, where IQR is the difference between the third quartile (75th percentile) and first quartile (25th percentile).
+|      **[A.1]** <span style="color: #FF0000">UNEMPR</span> = 30
+|      **[A.2]** <span style="color: #FF0000">INFMOR</span> = 10
+|      **[A.3]** <span style="color: #FF0000">GDP</span> = 46
+|      **[A.4]** <span style="color: #FF0000">GNI</span> = 48
+|      **[A.5]** <span style="color: #FF0000">PERCAP</span> = 46
+|      **[A.6]** <span style="color: #FF0000">RTIMOR</span> = 2
+|      **[A.7]** <span style="color: #FF0000">TUBINC</span> = 32
+|      **[A.8]** <span style="color: #FF0000">DPTIMM</span> = 34
+|      **[A.9]** <span style="color: #FF0000">HEPIMM</span> = 26
+|      **[A.10]** <span style="color: #FF0000">MEAIMM</span> = 40
+|      **[A.11]** <span style="color: #FF0000">HOSBED</span> = 16
+|      **[A.12]** <span style="color: #FF0000">SANSER</span> = 8
+|      **[A.13]** <span style="color: #FF0000">TUBTRT</span> = 34
+|      **[A.14]** <span style="color: #FF0000">NCOMOR</span> = 11
+|      **[A.15]** <span style="color: #FF0000">SUIRAT</span> = 29
+|
+| **[B]** Distributional anomalies observed for 9 predictors showing a high number of observations reporting the exact same set of values.
+|      **[B.1]** <span style="color: #FF0000">INFMOR=30.20</span> 
+|      **[B.2]** <span style="color: #FF0000">CLTECH=60.60</span> 
+|      **[B.3]** <span style="color: #FF0000">RTIMOR=18.20</span> 
+|      **[B.4]** <span style="color: #FF0000">DPTIMM=85.70</span> 
+|      **[B.5]** <span style="color: #FF0000">HEPIMM=81.30</span>
+|      **[B.6]** <span style="color: #FF0000">MEAIMM=84.90</span> 
+|      **[B.7]** <span style="color: #FF0000">HOSBED=3.00</span> 
+|      **[B.8]** <span style="color: #FF0000">NCOMOR=22.10</span> 
+|      **[B.9]** <span style="color: #FF0000">SUIRAT=10.60</span> 
+|
+| **[C]** A total of 30 observations representing 15 countries associated with these unreliable values were removed for the subsequent analysis.
+|      **[C.1]** <span style="color: #FF0000">COUNTRY=Aruba</span>
+|      **[C.2]** <span style="color: #FF0000">COUNTRY=Bermuda</span>
+|      **[C.3]** <span style="color: #FF0000">COUNTRY=Channel Islands</span>
+|      **[C.4]** <span style="color: #FF0000">COUNTRY=Faroe Islands</span>
+|      **[C.5]** <span style="color: #FF0000">COUNTRY=French Polynesia</span>
+|      **[C.6]** <span style="color: #FF0000">COUNTRY=Guam</span>
+|      **[C.7]** <span style="color: #FF0000">COUNTRY=Hong Kong SAR, China</span>
+|      **[C.8]** <span style="color: #FF0000">COUNTRY=Kosovo</span>
+|      **[C.9]** <span style="color: #FF0000">COUNTRY=Liechtenstein</span>
+|      **[C.10]** <span style="color: #FF0000">COUNTRY=Macao SAR, China</span>
+|      **[C.11]** <span style="color: #FF0000">COUNTRY=New Caledonia</span>
+|      **[C.12]** <span style="color: #FF0000">COUNTRY=Puerto Rico</span>
+|      **[C.13]** <span style="color: #FF0000">COUNTRY=St. Martin (French part)</span>
+|      **[C.14]** <span style="color: #FF0000">COUNTRY=Virgin Islands (U.S.)</span>
+|      **[C.15]** <span style="color: #FF0000">COUNTRY=West Bank and Gaza</span>
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.3.0, warning=FALSE, message=FALSE}
+##################################
+# Loading dataset
+##################################
+DPA <- LED
+
+##################################
+# Gathering descriptive statistics
+##################################
+(DPA_Skimmed <- skim(DPA))
+```
+
+```{r section_1.3.3.1, warning=FALSE, message=FALSE, fig.width=15, fig.height=2}
+##################################
+# Outlier Treatment
+##################################
+
+##################################
+# Listing all Predictors
+##################################
+DPA.Predictors <- DPA[,!names(DPA) %in% c("COUNTRY","YEAR","LIFEXP")]
+
+##################################
+# Listing all numeric predictors
+##################################
+DPA.Predictors.Numeric <- DPA.Predictors[,sapply(DPA.Predictors, is.numeric)]
+
+##################################
+# Identifying outliers for the numeric predictors
+##################################
+OutlierCountList <- c()
+
+for (i in 1:ncol(DPA.Predictors.Numeric)) {
+  Outliers <- boxplot.stats(DPA.Predictors.Numeric[,i])$out
+  OutlierCount <- length(Outliers)
+  OutlierCountList <- append(OutlierCountList,OutlierCount)
+  OutlierIndices <- which(DPA.Predictors.Numeric[,i] %in% c(Outliers))
+  print(
+  ggplot(DPA.Predictors.Numeric, aes(x=DPA.Predictors.Numeric[,i])) +
+  geom_boxplot() +
+  theme_bw() +
+  theme(axis.text.y=element_blank(), 
+        axis.ticks.y=element_blank()) +
+  xlab(names(DPA.Predictors.Numeric)[i]) +
+  labs(title=names(DPA.Predictors.Numeric)[i],
+       subtitle=paste0(OutlierCount, " Outlier(s) Detected")))
+}
+
+##################################
+# Formulating the histogram
+# for the numeric predictors
+##################################
+
+for (i in 1:ncol(DPA.Predictors.Numeric)) {
+  Median <- format(round(median(DPA.Predictors.Numeric[,i],na.rm = TRUE),2), nsmall=2)
+  Mean <- format(round(mean(DPA.Predictors.Numeric[,i],na.rm = TRUE),2), nsmall=2)
+  Skewness <- format(round(skewness(DPA.Predictors.Numeric[,i],na.rm = TRUE),2), nsmall=2)
+  print(
+  ggplot(DPA.Predictors.Numeric, aes(x=DPA.Predictors.Numeric[,i])) +
+  geom_histogram(binwidth=1,color="black", fill="white") +
+  geom_vline(aes(xintercept=mean(DPA.Predictors.Numeric[,i])),
+            color="blue", size=1) +
+    geom_vline(aes(xintercept=median(DPA.Predictors.Numeric[,i])),
+            color="red", size=1) +
+  theme_bw() +
+  ylab("Count") +
+  xlab(names(DPA.Predictors.Numeric)[i]) +
+  labs(title=names(DPA.Predictors.Numeric)[i],
+       subtitle=paste0("Median = ", Median,
+                       ", Mean = ", Mean,
+                       ", Skewness = ", Skewness)))
+}
+
+##################################
+# Investigating distributional anomalies
+# observed for several predictors 
+##################################
+(INFMOR_Unique <- DPA %>%
+  group_by(INFMOR) %>%
+  summarize(Distinct_INFMOR = n_distinct(COUNTRY)) %>%
+  arrange(desc(Distinct_INFMOR)) %>%
+  slice(1:5))
+(INFMOR_Unique_Country <- DPA[round(DPA$INFMOR,digits=1)==30.2,c("COUNTRY")])
+
+DPA %>%
+  group_by(CLTECH) %>%
+  summarize(Distinct_CLTECH = n_distinct(COUNTRY)) %>%
+  arrange(desc(Distinct_CLTECH)) %>%
+  slice(1:5)
+(CLTECH_Unique_Country <- DPA[round(DPA$CLTECH,digits=1)==60.6,c("COUNTRY")])
+
+DPA %>%
+  group_by(RTIMOR) %>%
+  summarize(Distinct_RTIMOR = n_distinct(COUNTRY)) %>%
+  arrange(desc(Distinct_RTIMOR)) %>%
+  slice(1:5)
+(RTIMOR_Unique_Country <- DPA[round(DPA$RTIMOR,digits=1)==18.2,c("COUNTRY")])
+
+DPA %>%
+  group_by(DPTIMM) %>%
+  summarize(Distinct_DPTIMM = n_distinct(COUNTRY)) %>%
+  arrange(desc(Distinct_DPTIMM)) %>%
+  slice(1:5)
+(DPTIMM_Unique_Country <- DPA[round(DPA$DPTIMM,digits=1)==85.7,c("COUNTRY")])
+
+DPA %>%
+  group_by(HEPIMM) %>%
+  summarize(Distinct_HEPIMM = n_distinct(COUNTRY)) %>%
+  arrange(desc(Distinct_HEPIMM)) %>%
+  slice(1:5)
+(HEPIMM_Unique_Country <- DPA[round(DPA$HEPIMM,digits=1)==81.3,c("COUNTRY")])
+
+DPA %>%
+  group_by(MEAIMM) %>%
+  summarize(Distinct_MEAIMM = n_distinct(COUNTRY)) %>%
+  arrange(desc(Distinct_MEAIMM)) %>%
+  slice(1:5)
+(MEAIMM_Unique_Country <- DPA[round(DPA$MEAIMM,digits=1)==84.9,c("COUNTRY")])
+
+DPA %>%
+  group_by(HOSBED) %>%
+  summarize(Distinct_HOSBED = n_distinct(COUNTRY)) %>%
+  arrange(desc(Distinct_HOSBED)) %>%
+  slice(1:5)
+(HOSBED_Unique_Country <- DPA[round(DPA$HOSBED,digits=1)==3.0,c("COUNTRY")])
+
+DPA %>%
+  group_by(NCOMOR) %>%
+  summarize(Distinct_NCOMOR = n_distinct(COUNTRY)) %>%
+  arrange(desc(Distinct_NCOMOR)) %>%
+  slice(1:5)
+(NCOMOR_Unique_Country <- DPA[round(DPA$NCOMOR,digits=1)==22.1,c("COUNTRY")])
+
+DPA %>%
+  group_by(SUIRAT) %>%
+  summarize(Distinct_SUIRAT = n_distinct(COUNTRY)) %>%
+  arrange(desc(Distinct_SUIRAT)) %>%
+  slice(1:5)
+(SUIRAT_Unique_Country <- DPA[round(DPA$SUIRAT,digits=1)==10.6,c("COUNTRY")])
+
+(AnomalousVariables_Unique_Country <- MEAIMM_Unique_Country)
+
+##################################
+# Removing rows with anomalous values
+##################################
+dim(DPA)
+
+DPA <- DPA[!(DPA$COUNTRY %in% AnomalousVariables_Unique_Country),]
+dim(DPA)
+
+##################################
+# Listing all Predictors
+# for the updated data
+##################################
+DPA.Predictors <- DPA[,!names(DPA) %in% c("COUNTRY","YEAR","LIFEXP")]
+
+##################################
+# Listing all numeric predictors
+# for the updated data
+##################################
+DPA.Predictors.Numeric <- DPA.Predictors[,sapply(DPA.Predictors, is.numeric)]
+
+```
+
+</details>
+
+|
+|
+####  1.3.3.2 Zero and Near-Zero Variance
+|
+| **[A]** No low variance observed for any predictor using a preprocessing summary from the <mark style="background-color: #CCECFF">**caret**</mark> package. The <span style="color: #0000FF">nearZeroVar</span> method using both the <span style="color: #0000FF">freqCut</span> and <span style="color: #0000FF">uniqueCut</span> criteria set at 95/5 and 10, respectively, were applied on the dataset.
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.3.2, warning=FALSE, message=FALSE}
+##################################
+# Zero and Near-Zero Variance
+##################################
+
+##################################
+# Identifying columns with low variance
+###################################
+DPA_LowVariance <- nearZeroVar(DPA,
+                               freqCut = 80/20,
+                               uniqueCut = 10,
+                               saveMetrics= TRUE)
+(DPA_LowVariance[DPA_LowVariance$nzv,])
+
+if ((nrow(DPA_LowVariance[DPA_LowVariance$nzv,]))==0){
+  
+  print("No low variance predictors noted.")
+  
+} else {
+
+  print(paste0("Low variance observed for ",
+               (nrow(DPA_LowVariance[DPA_LowVariance$nzv,])),
+               " numeric variable(s) with First.Second.Mode.Ratio>4 and Unique.Count.Ratio<0.10."))
+  
+  DPA_LowVarianceForRemoval <- (nrow(DPA_LowVariance[DPA_LowVariance$nzv,]))
+  
+  print(paste0("Low variance can be resolved by removing ",
+               (nrow(DPA_LowVariance[DPA_LowVariance$nzv,])),
+               " numeric variable(s)."))
+  
+  for (j in 1:DPA_LowVarianceForRemoval) {
+  DPA_LowVarianceRemovedVariable <- rownames(DPA_LowVariance[DPA_LowVariance$nzv,])[j]
+  print(paste0("Variable ",
+               j,
+               " for removal: ",
+               DPA_LowVarianceRemovedVariable))
+  }
+  
+  DPA %>%
+  skim() %>%
+  dplyr::filter(skim_variable %in% rownames(DPA_LowVariance[DPA_LowVariance$nzv,]))
+
+}
+
+```
+
+</details>
+
+|
+|
+####  1.3.3.3 Collinearity
+|
+| **[A]** High correlation values were noted for 7 pairs of numeric predictors with Pearson correlation coefficients >80% as confirmed using the preprocessing summaries from the <mark style="background-color: #CCECFF">**caret**</mark> package.
+|      **[A.1]** <span style="color: #FF0000">URBPOP</span> and <span style="color: #FF0000">RURPOP</span>  = -100.00%
+|      **[A.2]** <span style="color: #FF0000">GDP</span> and <span style="color: #FF0000">GNI</span>  = +99.99%
+|      **[A.3]** <span style="color: #FF0000">DPTIMM</span> and <span style="color: #FF0000">HEPIMM</span>  = +95.03%
+|      **[A.4]** <span style="color: #FF0000">DPTIMM</span> and <span style="color: #FF0000">MEAIMM</span>  = +88.17%
+|      **[A.5]** <span style="color: #FF0000">HEPIMM</span> and <span style="color: #FF0000">MEAIMM</span>  = +86.42%
+|      **[A.6]** <span style="color: #FF0000">CLTECH</span> and <span style="color: #FF0000">SANSER</span>  = +86.21%
+|      **[A.7]** <span style="color: #FF0000">INFMOR</span> and <span style="color: #FF0000">SANSER</span>  = -82.41%
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.3.3, warning=FALSE, message=FALSE}
+##################################
+# Collinearity
+##################################
+
+##################################
+# Visualizing pairwise correlation between predictors
+##################################
+(DPA_Correlation <- cor(DPA.Predictors.Numeric,
+                        method = "pearson",
+                        use="pairwise.complete.obs"))
+
+DPA_CorrelationTest <- cor.mtest(DPA.Predictors.Numeric,
+                       method = "pearson",
+                       conf.level = 0.95)
+
+corrplot(cor(DPA.Predictors.Numeric,
+             method = "pearson",
+             use="pairwise.complete.obs"), 
+             method = "circle",
+             type = "upper", 
+             order = "original", 
+             tl.col = "black", 
+             tl.cex = 0.75,
+             tl.srt = 90, 
+             sig.level = 0.05, 
+             p.mat = DPA_CorrelationTest$p,
+             insig = "blank")
+
+corrplot(cor(DPA.Predictors.Numeric,
+             method = "pearson",
+             use="pairwise.complete.obs"), 
+             method = "number",
+             type = "upper", 
+             order = "original", 
+             tl.col = "black", 
+             tl.cex = 0.75,
+             tl.srt = 90, 
+             sig.level = 0.05, 
+             p.mat = DPA_CorrelationTest$p,
+             insig = "blank")
+
+##################################
+# Identifying the highly correlated variables
+##################################
+DPA_Correlation <-  cor(DPA.Predictors.Numeric, 
+                        method = "pearson",
+                        use="pairwise.complete.obs")
+
+(DPA_HighlyCorrelatedCount <- sum(abs(DPA_Correlation[upper.tri(DPA_Correlation)])>0.80))
+
+if (DPA_HighlyCorrelatedCount > 0) {
+  DPA_HighlyCorrelated <- findCorrelation(DPA_Correlation, cutoff = 0.80)
+  
+  (DPA_HighlyCorrelatedForRemoval <- length(DPA_HighlyCorrelated))
+  
+  print(paste0("High correlation can be resolved by removing ",
+               (DPA_HighlyCorrelatedForRemoval),
+               " numeric variable(s)."))
+  
+  for (j in 1:DPA_HighlyCorrelatedForRemoval) {
+  DPA_HighlyCorrelatedRemovedVariable <- colnames(DPA.Predictors.Numeric)[DPA_HighlyCorrelated[j]]
+  print(paste0("Variable ",
+               j,
+               " for removal: ",
+               DPA_HighlyCorrelatedRemovedVariable))
+  }
+  
+}
+
+```
+
+</details>
+
+|
+|
+####  1.3.3.4 Linear Dependencies
+|
+| **[A]** No linear dependencies noted for any subset of numeric variables using the preprocessing summary from the <mark style="background-color: #CCECFF">**caret**</mark> package applying the <span style="color: #0000FF">findLinearCombos</span> method which utilizes the QR decomposition of a matrix to enumerate sets of linear combinations (if they exist). 
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.3.4, warning=FALSE, message=FALSE}
+##################################
+# Linear Dependencies
+##################################
+
+##################################
+# Finding linear dependencies
+##################################
+DPA_LinearlyDependent <- findLinearCombos(DPA.Predictors.Numeric)
+
+##################################
+# Identifying the linearly dependent variables
+##################################
+DPA_LinearlyDependent <- findLinearCombos(DPA.Predictors.Numeric)
+
+(DPA_LinearlyDependentCount <- length(DPA_LinearlyDependent$linearCombos))
+
+if (DPA_LinearlyDependentCount == 0) {
+  print("No linearly dependent predictors noted.")
+} else {
+  print(paste0("Linear dependency observed for ",
+               (DPA_LinearlyDependentCount),
+               " subset(s) of numeric variable(s)."))
+  
+  for (i in 1:DPA_LinearlyDependentCount) {
+    DPA_LinearlyDependentSubset <- colnames(DPA.Predictors.Numeric)[DPA_LinearlyDependent$linearCombos[[i]]]
+    print(paste0("Linear dependent variable(s) for subset ",
+                 i,
+                 " include: ",
+                 DPA_LinearlyDependentSubset))
+  }
+  
+}
+
+##################################
+# Identifying the linearly dependent variables for removal
+##################################
+
+if (DPA_LinearlyDependentCount > 0) {
+  DPA_LinearlyDependent <- findLinearCombos(DPA.Predictors.Numeric)
+  
+  DPA_LinearlyDependentForRemoval <- length(DPA_LinearlyDependent$remove)
+  
+  print(paste0("Linear dependency can be resolved by removing ",
+               (DPA_LinearlyDependentForRemoval),
+               " numeric variable(s)."))
+  
+  for (j in 1:DPA_LinearlyDependentForRemoval) {
+  DPA_LinearlyDependentRemovedVariable <- colnames(DPA.Predictors.Numeric)[DPA_LinearlyDependent$remove[j]]
+  print(paste0("Variable ",
+               j,
+               " for removal: ",
+               DPA_LinearlyDependentRemovedVariable))
+  }
+
+}
+
+```
+
+</details>
+
+|
+|
+####  1.3.3.5 Shape Transformation
+|
+| **[A]** Shape transformation was applied to improve against skewness and minimize outliers for data distribution stability using the <span style="color: #0000FF">BoxCox</span> method from the <mark style="background-color: #CCECFF">**caret**</mark> package which transforms the distributional shape for predictors with strictly positive values.
+|
+| **[B]** Skewness measurements were improved for most except for 1 numeric predictor with Skewness>3. 
+|      **[B.1]** <span style="color: #FF0000">SUIRAT</span> = 3.95
+|
+| **[C]** Outliers were minimized for most except for 9 numeric predictors which continued to contain outlying points as noted using the IQR criterion.
+|      **[C.1]** <span style="color: #FF0000">UNEMPR</span> = 5
+|      **[C.2]** <span style="color: #FF0000">RTIMOR</span> = 2
+|      **[C.3]** <span style="color: #FF0000">TUBINC</span> = 28
+|      **[C.4]** <span style="color: #FF0000">DPTIMM</span> = 24
+|      **[C.5]** <span style="color: #FF0000">HEPIMM</span> = 8
+|      **[C.6]** <span style="color: #FF0000">MEAIMM</span> = 18
+|      **[C.7]** <span style="color: #FF0000">TUBTRT</span> = 30
+|      **[C.8]** <span style="color: #FF0000">NCOMOR</span> = 2
+|      **[C.9]** <span style="color: #FF0000">SUIRAT</span> = 27
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.3.5, warning=FALSE, message=FALSE, fig.width=15, fig.height=2}
+##################################
+# Shape Transformation
+##################################
+
+##################################
+# Applying a Box-Cox transformation
+##################################
+DPA_BoxCox <- preProcess(DPA.Predictors.Numeric, method = c("BoxCox"))
+DPA_BoxCoxTransformed <- predict(DPA_BoxCox, DPA.Predictors.Numeric)
+
+for (i in 1:ncol(DPA_BoxCoxTransformed)) {
+  Median <- format(round(median(DPA_BoxCoxTransformed[,i],na.rm = TRUE),2), nsmall=2)
+  Mean <- format(round(mean(DPA_BoxCoxTransformed[,i],na.rm = TRUE),2), nsmall=2)
+  Skewness <- format(round(skewness(DPA_BoxCoxTransformed[,i],na.rm = TRUE),2), nsmall=2)
+  print(
+  ggplot(DPA_BoxCoxTransformed, aes(x=DPA_BoxCoxTransformed[,i])) +
+  geom_histogram(binwidth=1,color="black", fill="white") +
+  geom_vline(aes(xintercept=mean(DPA_BoxCoxTransformed[,i])),
+            color="blue", size=1) +
+    geom_vline(aes(xintercept=median(DPA_BoxCoxTransformed[,i])),
+            color="red", size=1) +
+  theme_bw() +
+  ylab("Count") +
+  xlab(names(DPA_BoxCoxTransformed)[i]) +
+  labs(title=names(DPA_BoxCoxTransformed)[i],
+       subtitle=paste0("Median = ", Median,
+                       ", Mean = ", Mean,
+                       ", Skewness = ", Skewness)))
+}
+
+##################################
+# Identifying outliers for the numeric predictors
+##################################
+OutlierCountList <- c()
+
+for (i in 1:ncol(DPA_BoxCoxTransformed)) {
+  Outliers <- boxplot.stats(DPA_BoxCoxTransformed[,i])$out
+  OutlierCount <- length(Outliers)
+  OutlierCountList <- append(OutlierCountList,OutlierCount)
+  OutlierIndices <- which(DPA_BoxCoxTransformed[,i] %in% c(Outliers))
+  print(
+  ggplot(DPA_BoxCoxTransformed, aes(x=DPA_BoxCoxTransformed[,i])) +
+  geom_boxplot() +
+  theme_bw() +
+  theme(axis.text.y=element_blank(), 
+        axis.ticks.y=element_blank()) +
+  xlab(names(DPA_BoxCoxTransformed)[i]) +
+  labs(title=names(DPA_BoxCoxTransformed)[i],
+       subtitle=paste0(OutlierCount, " Outlier(s) Detected")))
+}
+
+
+DPA_BoxCoxTransformed <- cbind(DPA_BoxCoxTransformed,DPA[,c("COUNTRY",
+                                                            "YEAR",
+                                                            "GENDER",
+                                                            "CONTIN",
+                                                            "LIFEXP")])
+
+
+```
+
+</details>
+
+|
+|
+####  1.3.3.6 Pre-Processed Dataset
+|
+| **[A]**  A total of 9 variables (8 predictors and 1 metadata) were removed prior to data exploration and modelling due to issues identified during data preprocessing.
+|      **[A.1]** <span style="color: #FF0000">YEAR</span> = Metadata containing only a single value
+|      **[A.2]** <span style="color: #FF0000">GNI</span> = High correlation with <span style="color: #FF0000">GDP</span>
+|      **[A.3]** <span style="color: #FF0000">DPTIMM</span> = High correlation with <span style="color: #FF0000">HEPIMM</span>
+|      **[A.4]** <span style="color: #FF0000">MEAIMM</span> = High correlation with <span style="color: #FF0000">HEPIMM</span>
+|      **[A.5]** <span style="color: #FF0000">URBPOP</span> = High correlation with <span style="color: #FF0000">RURPOP</span>
+|      **[A.6]** <span style="color: #FF0000">SANSER</span> = High correlation with <span style="color: #FF0000">INFMOR</span> and <span style="color: #FF0000">CLTECH</span>
+|      **[A.7]** <span style="color: #FF0000">TUBINC</span> = High outlier count even after shape transformation
+|      **[A.8]** <span style="color: #FF0000">TUBTRT</span> = High outlier count even after shape transformation
+|      **[A.9]** <span style="color: #FF0000">SUIRAT</span> = High skewness even after shape transformation
+|
+| **[B]** A total of 30 observations were removed prior to data exploration and modelling due to issues identified during data preprocessing.
+|      **[B.1]** 15 countries were identified to be associated with distributional anomalies showing high number of observations reporting the exact same set of values.
+|
+| **[C]** The preprocessed tabular dataset was comprised of 364 observations and 14 variables (including 1 metadata, 1 response and 12 predictors). 
+|      **[C.1]** 364 rows (observations)
+|      **[C.2]** 14 columns (variables)
+|             **[C.2.1]** 1/14 instance labels = <span style="color: #FF0000">COUNTRY</span> (character)
+|             **[C.2.2]** 1/14 response = <span style="color: #FF0000">LIFEXP</span> (numeric)
+|             **[C.2.3]** 12/14 predictors = 10/12 numeric + 2/12 factor
+|                      **[C.2.3.1]** <span style="color: #FF0000">GENDER</span> (factor)
+|                      **[C.2.3.2]** <span style="color: #FF0000">CONTIN</span> (factor)
+|                      **[C.2.3.3]** <span style="color: #FF0000">UNEMPR</span> (numeric)
+|                      **[C.2.3.4]** <span style="color: #FF0000">INFMOR</span> (numeric)
+|                      **[C.2.3.5]** <span style="color: #FF0000">GDP</span> (numeric)
+|                      **[C.2.3.6]** <span style="color: #FF0000">CLTECH</span> (numeric)
+|                      **[C.2.3.7]** <span style="color: #FF0000">PERCAP</span> (numeric)
+|                      **[C.2.3.8]** <span style="color: #FF0000">RTIMOR</span> (numeric)
+|                      **[C.2.3.9]** <span style="color: #FF0000">HEPIMM</span> (numeric)
+|                      **[C.2.3.10]** <span style="color: #FF0000">HOSBED</span> (numeric)
+|                      **[C.2.3.11]** <span style="color: #FF0000">RURPOP</span> (numeric)
+|                      **[C.2.3.12]** <span style="color: #FF0000">NCOMOR</span> (numeric)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.3.6, warning=FALSE, message=FALSE}
+##################################
+# Creating the pre-modelling
+# train set
+##################################
+PMA <- DPA_BoxCoxTransformed[,!names(DPA_BoxCoxTransformed) %in% c("YEAR",
+                                                                   "GNI",
+                                                                   "DPTIMM",
+                                                                   "MEAIMM",
+                                                                   "URBPOP",
+                                                                   "SANSER",
+                                                                   "TUBINC",
+                                                                   "TUBTRT",
+                                                                   "SUIRAT")]
+
+##################################
+# Gathering descriptive statistics
+##################################
+(PMA_Skimmed <- skim(PMA))
+
+```
+
+</details>
+
+###  1.3.4 Data Exploration
+|
+| **[A]** Numeric predictors which demonstrated a positive linear relationship with the response variable <span style="color: #FF0000">LIFEXP</span> included:
+|      **[A.1]** <span style="color: #FF0000">PERCAP</span> (numeric)
+|      **[A.2]** <span style="color: #FF0000">CLTECH</span> (numeric)
+|
+| **[B]** Numeric predictors which demonstrated a negative linear relationship with the response variable <span style="color: #FF0000">LIFEXP</span> included:
+|      **[B.1]** <span style="color: #FF0000">INFMOR</span> (numeric)
+|      **[B.2]** <span style="color: #FF0000">NCOMOR</span> (numeric)
+|
+| **[C]** Both factor predictors demonstrated a differential relationship with the response variable <span style="color: #FF0000">LIFEXP</span> included:
+|      **[C.1]** <span style="color: #FF0000">GENDER</span> (factor)
+|      **[C.2]** <span style="color: #FF0000">CONTIN</span> (factor)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.4, warning=FALSE, message=FALSE}
+##################################
+# Loading dataset
+##################################
+PME <- PMA
+PME.Numeric <- PME[,sapply(PME, is.numeric), drop = FALSE]
+
+##################################
+# Listing all Predictors
+##################################
+PME.Predictors <- PME[,!names(PME) %in% c("COUNTRY","LIFEXP")]
+
+##################################
+# Listing all numeric Predictors
+##################################
+PME.Predictors.Numeric <- PME.Predictors[,sapply(PME.Predictors, is.numeric), drop = FALSE]
+ncol(PME.Predictors.Numeric)
+
+##################################
+# Listing all numeric Predictors
+##################################
+PME.Predictors.Factor <- PME.Predictors[,sapply(PME.Predictors, is.factor), drop = FALSE]
+ncol(PME.Predictors.Factor)
+
+##################################
+# Formulating the scatter plot
+##################################
+featurePlot(x = PME.Predictors.Numeric, 
+            y = PME$LIFEXP,
+            plot = "scatter",
+            type = c("p", "smooth"),
+            span = .5,
+            layout = c(4, 3))
+
+##################################
+# Formulating the box plot
+##################################
+featurePlot(x = PME.Numeric, 
+            y = PME$GENDER,
+            plot = "box",
+            scales = list(x = list(relation="free", rot = 90), 
+                          y = list(relation="free")),
+            adjust = 1.5,
+            layout = c(4, 3))
+
+##################################
+# Formulating the box plot
+##################################
+featurePlot(x = PME.Numeric, 
+            y = PME$CONTIN,
+            plot = "box",
+            scales = list(x = list(relation="free", rot = 90), 
+                          y = list(relation="free")),
+            adjust = 1.5,
+            layout = c(4, 3))
+
+```
+
+</details>
+
+###  1.3.5 Feature Selection
+|
+|
+####  1.3.5.1 Locally Weighted Scatterplot Smoothing Pseudo-R-Squared
+|
+| **[A]** The numeric predictors which demonstrated the best feature importance in terms of the locally weighted scatterplot smoothing pseudo-r-squared statistic as obtained using the <mark style="background-color: #CCECFF">**caret**</mark> package included:
+|      **[A.1]** <span style="color: #FF0000">INFMOR</span> = 0.8254
+|      **[A.2]** <span style="color: #FF0000">PERCAP</span> = 0.6217
+|      **[A.3]** <span style="color: #FF0000">NCOMOR</span> = 0.5966
+|      **[A.4]** <span style="color: #FF0000">CLTECH</span> = 0.5819
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.5.1, warning=FALSE, message=FALSE}
+##################################
+# Evaluating model-independent
+# feature importance metrics
+##################################
+
+##################################
+# Obtaining the LOWESSPR pseudo-R-Squared
+##################################
+FE_LOWESSPR <- filterVarImp(x = PME.Predictors.Numeric,
+                            y = PME$LIFEXP,
+                            nonpara = TRUE)
+
+##################################
+# Formulating the summary table
+##################################
+FE_LOWESSPR_Summary <- FE_LOWESSPR 
+
+FE_LOWESSPR_Summary$Predictor <- rownames(FE_LOWESSPR)
+names(FE_LOWESSPR_Summary)[1] <- "LOWESSPR"
+FE_LOWESSPR_Summary$Metric <- rep("LOWESSPR",nrow(FE_LOWESSPR))
+
+FE_LOWESSPR_Summary
+
+##################################
+# Exploring predictor performance
+# using LOWESS
+##################################
+dotplot(Predictor ~ LOWESSPR | Metric, 
+        FE_LOWESSPR_Summary,
+        origin = 0,
+        type = c("p", "h"),
+        pch = 16,
+        cex = 2,
+        alpha = 0.45,
+        prepanel = function(x, y) {
+            list(ylim = levels(reorder(y, x)))
+        },
+        panel = function(x, y, ...) {
+            panel.dotplot(x, reorder(y, x), ...)
+        })
+```
+
+</details>
+
+|
+|
+####  1.3.5.2 Pearson’s Correlation Coefficient
+|
+| **[A]** The numeric predictors which demonstrated the best feature importance in terms of the higher Pearson’s correlation coefficients as obtained using the <mark style="background-color: #CCECFF">**stats**</mark> package included:
+|      **[A.1]** <span style="color: #FF0000">INFMOR</span> = 0.8796
+|      **[A.2]** <span style="color: #FF0000">PERCAP</span> = 0.7852
+|      **[A.3]** <span style="color: #FF0000">NCOMOR</span> = 0.7524
+|      **[A.4]** <span style="color: #FF0000">CLTECH</span> = 0.7332
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.5.2, warning=FALSE, message=FALSE}
+##################################
+# Obtaining the Pearson correlation coefficient
+##################################
+(FE_PCC <- abs(cor(PME.Numeric, method="pearson")[-11,11]))
+
+##################################
+# Formulating the summary table
+##################################
+FE_PCC_Summary <- data.frame(Predictor = names(PME.Numeric)[1:(ncol(PME.Numeric)-1)],
+                             PCC = FE_PCC,
+                             Metric = rep("PCC", length(FE_PCC)),
+                             row.names = NULL)
+
+FE_PCC_Summary
+
+##################################
+# Exploring predictor performance
+# using PCC
+##################################
+dotplot(Predictor ~ PCC | Metric,
+        FE_PCC_Summary,
+        origin = 0,
+        type = c("p", "h"),
+        pch = 16,
+        cex = 2,
+        alpha = 0.45,
+        prepanel = function(x, y) {
+            list(ylim = levels(reorder(y, x)))
+        },
+        panel = function(x, y, ...) {
+            panel.dotplot(x, reorder(y, x), ...)
+        })
+```
+
+</details>
+
+|
+|
+####  1.3.5.3 Spearman’s Rank Correlation Coefficient
+|
+| **[A]** The numeric predictors which demonstrated the best feature importance in terms of the higher Spearman’s rank correlation coefficients as obtained using the <mark style="background-color: #CCECFF">**stats**</mark> package included:
+|      **[A.1]** <span style="color: #FF0000">INFMOR</span> = 0.8919
+|      **[A.2]** <span style="color: #FF0000">PERCAP</span> = 0.7982
+|      **[A.3]** <span style="color: #FF0000">NCOMOR</span> = 0.7891
+|      **[A.4]** <span style="color: #FF0000">CLTECH</span> = 0.7837
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.5.3, warning=FALSE, message=FALSE}
+##################################
+# Obtaining the Spearman's rank correlation coefficient
+##################################
+(FE_SRCC <- abs(cor(PME.Numeric, method="spearman")[-11,11]))
+
+##################################
+# Formulating the summary table
+##################################
+FE_SRCC_Summary <- data.frame(Predictor = names(PME.Numeric)[1:(ncol(PME.Numeric)-1)],
+                             SRCC = FE_SRCC,
+                             Metric = rep("SRCC", length(FE_SRCC)),
+                             row.names = NULL)
+
+FE_SRCC_Summary
+
+##################################
+# Exploring predictor performance
+# using SRCC
+##################################
+dotplot(Predictor ~ SRCC | Metric, 
+        FE_SRCC_Summary,
+        origin = 0,
+        type = c("p", "h"),
+        pch = 16,
+        cex = 2,
+        alpha = 0.45,
+        prepanel = function(x, y) {
+            list(ylim = levels(reorder(y, x)))
+        },
+        panel = function(x, y, ...) {
+            panel.dotplot(x, reorder(y, x), ...)
+        })
+```
+
+</details>
+
+|
+|
+####  1.3.5.4 Maximal Information Coefficient
+|
+| **[A]** The numeric predictors which demonstrated the best feature importance in terms of the higher maximal information coefficients as obtained using the <mark style="background-color: #CCECFF">**minerva**</mark> package included:
+|      **[A.1]** <span style="color: #FF0000">INFMOR</span> = 0.7084
+|      **[A.2]** <span style="color: #FF0000">NCOMOR</span> = 0.6439
+|      **[A.3]** <span style="color: #FF0000">PERCAP</span> = 0.5502
+|      **[A.4]** <span style="color: #FF0000">CLTECH</span> = 0.5099
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.5.4, warning=FALSE, message=FALSE}
+##################################
+# Obtaining the maximal information coefficient
+##################################
+FE_MIC <- mine(x = PME.Numeric[,!names(PME.Numeric) %in% c("LIFEXP")],
+               y = PME$LIFEXP)$MIC
+
+##################################
+# Formulating the summary table
+##################################
+FE_MIC_Summary <- data.frame(Predictor = names(PME.Numeric)[1:(ncol(PME.Numeric)-1)],
+                             MIC = FE_MIC[,1],
+                             Metric = rep("MIC", length(FE_MIC)))
+
+FE_MIC_Summary
+
+##################################
+# Exploring predictor performance
+# using MIC
+##################################
+dotplot(Predictor ~ MIC | Metric, 
+        FE_MIC_Summary,
+        origin = 0,
+        type = c("p", "h"),
+        pch = 16,
+        cex = 2,
+        alpha = 0.45,
+        prepanel = function(x, y) {
+            list(ylim = levels(reorder(y, x)))
+        },
+        panel = function(x, y, ...) {
+            panel.dotplot(x, reorder(y, x), ...)
+        })
+```
+
+</details>
+
+|
+|
+####  1.3.5.5 Relief Values
+|
+| **[A]** The numeric predictors which demonstrated the best feature importance in terms of the higher relief values as obtained using the <mark style="background-color: #CCECFF">**CORElearn**</mark> package included:
+|      **[A.1]** <span style="color: #FF0000">NCOMOR</span> = 0.2991
+|      **[A.2]** <span style="color: #FF0000">INFMOR</span> = 00936
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.5.5, warning=FALSE, message=FALSE}
+##################################
+# Obtaining the relief values
+##################################
+FE_RV <- attrEval(LIFEXP ~ .,  
+                  data = PME.Numeric,
+                  estimator = "RReliefFequalK")
+
+##################################
+# Formulating the summary table
+##################################
+FE_RV_Summary <- data.frame(Predictor = names(FE_RV),
+                            RV = FE_RV,
+                            Metric = rep("RV", length(FE_RV)))
+
+FE_RV_Summary
+
+##################################
+# Exploring predictor performance
+##################################
+dotplot(Predictor ~ RV | Metric, 
+        FE_RV_Summary,
+        origin = 0,
+        type = c("p", "h"),
+        pch = 16,
+        cex = 2,
+        alpha = 0.45,
+        prepanel = function(x, y) {
+            list(ylim = levels(reorder(y, x)))
+        },
+        panel = function(x, y, ...) {
+            panel.dotplot(x, reorder(y, x), ...)
+        })
+```
+
+</details>
+
+|
+|
+####  1.3.5.6 Pre-Modelling Dataset
+|
+| **[A]** The final list of predictors to be applied during the modelling process involved 4 numeric predictors (which consistently demonstrated the best feature importance in terms of the aforementioned metrics) and 2 factor predictors enumerated as follows:
+|      **[A.1]** <span style="color: #FF0000">INFMOR</span> (numeric)
+|      **[A.2]** <span style="color: #FF0000">PERCAP</span> (numeric)
+|      **[A.3]** <span style="color: #FF0000">NCOMOR</span> (numeric)
+|      **[A.4]** <span style="color: #FF0000">CLTECH</span> (numeric)
+|      **[A.5]** <span style="color: #FF0000">GENDER</span> (factor)
+|      **[A.6]** <span style="color: #FF0000">CONTIN</span> (factor)
+|
+| **[B]** The dataset was divided into two groups using a fixed random seed.
+|      **[B.1]** 80% were allocated for the model development set.
+|             **[B.1.1]** 10 folds were formulated for the model development set using a fixed random seed.
+|             **[B.1.2]** Fold assignments will be used for internal 10-fold cross-validation and hyperparameter tuning.
+|      **[B.2]** 20% were allocated for the model test set.
+|             **[B.2.1]** Model test will be used for external validation.
+|
+| **[C]** The model development set was comprised of 292 observations and 8 variables (including 1 metadata, 1 response and 6 predictors). 
+|      **[C.1]** 292 rows (observations)
+|      **[C.2]** 8 columns (variables)
+|             **[C.2.1]** 1/8 instance labels = <span style="color: #FF0000">COUNTRY</span> variable (character)
+|             **[C.2.2]** 1/8 response = <span style="color: #FF0000">LIFEXP</span> variable (numeric)
+|             **[C.2.3]** 6/8 predictors = 4/6 numeric + 2/6 factor
+|                      **[C.2.3.1]** <span style="color: #FF0000">INFMOR</span> (numeric)
+|                      **[C.2.3.2]** <span style="color: #FF0000">PERCAP</span> (numeric)
+|                      **[C.2.3.3]** <span style="color: #FF0000">NCOMOR</span> (numeric)
+|                      **[C.2.3.4]** <span style="color: #FF0000">CLTECH</span> (numeric)
+|                      **[C.2.3.5]** <span style="color: #FF0000">GENDER</span> (factor)
+|                      **[C.2.3.6]** <span style="color: #FF0000">CONTIN</span> (factor)
+|
+| **[D]** The model test set was comprised of 72 observations and 8 variables (including 1 metadata, 1 response and 6 predictors). 
+|      **[D.1]** 72 rows (observations)
+|      **[D.2]** 8 columns (variables)
+|             **[D.2.1]** 1/8 instance labels = <span style="color: #FF0000">COUNTRY</span> variable (character)
+|             **[D.2.2]** 1/8 response = <span style="color: #FF0000">LIFEXP</span> variable (numeric)
+|             **[D.2.3]** 6/8 predictors = 4/6 numeric + 2/6 factor
+|                      **[D.2.3.1]** <span style="color: #FF0000">INFMOR</span> (numeric)
+|                      **[D.2.3.2]** <span style="color: #FF0000">PERCAP</span> (numeric)
+|                      **[D.2.3.3]** <span style="color: #FF0000">NCOMOR</span> (numeric)
+|                      **[D.2.3.4]** <span style="color: #FF0000">CLTECH</span> (numeric)
+|                      **[D.2.3.5]** <span style="color: #FF0000">GENDER</span> (factor)
+|                      **[D.2.3.6]** <span style="color: #FF0000">CONTIN</span> (factor)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.5.6, warning=FALSE, message=FALSE}
+##################################
+# Preparing the dataset for
+# model development and test
+##################################
+set.seed(12345678)
+trainIndex <- createDataPartition(PME$LIFEXP,
+                                  p = 0.8, 
+                                  list = FALSE, 
+                                  times = 1)
+
+##################################
+# Formulating the model development data
+##################################
+MD <- PME[ trainIndex,]
+
+##################################
+# Formulating the model test data
+##################################
+MT <- PME[-trainIndex,]
+
+##################################
+# Preparing the dataset for
+# model development
+##################################
+MD <- MD[,c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR","LIFEXP")]
+dim(MD)
+
+MD.Model.Predictors <- MD[,c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR")]
+
+##################################
+# Preparing the dataset for
+# model test
+##################################
+MT <- MT[,c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR","LIFEXP")]
+dim(MT)
+
+MT.Model.Predictors <- MT[,c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR")]
+
+##################################
+# Creating consistent fold assignments
+# for the 10-Fold Cross Validation process
+##################################
+set.seed(12345678)
+KFold_Indices <- createFolds(MD$LIFEXP,
+                             k = 10,
+                             returnTrain=TRUE)
+KFold_Control <- trainControl(method="cv",
+                              index=KFold_Indices)
+```
+
+</details>
+
+###  1.3.6 Model Development and Performance Estimation
+|
+|
+####  1.3.6.1 Linear Regression
+|
+| **[A]** The linear regression model from the  <mark style="background-color: #CCECFF">**stats**</mark> package was implemented through the <mark style="background-color: #CCECFF">**caret**</mark> package.
+|
+| **[B]** The model contains 1 hyperparameter:
+|      **[B.1]** <span style="color: #FF0000">intercept</span> =  intercept held constant at a value of TRUE
+|
+| **[C]** The 10-fold cross-validated model performance of the optimal model is summarized as follows:
+|      **[C.1]** Optimal model used intercept=TRUE
+|      **[C.2]** Root Mean Square Error = 2.4078
+|      **[C.3]** R-Squared = 0.9116
+|
+| **[D]** The apparent model performance of the optimal model is summarized as follows:
+|      **[D.1]** Root Mean Square Error = 2.3622
+|      **[D.2]** R-Squared = 0.9098
+|
+| **[E]** The top-performing predictors in the model ranked using the root mean square error loss after permutations are as follows:
+|      **[E.1]** <span style="color: #FF0000">INFMOR</span> (numeric) = 7.15
+|      **[E.2]** <span style="color: #FF0000">NCOMOR</span> (numeric) = 3.23
+|      **[E.3]** <span style="color: #FF0000">CONTIN</span> (factor) = 3.18
+|      **[E.5]** <span style="color: #FF0000">CLTECH</span> (numeric) = 3.10
+|      **[E.4]** <span style="color: #FF0000">GENDER</span> (factor) = 3.06
+|      **[E.6]** <span style="color: #FF0000">PERCAP</span> (numeric) = 2.43
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.6.1, warning=FALSE, message=FALSE}
+##################################
+# No hyperparameter tuning process conducted
+# for the LR model
+# hyperparameter=intercept fixed to TRUE
+##################################
+
+##################################
+# Running the LR model
+# by setting the caret method to 'lm'
+##################################
+set.seed(12345678)
+LR_Tune <- train(x = MD.Model.Predictors,
+                  y = MD$LIFEXP,
+                  method = "lm",
+                  trControl = KFold_Control)
+
+##################################
+# Reporting the apparent results
+# for the LR model
+##################################
+LR_DALEX <- DALEX::explain(LR_Tune,
+                            data = MD.Model.Predictors,
+                            y = MD$LIFEXP,
+                            verbose = FALSE,
+                            label = "LR")
+
+(LR_DALEX_Performance <- model_performance(LR_DALEX))
+(LR_DALEX_Diagnostics <- model_diagnostics(LR_DALEX))
+plot(LR_DALEX_Diagnostics,
+     variable = "y",
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") +
+  scale_y_continuous("Predicted LIFEXP") +
+  geom_abline(slope = 1) +
+  ggtitle("LR: Observed and Predicted LIFEXP")
+
+(LR_DALEX_VariableImportance    <- model_parts(LR_DALEX,
+                                               loss_function = loss_root_mean_square,
+                                               B = 200,
+                                               N = NULL))
+
+plot(LR_DALEX_VariableImportance)
+
+##################################
+# Reporting the cross-validation results
+# for the LR model
+##################################
+LR_Tune
+
+LR_Tune$finalModel
+
+(LR_Tune_RMSE <- LR_Tune$results$RMSE)
+
+(LR_Tune_Rsquared <- LR_Tune$results$Rsquared)
+
+(LR_Tune_MAE <- LR_Tune$results$MAE)
+
+```
+
+</details>
+
+|
+|
+####  1.3.6.2 Stochastic Gradient Boosting
+|
+| **[A]** The stochastic gradient boosting regression model from the  <mark style="background-color: #CCECFF">**gbm**</mark> package was implemented through the <mark style="background-color: #CCECFF">**caret**</mark> package.
+|
+| **[B]** The model contains 4 hyperparameters:
+|      **[B.1]** <span style="color: #FF0000">n.trees</span> =  total number of trees to fit which is equivalent to the number of iterations and the number of basis functions in the additive expansion made to vary across a range of values equal to 100, 200 and 300
+|      **[B.2]** <span style="color: #FF0000">interaction.depth</span> = maximum depth of each tree representing the highest level of variable interactions allowed made to vary across a range of values equal to 1, 2 and 3
+|      **[B.3]** <span style="color: #FF0000">shrinkage</span> = shrinkage parameter applied to each tree in the expansion representing the learning rate or step-size reduction made to vary across a range of values equal to 0.001, 0.01 and 0.1
+|      **[B.4]** <span style="color: #FF0000">n.minobsinnode</span> = minimum number of observations in the terminal nodes of the trees made to vary across a range of values equal to 5, 10 and 15
+|
+| **[C]** The 10-fold cross-validated model performance of the optimal model is summarized as follows:
+|      **[C.1]** Optimal model used n.trees=300, interaction.depth=2, shrinkage=0.1 and n.minobsinnode=5 which demonstrated the lowest root mean square error
+|      **[C.2]** Root Mean Square Error = 2.0978
+|      **[C.3]** R-Squared = 0.9288
+|
+| **[D]** The apparent model performance of the optimal model is summarized as follows:
+|      **[D.1]** Root Mean Square Error = 1.7044
+|      **[D.2]** R-Squared = 0.9530
+|
+| **[E]** The top-performing predictors in the model ranked using the root mean square error loss after permutations are as follows:
+|      **[E.1]** <span style="color: #FF0000">INFMOR</span> (numeric) = 7.07
+|      **[E.2]** <span style="color: #FF0000">NCOMOR</span> (numeric) = 3.57
+|      **[E.3]** <span style="color: #FF0000">CONTIN</span> (factor) = 1.93
+|      **[E.4]** <span style="color: #FF0000">GENDER</span> (factor) = 1.92
+|      **[E.5]** <span style="color: #FF0000">CLTECH</span> (numeric) = 1.84
+|      **[E.6]** <span style="color: #FF0000">PERCAP</span> (numeric) = 1.52
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.6.2, warning=FALSE, message=FALSE}
+##################################
+# Defining the model hyperparameter values
+# for the GBM model
+##################################
+GBM_Grid = expand.grid(n.trees = c(100, 200, 300),
+                       interaction.depth = c(1, 2, 3),
+                       shrinkage = c(0.001, 0.005, 0.01, 0.05, 0.10),
+                       n.minobsinnode = c(5,10,15))
+
+##################################
+# Running the GBM model
+# by setting the caret method to 'gbm'
+##################################
+set.seed(12345678)
+GBM_Tune <- train(x = MD.Model.Predictors,
+                  y = MD$LIFEXP,
+                  method = "gbm",
+                  tuneGrid = GBM_Grid,
+                  trControl = KFold_Control)
+
+##################################
+# Reporting the apparent results
+# for the GBM model
+##################################
+GBM_DALEX <- DALEX::explain(GBM_Tune,
+                            data = MD.Model.Predictors,
+                            y = MD$LIFEXP,
+                            verbose = FALSE,
+                            label = "GBM")
+
+(GBM_DALEX_Performance <- model_performance(GBM_DALEX))
+(GBM_DALEX_Diagnostics <- model_diagnostics(GBM_DALEX))
+plot(GBM_DALEX_Diagnostics,
+     variable = "y",
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") +
+  scale_y_continuous("Predicted LIFEXP") +
+  geom_abline(slope = 1) +
+  ggtitle("GBM: Observed and Predicted LIFEXP")
+
+(GBM_DALEX_VariableImportance    <- model_parts(GBM_DALEX,
+                                               loss_function = loss_root_mean_square,
+                                               B = 200,
+                                               N = NULL))
+
+plot(GBM_DALEX_VariableImportance)
+
+##################################
+# Reporting the cross-validation results
+# for the GBM model
+##################################
+GBM_Tune
+
+GBM_Tune$finalModel
+
+(GBM_Tune_RMSE <- GBM_Tune$results[GBM_Tune$results$shrinkage==GBM_Tune$bestTune$shrinkage &
+                              GBM_Tune$results$interaction.depth==GBM_Tune$bestTune$interaction.depth &
+                              GBM_Tune$results$n.minobsinnode==GBM_Tune$bestTune$n.minobsinnode &
+                              GBM_Tune$results$n.trees==GBM_Tune$bestTune$n.trees,
+                 c("RMSE")])
+
+(GBM_Tune_Rsquared <- GBM_Tune$results[GBM_Tune$results$shrinkage==GBM_Tune$bestTune$shrinkage &
+                              GBM_Tune$results$interaction.depth==GBM_Tune$bestTune$interaction.depth &
+                              GBM_Tune$results$n.minobsinnode==GBM_Tune$bestTune$n.minobsinnode &
+                              GBM_Tune$results$n.trees==GBM_Tune$bestTune$n.trees,
+                 c("Rsquared")])
+
+(GBM_Tune_MAE <- GBM_Tune$results[GBM_Tune$results$shrinkage==GBM_Tune$bestTune$shrinkage &
+                              GBM_Tune$results$interaction.depth==GBM_Tune$bestTune$interaction.depth &
+                              GBM_Tune$results$n.minobsinnode==GBM_Tune$bestTune$n.minobsinnode &
+                              GBM_Tune$results$n.trees==GBM_Tune$bestTune$n.trees,
+                 c("MAE")])
+
+```
+
+</details>
+
+|
+|
+####  1.3.6.3 Random Forest
+|
+| **[A]** The random forest model from the  <mark style="background-color: #CCECFF">**randomForest**</mark> package was implemented through the <mark style="background-color: #CCECFF">**caret**</mark> package.
+|
+| **[B]** The model contains 1 hyperparameter:
+|      **[B.1]** <span style="color: #FF0000">mtry</span> = number of randomly selected predictors made to vary across a range of values equal to 100 to 1000 with intervals of 100
+|
+| **[C]** The 10-fold cross-validated model performance of the optimal model is summarized as follows:
+|      **[C.1]** Optimal model used mtry=400 which demonstrated the lowest root mean square error
+|      **[C.2]** Root Mean Square Error = 2.2390
+|      **[C.3]** R-Squared = 0.9201
+|
+| **[D]** The apparent model performance of the optimal model is summarized as follows:
+|      **[D.1]** Root Mean Square Error = 0.9698
+|      **[D.2]** R-Squared = 0.9848
+|
+| **[E]** The top-performing predictors in the model ranked using the root mean square error loss after permutations are as follows:
+|      **[E.1]** <span style="color: #FF0000">INFMOR</span> (numeric) = 8.39
+|      **[E.2]** <span style="color: #FF0000">NCOMOR</span> (numeric) = 4.23
+|      **[E.3]** <span style="color: #FF0000">CONTIN</span> (factor) = 1.45
+|      **[E.4]** <span style="color: #FF0000">GENDER</span> (factor) = 1.36
+|      **[E.5]** <span style="color: #FF0000">CLTECH</span> (numeric) = 1.28
+|      **[E.6]** <span style="color: #FF0000">PERCAP</span> (numeric) = 1.25
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.6.3, warning=FALSE, message=FALSE}
+##################################
+# Defining the model hyperparameter values
+# for the RF model
+##################################
+RF_Grid = data.frame(mtry = c(100, 200, 300, 400, 500,
+                              600, 700, 800, 900, 1000))
+
+##################################
+# Running the RF model
+# by setting the caret method to 'RF'
+##################################
+set.seed(12345678)
+RF_Tune <- train(x = MD.Model.Predictors,
+                 y = MD$LIFEXP,
+                 method = "rf",
+                 tuneGrid = RF_Grid,
+                 trControl = KFold_Control)
+
+##################################
+# Reporting the apparent results
+# for the RF model
+##################################
+RF_DALEX <- DALEX::explain(RF_Tune,
+                           data = MD.Model.Predictors,
+                           y = MD$LIFEXP,
+                           verbose = FALSE,
+                           label = "RF")
+
+(RF_DALEX_Performance <- model_performance(RF_DALEX))
+(RF_DALEX_Diagnostics <- model_diagnostics(RF_DALEX))
+plot(RF_DALEX_Diagnostics,
+     variable = "y",
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") +
+  scale_y_continuous("Predicted LIFEXP") +
+  geom_abline(slope = 1) +
+  ggtitle("RF: Observed and Predicted LIFEXP")
+
+(RF_DALEX_VariableImportance    <- model_parts(RF_DALEX,
+                                              loss_function = loss_root_mean_square,
+                                              B = 200,
+                                              N = NULL))
+
+plot(RF_DALEX_VariableImportance)
+
+##################################
+# Reporting the cross-validation results
+# for the RF model
+##################################
+RF_Tune
+
+RF_Tune$finalModel
+
+(RF_Tune_RMSE <- RF_Tune$results[RF_Tune$results$mtry==RF_Tune$bestTune$mtry,
+                 c("RMSE")])
+
+(RF_Tune_Rsquared <- RF_Tune$results[RF_Tune$results$mtry==RF_Tune$bestTune$mtry,
+                 c("Rsquared")])
+
+(RF_Tune_MAE <- RF_Tune$results[RF_Tune$results$mtry==RF_Tune$bestTune$mtry,
+                 c("MAE")])
+
+```
+
+</details>
+
+|
+|
+####  1.3.6.4 Neural Network
+|
+| **[A]** The neural network regression model from the  <mark style="background-color: #CCECFF">**nnet**</mark> package was implemented through the <mark style="background-color: #CCECFF">**caret**</mark> package.
+|
+| **[B]** The model contains 2 hyperparameters:
+|      **[B.1]** <span style="color: #FF0000">size</span> = number of units in the hidden layer made to vary across a range of values equal to 2, 5, 10, 15 and 20
+|      **[B.2]** <span style="color: #FF0000">decay</span> = parameter for weight decay made to vary across a range of values equal to 0, 0.00001, 0.0001, 0.001 and 0.1
+|
+| **[C]** The 10-fold cross-validated model performance of the optimal model is summarized as follows:
+|      **[C.1]** Optimal model used size=2 and decay=0.1 which demonstrated the lowest root mean square error
+|      **[C.2]** Root Mean Square Error = 2.0701
+|      **[C.3]** R-Squared = 0.9321
+|
+| **[D]** The apparent model performance of the optimal model is summarized as follows:
+|      **[D.1]** Root Mean Square Error = 1.9473
+|      **[D.2]** R-Squared = 0.9387
+|
+| **[E]** The top-performing predictors in the model ranked using the root mean square error loss after permutations are as follows:
+|      **[E.1]** <span style="color: #FF0000">INFMOR</span> (numeric) = 7.70
+|      **[E.2]** <span style="color: #FF0000">NCOMOR</span> (numeric) = 3.67
+|      **[E.3]** <span style="color: #FF0000">CLTECH</span> (numeric) = 3.10
+|      **[E.4]** <span style="color: #FF0000">CONTIN</span> (factor) = 3.07
+|      **[E.5]** <span style="color: #FF0000">GENDER</span> (factor) = 2.51
+|      **[E.6]** <span style="color: #FF0000">PERCAP</span> (numeric) = 2.33
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.6.4, warning=FALSE, message=FALSE}
+##################################
+# Defining the model hyperparameter values
+# for the NN model
+##################################
+NN_Grid = expand.grid(size = c(2, 5, 10, 15, 20),
+                      decay = c(0, 0.00001, 0.0001, 0.001, 0.1))
+
+##################################
+# Running the NN model
+# by setting the caret method to 'NN'
+##################################
+set.seed(12345678)
+NN_Tune <- train(x = MD.Model.Predictors,
+                 y = MD$LIFEXP,
+                 method = "nnet",
+                 linout = TRUE,
+                 preProcess = c('center', 'scale'),
+                 maxit = 500,
+                 tuneGrid = NN_Grid,
+                 trControl = KFold_Control)
+
+##################################
+# Reporting the apparent results
+# for the NN model
+##################################
+NN_DALEX <- DALEX::explain(NN_Tune,
+                           data = MD.Model.Predictors,
+                           y = MD$LIFEXP,
+                           verbose = FALSE,
+                           label = "NN")
+
+(NN_DALEX_Performance <- model_performance(NN_DALEX))
+(NN_DALEX_Diagnostics <- model_diagnostics(NN_DALEX))
+plot(NN_DALEX_Diagnostics,
+     variable = "y",
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") +
+  scale_y_continuous("Predicted LIFEXP") +
+  geom_abline(slope = 1) +
+  ggtitle("RF: Observed and Predicted LIFEXP")
+
+(NN_DALEX_VariableImportance    <- model_parts(NN_DALEX,
+                                              loss_function = loss_root_mean_square,
+                                              B = 200,
+                                              N = NULL))
+
+plot(NN_DALEX_VariableImportance)
+
+##################################
+# Reporting the cross-validation results
+# for the NN model
+##################################
+NN_Tune
+
+NN_Tune$finalModel
+
+(NN_Tune_RMSE <- NN_Tune$results[NN_Tune$results$size==NN_Tune$bestTune$size &
+                              NN_Tune$results$decay==NN_Tune$bestTune$decay,
+                 c("RMSE")])
+
+(NN_Tune_Rsquared <- NN_Tune$results[NN_Tune$results$size==NN_Tune$bestTune$size &
+                              NN_Tune$results$decay==NN_Tune$bestTune$decay,
+                 c("Rsquared")])
+
+(NN_Tune_MAE <- NN_Tune$results[NN_Tune$results$size==NN_Tune$bestTune$size &
+                              NN_Tune$results$decay==NN_Tune$bestTune$decay,
+                 c("MAE")])
+
+```
+
+</details>
+
+|
+|
+####  1.3.6.5 Partial Least Squares Regression
+|
+| **[A]** The partial least squares regression model from the  <mark style="background-color: #CCECFF">**pls**</mark> package was implemented through the <mark style="background-color: #CCECFF">**caret**</mark> package.
+|
+| **[B]** The model contains 1 hyperparameter:
+|      **[B.1]** <span style="color: #FF0000">ncomp</span> = number of components made to vary across a range of values equal to 1 to 5 with intervals of 1
+|
+| **[C]** The 10-fold cross-validated model performance of the optimal model is summarized as follows:
+|      **[C.1]** Optimal model used ncomp=5 which demonstrated the lowest root mean square error
+|      **[C.2]** Root Mean Square Error = 2.4632
+|      **[C.3]** R-Squared = 0.9087
+|
+| **[D]** The apparent model performance of the optimal model is summarized as follows:
+|      **[D.1]** Root Mean Square Error = 2.4242
+|      **[D.2]** R-Squared = 0.9050
+|
+| **[E]** The top-performing predictors in the model ranked using the root mean square error loss after permutations are as follows:
+|      **[E.1]** <span style="color: #FF0000">INFMOR</span> (numeric) = 7.84
+|      **[E.2]** <span style="color: #FF0000">GENDER</span> (factor) = 3.25
+|      **[E.3]** <span style="color: #FF0000">CLTECH</span> (numeric) = 3.16
+|      **[E.4]** <span style="color: #FF0000">CONTIN</span> (factor) = 3.07
+|      **[E.5]** <span style="color: #FF0000">NCOMOR</span> (numeric) = 2.97
+|      **[E.6]** <span style="color: #FF0000">PERCAP</span> (numeric) = 2.43
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.6.5, warning=FALSE, message=FALSE}
+##################################
+# Defining the model hyperparameter values
+# for the PLS model
+##################################
+PLS_Grid = expand.grid(ncomp = 1:5)
+
+##################################
+# Running the PLS model
+# by setting the caret method to 'pls'
+##################################
+set.seed(12345678)
+PLS_Tune <- train(x = MD.Model.Predictors,
+                  y = MD$LIFEXP,
+                  method = "pls",
+                  tuneGrid = PLS_Grid,
+                  trControl = KFold_Control)
+
+##################################
+# Reporting the apparent results
+# for the PLS model
+##################################
+PLS_DALEX <- DALEX::explain(PLS_Tune,
+                           data = MD.Model.Predictors,
+                           y = MD$LIFEXP,
+                           verbose = FALSE,
+                           label = "PLS")
+
+(PLS_DALEX_Performance <- model_performance(PLS_DALEX))
+(PLS_DALEX_Diagnostics <- model_diagnostics(PLS_DALEX))
+plot(PLS_DALEX_Diagnostics,
+     variable = "y",
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") +
+  scale_y_continuous("Predicted LIFEXP") +
+  geom_abline(slope = 1) +
+  ggtitle("RF: Observed and Predicted LIFEXP")
+
+(PLS_DALEX_VariableImportance    <- model_parts(PLS_DALEX,
+                                              loss_function = loss_root_mean_square,
+                                              B = 200,
+                                              N = NULL))
+
+plot(PLS_DALEX_VariableImportance)
+
+##################################
+# Reporting the cross-validation results
+# for the PLS model
+##################################
+PLS_Tune
+
+PLS_Tune$finalModel
+
+(PLS_Tune_RMSE <- PLS_Tune$results[PLS_Tune$results$ncomp==PLS_Tune$bestTune$ncomp,
+                 c("RMSE")])
+
+(PLS_Tune_Rsquared <- PLS_Tune$results[PLS_Tune$results$ncomp==PLS_Tune$bestTune$ncomp,
+                 c("Rsquared")])
+
+(PLS_Tune_MAE <- PLS_Tune$results[PLS_Tune$results$ncomp==PLS_Tune$bestTune$ncomp,
+                 c("MAE")])
+
+```
+
+</details>
+
+|
+|
+####  1.3.6.6 Cubist Regression
+|
+| **[A]** The cubist regression model from the  <mark style="background-color: #CCECFF">**Cubist**</mark> package was implemented through the <mark style="background-color: #CCECFF">**caret**</mark> package.
+|
+| **[B]** The model contains 2 hyperparameters:
+|      **[B.1]** <span style="color: #FF0000">committees</span> = number of committees made to vary across a range of values equal to 10 to 50 with intervals of 10
+|      **[B.2]** <span style="color: #FF0000">neighbors</span> = number of neighbors made to vary across a range of values equal to 0 to 9 with intervals of 3
+|
+| **[C]** The 10-fold cross-validated model performance of the optimal model is summarized as follows:
+|      **[C.1]** Optimal model used committees=50 and neighbors=0 which demonstrated the lowest root mean square error
+|      **[C.2]** Root Mean Square Error = 2.0967
+|      **[C.3]** R-Squared = 0.9316
+|
+| **[D]** The apparent model performance of the optimal model is summarized as follows:
+|      **[D.1]** Root Mean Square Error = 1.9126
+|      **[D.2]** R-Squared = 0.9408
+|
+| **[E]** The top-performing predictors in the model ranked using the root mean square error loss after permutations are as follows:
+|      **[E.1]** <span style="color: #FF0000">INFMOR</span> (numeric) = 7.73
+|      **[E.2]** <span style="color: #FF0000">NCOMOR</span> (numeric) = 3.75
+|      **[E.3]** <span style="color: #FF0000">CONTIN</span> (factor) = 2.36
+|      **[E.4]** <span style="color: #FF0000">GENDER</span> (factor) = 2.29
+|      **[E.5]** <span style="color: #FF0000">PERCAP</span> (numeric) = 2.09
+|      **[E.6]** <span style="color: #FF0000">CLTECH</span> (numeric) = 1.92
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.6.6, warning=FALSE, message=FALSE}
+##################################
+# Defining the model hyperparameter values
+# for the CUBIST model
+##################################
+CUBIST_Grid = expand.grid(committees = c(10, 20, 30, 40, 50),
+                          neighbors = c(0, 3, 6, 9))
+
+
+##################################
+# Running the CUBIST model
+# by setting the caret method to 'cubist'
+##################################
+set.seed(12345678)
+CUBIST_Tune <- train(x = MD.Model.Predictors,
+                   y = MD$LIFEXP,
+                   method = "cubist",
+                   tuneGrid = CUBIST_Grid,
+                   trControl = KFold_Control)
+
+##################################
+# Reporting the apparent results
+# for the CUBIST model
+##################################
+CUBIST_DALEX <- DALEX::explain(CUBIST_Tune,
+                           data = MD.Model.Predictors,
+                           y = MD$LIFEXP,
+                           verbose = FALSE,
+                           label = "CUBIST")
+
+(CUBIST_DALEX_Performance <- model_performance(CUBIST_DALEX))
+(CUBIST_DALEX_Diagnostics <- model_diagnostics(CUBIST_DALEX))
+plot(CUBIST_DALEX_Diagnostics,
+     variable = "y",
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") +
+  scale_y_continuous("Predicted LIFEXP") +
+  geom_abline(slope = 1) +
+  ggtitle("RF: Observed and Predicted LIFEXP")
+
+(CUBIST_DALEX_VariableImportance    <- model_parts(CUBIST_DALEX,
+                                              loss_function = loss_root_mean_square,
+                                              B = 200,
+                                              N = NULL))
+
+plot(CUBIST_DALEX_VariableImportance)
+
+##################################
+# Reporting the cross-validation results
+# for the CUBIST model
+##################################
+CUBIST_Tune
+
+CUBIST_Tune$finalModel
+
+(CUBIST_Tune_RMSE <- CUBIST_Tune$results[CUBIST_Tune$results$committees==CUBIST_Tune$bestTune$committees &
+                              CUBIST_Tune$results$neighbors==CUBIST_Tune$bestTune$neighbors,
+                 c("RMSE")])
+
+(CUBIST_Tune_Rsquared <- CUBIST_Tune$results[CUBIST_Tune$results$committees==CUBIST_Tune$bestTune$committees &
+                              CUBIST_Tune$results$neighbors==CUBIST_Tune$bestTune$neighbors,
+                 c("Rsquared")])
+
+(CUBIST_Tune_MAE <- CUBIST_Tune$results[CUBIST_Tune$results$committees==CUBIST_Tune$bestTune$committees &
+                              CUBIST_Tune$results$neighbors==CUBIST_Tune$bestTune$neighbors,
+                 c("MAE")])
+
+```
+
+</details>
+
+###  1.3.7 Model Performance Validation
+|
+| **[A]** Apparent performance ranked from best to worst among the candidate optimal models are provided as follows:
+|      **[A.1]** **RF: Random Forest** (<mark style="background-color: #CCECFF">**randomForest**</mark> package)
+|             **[A.1.1]** Root Mean Square Error = 0.9698
+|             **[A.1.2]** R-Squared = 0.9848 
+|      **[A.2]** **GBM: Stochastic Gradient Boosting** (<mark style="background-color: #CCECFF">**gbm**</mark> package)
+|             **[A.2.1]** Root Mean Square Error = 1.7044
+|             **[A.2.2]** R-Squared = 0.9530
+|      **[A.3]** **CUB: Cubist** (<mark style="background-color: #CCECFF">**Cubist**</mark> package)
+|             **[A.3.1]** Root Mean Square Error = 1.9126
+|             **[A.3.2]** R-Squared = 0.9408
+|      **[A.4]** **NN: Neural Network** (<mark style="background-color: #CCECFF">**nnet**</mark> package)
+|             **[A.4.1]** Root Mean Square Error = 1.9473
+|             **[A.4.2]** R-Squared = 0.9387 
+|      **[A.5]** **LR: Linear Regression** (<mark style="background-color: #CCECFF">**stats**</mark> package)
+|             **[A.5.1]** Root Mean Square Error = 2.3622
+|             **[A.5.2]** R-Squared = 0.9098 
+|      **[A.6]** **PLS: Partial Least Squares** (<mark style="background-color: #CCECFF">**pls**</mark> package)
+|             **[A.6.1]** Root Mean Square Error = 2.4242
+|             **[A.6.2]** R-Squared = 0.9050
+|
+| **[B]** 10-fold cross-validated performance ranked from best to worst among the candidate optimal models are provided as follows:
+|      **[B.1]** **NN: Neural Network** (<mark style="background-color: #CCECFF">**nnet**</mark> package)
+|             **[B.1.1]** Root Mean Square Error = 2.0701
+|             **[B.1.2]** R-Squared = 0.9321 
+|      **[B.2]** **CUB: Cubist** (<mark style="background-color: #CCECFF">**Cubist**</mark> package)
+|             **[B.2.1]** Root Mean Square Error = 2.0967
+|             **[B.2.2]** R-Squared = 0.9316
+|      **[B.3]** **GBM: Stochastic Gradient Boosting** (<mark style="background-color: #CCECFF">**gbm**</mark> package)
+|             **[B.3.1]** Root Mean Square Error = 2.0978
+|             **[B.3.2]** R-Squared = 0.9288
+|      **[B.4]** **RF: Random Forest** (<mark style="background-color: #CCECFF">**randomForest**</mark> package)
+|             **[B.4.1]** Root Mean Square Error = 2.2390
+|             **[B.4.2]** R-Squared = 0.9201 
+|      **[B.5]** **LR: Linear Regression** (<mark style="background-color: #CCECFF">**stats**</mark> package)
+|             **[B.5.1]** Root Mean Square Error = 2.4078
+|             **[B.5.2]** R-Squared = 0.9116 
+|      **[B.6]** **PLS: Partial Least Squares** (<mark style="background-color: #CCECFF">**pls**</mark> package)
+|             **[B.6.1]** Root Mean Square Error = 2.4632
+|             **[B.6.2]** R-Squared = 0.9087
+|
+| **[C]** Externally-validated performance ranked from best to worst among the candidate optimal models are provided as follows:
+|      **[C.1]** **GBM: Stochastic Gradient Boosting** (<mark style="background-color: #CCECFF">**gbm**</mark> package)
+|             **[C.1.1]** Root Mean Square Error = 2.1007
+|             **[C.1.2]** R-Squared = 0.9171
+|      **[C.2]** **CUB: Cubist** (<mark style="background-color: #CCECFF">**Cubist**</mark> package)
+|             **[C.2.1]** Root Mean Square Error = 2.2261
+|             **[C.2.2]** R-Squared = 0.9069
+|      **[C.3]** **NN: Neural Network** (<mark style="background-color: #CCECFF">**nnet**</mark> package)
+|             **[C.3.1]** Root Mean Square Error = 2.3021
+|             **[C.3.2]** R-Squared = 0.9005
+|      **[C.4]** **RF: Random Forest** (<mark style="background-color: #CCECFF">**randomForest**</mark> package)
+|             **[C.4.1]** Root Mean Square Error = 2.5012
+|             **[C.4.2]** R-Squared = 0.8825 
+|      **[C.5]** **LR: Linear Regression** (<mark style="background-color: #CCECFF">**stats**</mark> package)
+|             **[C.5.1]** Root Mean Square Error = 2.5330
+|             **[C.5.2]** R-Squared = 0.8795
+|      **[C.6]** **PLS: Partial Least Squares** (<mark style="background-color: #CCECFF">**pls**</mark> package)
+|             **[C.6.1]** Root Mean Square Error = 2.6870
+|             **[C.6.2]** R-Squared = 0.8644
+|
+| **[D]** The formulated models below demonstrated consistently good performance from both internal and external validation.
+|      **[D.1]** **GBM: Stochastic Gradient Boosting** (<mark style="background-color: #CCECFF">**gbm**</mark> package)
+|      **[D.2]** **CUB: Cubist** (<mark style="background-color: #CCECFF">**Cubist**</mark> package)
+|      **[D.3]** **NN: Neural Network** (<mark style="background-color: #CCECFF">**nnet**</mark> package)
+|
+| **[E]** The formulated model below showed signs of overfitting due to the huge difference in performance as observed between internal and external validation.
+|      **[E.1]** **RF: Random Forest** (<mark style="background-color: #CCECFF">**randomForest**</mark> package)
+|
+| **[F]** The formulated models below showed consistently worse performance from both internal and external validation. 
+|      **[F.1]** **LR: Linear Regression** (<mark style="background-color: #CCECFF">**stats**</mark> package)
+|      **[F.2]** **PLS: Partial Least Squares** (<mark style="background-color: #CCECFF">**pls**</mark> package)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.7, warning=FALSE, message=FALSE}
+##################################
+# Evaluating the models
+# on the model test data
+##################################
+
+##################################
+# Formulating the DALEX object
+# for the Best LR model
+# as applied to the model test data
+##################################
+LR_DALEX <- DALEX::explain(LR_Tune,
+                            data = MT.Model.Predictors,
+                            y = MT$LIFEXP,
+                            verbose = FALSE,
+                            label = "LR")
+
+(LR_DALEX_Performance <- model_performance(LR_DALEX))
+(LR_DALEX_Diagnostics <- model_diagnostics(LR_DALEX))
+plot(LR_DALEX_Diagnostics,
+     variable = "y",
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") +
+  scale_y_continuous("Predicted LIFEXP") +
+  geom_abline(slope = 1) +
+  ggtitle("LR: Observed and Predicted LIFEXP")
+
+##################################
+# Formulating the DALEX object
+# for the Best GBM model
+# as applied to the model test data
+##################################
+GBM_DALEX <- DALEX::explain(GBM_Tune,
+                            data = MT.Model.Predictors,
+                            y = MT$LIFEXP,
+                            verbose = FALSE,
+                            label = "GBM")
+
+(GBM_DALEX_Performance <- model_performance(GBM_DALEX))
+(GBM_DALEX_Diagnostics <- model_diagnostics(GBM_DALEX))
+plot(GBM_DALEX_Diagnostics,
+     variable = "y",
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") +
+  scale_y_continuous("Predicted LIFEXP") +
+  geom_abline(slope = 1) +
+  ggtitle("GBM: Observed and Predicted LIFEXP")
+
+##################################
+# Formulating the DALEX object
+# for the Best RF model
+# as applied to the model test data
+##################################
+RF_DALEX <- DALEX::explain(RF_Tune,
+                           data = MT.Model.Predictors,
+                           y = MT$LIFEXP,
+                           verbose = FALSE,
+                           label = "RF")
+
+(RF_DALEX_Performance <- model_performance(RF_DALEX))
+(RF_DALEX_Diagnostics <- model_diagnostics(RF_DALEX))
+plot(RF_DALEX_Diagnostics,
+     variable = "y",
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") +
+  scale_y_continuous("Predicted LIFEXP") +
+  geom_abline(slope = 1) +
+  ggtitle("RF: Observed and Predicted LIFEXP")
+
+##################################
+# Formulating the DALEX object
+# for the Best NN model
+# as applied to the model test data
+##################################
+NN_DALEX <- DALEX::explain(NN_Tune,
+                           data = MT.Model.Predictors,
+                           y = MT$LIFEXP,
+                           verbose = FALSE,
+                           label = "NN")
+
+(NN_DALEX_Performance <- model_performance(NN_DALEX))
+(NN_DALEX_Diagnostics <- model_diagnostics(NN_DALEX))
+plot(NN_DALEX_Diagnostics,
+     variable = "y",
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") +
+  scale_y_continuous("Predicted LIFEXP") +
+  geom_abline(slope = 1) +
+  ggtitle("NN: Observed and Predicted LIFEXP")
+
+##################################
+# Formulating the DALEX object
+# for the Best PLS model
+# as applied to the model test data
+##################################
+PLS_DALEX <- DALEX::explain(PLS_Tune,
+                            data = MT.Model.Predictors,
+                            y = MT$LIFEXP,
+                            verbose = FALSE,
+                            label = "PLS")
+
+(PLS_DALEX_Performance <- model_performance(PLS_DALEX))
+(PLS_DALEX_Diagnostics <- model_diagnostics(PLS_DALEX))
+plot(PLS_DALEX_Diagnostics,
+     variable = "y",
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") +
+  scale_y_continuous("Predicted LIFEXP") +
+  geom_abline(slope = 1) +
+  ggtitle("PLS: Observed and Predicted LIFEXP")
+
+##################################
+# Formulating the DALEX object
+# for the Best CUBIST model
+# as applied to the model test data
+##################################
+CUBIST_DALEX <- DALEX::explain(CUBIST_Tune,
+                            data = MT.Model.Predictors,
+                            y = MT$LIFEXP,
+                            verbose = FALSE,
+                            label = "CUBIST")
+
+(CUBIST_DALEX_Performance <- model_performance(CUBIST_DALEX))
+(CUBIST_DALEX_Diagnostics <- model_diagnostics(CUBIST_DALEX))
+plot(CUBIST_DALEX_Diagnostics,
+     variable = "y",
+     yvariable = "y_hat") +
+  geom_point(size=3) +
+  scale_x_continuous("Observed LIFEXP") +
+  scale_y_continuous("Predicted LIFEXP") +
+  geom_abline(slope = 1) +
+  ggtitle("CUBIST: Observed and Predicted LIFEXP")
+
+```
+
+</details>
+
+###  1.3.8 Model Selection
+|
+| **[A]** The formulated model using **GBM: Stochastic Gradient Boosting** was selected as the final model among others for the following reasons:
+|      **[A.1]** It demonstrated the best RMSE and R-Squared performance  based on external validation. 
+|      **[A.2]** No excessive overfitting observed when comparing the internal and external validation performance. 
+|      **[A.3]** It generated the most stable residual distribution with the lowest variance. 
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.8, warning=FALSE, message=FALSE}
+##################################
+# Consolidating the performance
+# on the model test data
+##################################
+plot(LR_DALEX_Performance,
+     GBM_DALEX_Performance,
+     RF_DALEX_Performance,
+     NN_DALEX_Performance,
+     PLS_DALEX_Performance,
+     CUBIST_DALEX_Performance)
+
+
+plot(LR_DALEX_Performance,
+     GBM_DALEX_Performance,
+     RF_DALEX_Performance,
+     NN_DALEX_Performance,
+     PLS_DALEX_Performance,
+     CUBIST_DALEX_Performance,
+     geom = "boxplot")
+
+plot(LR_DALEX_Performance,
+     GBM_DALEX_Performance,
+     RF_DALEX_Performance,
+     NN_DALEX_Performance,
+     PLS_DALEX_Performance,
+     CUBIST_DALEX_Performance,
+     geom = "histogram")
+
+plot(LR_DALEX_Performance,
+     geom = "histogram") +
+  scale_x_continuous(limits=c(-8, 8)) +
+  scale_y_continuous(limits=c(0, 8))
+
+plot(GBM_DALEX_Performance,
+     geom = "histogram") +
+  scale_x_continuous(limits=c(-8, 8)) +
+  scale_y_continuous(limits=c(0, 8))
+
+plot(RF_DALEX_Performance,
+     geom = "histogram") +
+  scale_x_continuous(limits=c(-8, 8)) +
+  scale_y_continuous(limits=c(0, 8))
+
+plot(NN_DALEX_Performance,
+     geom = "histogram") +
+  scale_x_continuous(limits=c(-8, 8)) +
+  scale_y_continuous(limits=c(0, 8))
+
+plot(PLS_DALEX_Performance,
+     geom = "histogram") +
+  scale_x_continuous(limits=c(-8, 8)) +
+  scale_y_continuous(limits=c(0, 8))
+
+plot(CUBIST_DALEX_Performance,
+     geom = "histogram") +
+  scale_x_continuous(limits=c(-8, 8)) +
+  scale_y_continuous(limits=c(0, 8))
+
+##################################
+# Consolidating the variable importance
+# on the model test data
+##################################
+LR_DALEX_VariableImportance    <- model_parts(LR_DALEX,
+                                              loss_function = loss_root_mean_square,
+                                              B = 200,
+                                              N = NULL)
+GBM_DALEX_VariableImportance    <- model_parts(GBM_DALEX,
+                                               loss_function = loss_root_mean_square,
+                                               B = 200,
+                                               N = NULL)
+RF_DALEX_VariableImportance     <- model_parts(RF_DALEX,
+                                               loss_function = loss_root_mean_square,
+                                               B = 200,
+                                               N = NULL)
+NN_DALEX_VariableImportance     <- model_parts(NN_DALEX,
+                                               loss_function = loss_root_mean_square,
+                                               B = 200,
+                                               N = NULL)
+PLS_DALEX_VariableImportance    <- model_parts(PLS_DALEX,
+                                               loss_function = loss_root_mean_square,
+                                               B = 200,
+                                               N = NULL)
+CUBIST_DALEX_VariableImportance <- model_parts(CUBIST_DALEX,
+                                               loss_function = loss_root_mean_square,
+                                               B = 200,
+                                               N = NULL)
+
+plot(LR_DALEX_VariableImportance,
+     GBM_DALEX_VariableImportance,
+     RF_DALEX_VariableImportance,
+     NN_DALEX_VariableImportance,
+     PLS_DALEX_VariableImportance,
+     CUBIST_DALEX_VariableImportance)
+
+```
+
+</details>
+
+###  1.3.9 Model Presentation
+|
+|
+####  1.3.9.1 Dataset Level Exploration : Variable Importance
+|
+| **[A]** The predictors for the **GBM: Stochastic Gradient Boosting** model ranked based on importance were given as follows:
+|      **[A.1]** <span style="color: #FF0000">INFMOR</span> (numeric)
+|      **[A.2]** <span style="color: #FF0000">NCOMOR</span> (numeric)
+|      **[A.3]** <span style="color: #FF0000">CONTIN</span> (factor)
+|      **[A.4]** <span style="color: #FF0000">GENDER</span> (factor)
+|      **[A.5]** <span style="color: #FF0000">CLTECH</span> (numeric)
+|      **[A.6]** <span style="color: #FF0000">PERCAP</span> (numeric)
+|
+| **[A]** The most dominant predictors for the model were the following:
+|      **[A.1]**  <span style="color: #FF0000">INFMOR</span> (numeric)
+|      **[A.2]**  <span style="color: #FF0000">NCOMOR</span> (numeric)
+|
+| **[B]** Comparable contributions were observed for the following predictors:
+|      **[B.1]** <span style="color: #FF0000">CONTIN</span> (factor)
+|      **[B.2]** <span style="color: #FF0000">GENDER</span> (factor)
+|      **[B.3]** <span style="color: #FF0000">CLTECH</span> (numeric)
+|
+| **[C]** The predictor which showed the least contribution in the model was:
+|      **[C.1]** <span style="color: #FF0000">PERCAP</span> (numeric)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.9.1, warning=FALSE, message=FALSE}
+##################################
+# Summarizing the variable importance
+# for the final model - GBM
+##################################
+GBM_DALEX_VariableImportance
+
+plot(GBM_DALEX_VariableImportance)
+
+```
+
+</details>
+
+|
+|
+####  1.3.9.2 Dataset Level Exploration : Partial Dependence Plots
+|
+| **[A]** The average effects of the individual **GBM: Stochastic Gradient Boosting** model predictors on the response variable <span style="color: #FF0000">LIFEXP</span>, as conditioned by the other predictors in the model,  are described as follows:
+|      **[A.1]** Lower values of <span style="color: #FF0000">INFMOR</span> (numeric) lead to higher <span style="color: #FF0000">LIFEXP</span> (numeric)
+|      **[A.2]** Lower values of <span style="color: #FF0000">NCOMOR</span> (numeric) lead to higher <span style="color: #FF0000">LIFEXP</span> (numeric)
+|      **[A.3]** <span style="color: #FF0000">CONTIN=Africa</span> (numeric) lead to lower <span style="color: #FF0000">LIFEXP</span> (numeric)
+|      **[A.4]** <span style="color: #FF0000">GENDER=Female</span> (factor) lead to higher <span style="color: #FF0000">LIFEXP</span> (numeric)
+|      **[A.5]** Higher values of <span style="color: #FF0000">CLTECH</span> (numeric) lead to higher <span style="color: #FF0000">LIFEXP</span> (numeric)
+|      **[A.6]** Minimal effect for <span style="color: #FF0000">PERCAP</span> (numeric) on <span style="color: #FF0000">LIFEXP</span> (numeric)
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.9.2, warning=FALSE, message=FALSE}
+##################################
+# Formulating the partial dependence plots
+# for the final model - GBM
+# using the numeric variables
+##################################
+GBM_DALEX_PartialDependencePlot_INFMOR <- model_profile(GBM_DALEX,
+                                                        variables = "INFMOR")
+GBM_DALEX_PartialDependencePlot_NCOMOR <- model_profile(GBM_DALEX,
+                                                        variables = "NCOMOR")
+GBM_DALEX_PartialDependencePlot_CLTECH <- model_profile(GBM_DALEX,
+                                                        variables = "CLTECH")
+GBM_DALEX_PartialDependencePlot_PERCAP <- model_profile(GBM_DALEX,
+                                                        variables = "PERCAP")
+
+(GBM_DALEX_PDP_INFMOR <- plot(GBM_DALEX_PartialDependencePlot_INFMOR,
+                              geom = "profiles"))
+(GBM_DALEX_PDP_NCOMOR <- plot(GBM_DALEX_PartialDependencePlot_NCOMOR,
+                              geom = "profiles"))
+(GBM_DALEX_PDP_CLTECH <- plot(GBM_DALEX_PartialDependencePlot_CLTECH,
+                              geom = "profiles"))
+(GBM_DALEX_PDP_PERCAP <- plot(GBM_DALEX_PartialDependencePlot_PERCAP,
+                              geom = "profiles"))
+
+##################################
+# Formulating the grouped partial dependence plots
+# for the final model - GBM
+# using the numeric variables
+# stratified by GENDER
+##################################
+GBM_DALEX_GroupedPartialDependencePlot_INFMOR <- model_profile(GBM_DALEX,
+                                                               variables = "INFMOR",
+                                                               groups = "GENDER")
+GBM_DALEX_GroupedPartialDependencePlot_NCOMOR <- model_profile(GBM_DALEX,
+                                                               variables = "NCOMOR",
+                                                               groups = "GENDER")
+GBM_DALEX_GroupedPartialDependencePlot_CLTECH <- model_profile(GBM_DALEX,
+                                                               variables = "CLTECH",
+                                                               groups = "GENDER")
+GBM_DALEX_GroupedPartialDependencePlot_PERCAP <- model_profile(GBM_DALEX,
+                                                               variables = "PERCAP",
+                                                               groups = "GENDER")
+
+(GBM_DALEX_GPDP_INFMOR <- plot(GBM_DALEX_GroupedPartialDependencePlot_INFMOR,
+                              geom = "profiles"))
+(GBM_DALEX_GPDP_NCOMOR <- plot(GBM_DALEX_GroupedPartialDependencePlot_NCOMOR,
+                              geom = "profiles"))
+(GBM_DALEX_GPDP_CLTECH <- plot(GBM_DALEX_GroupedPartialDependencePlot_CLTECH,
+                              geom = "profiles"))
+(GBM_DALEX_GPDP_PERCAP <- plot(GBM_DALEX_GroupedPartialDependencePlot_PERCAP,
+                              geom = "profiles"))
+
+##################################
+# Formulating the grouped partial dependence plots
+# for the final model - GBM
+# using the numeric variables
+# stratified by CONTIN
+##################################
+GBM_DALEX_GroupedPartialDependencePlot_INFMOR <- model_profile(GBM_DALEX,
+                                                               variables = "INFMOR",
+                                                               groups = "CONTIN")
+GBM_DALEX_GroupedPartialDependencePlot_NCOMOR <- model_profile(GBM_DALEX,
+                                                               variables = "NCOMOR",
+                                                               groups = "CONTIN")
+GBM_DALEX_GroupedPartialDependencePlot_CLTECH <- model_profile(GBM_DALEX,
+                                                               variables = "CLTECH",
+                                                               groups = "CONTIN")
+GBM_DALEX_GroupedPartialDependencePlot_PERCAP <- model_profile(GBM_DALEX,
+                                                               variables = "PERCAP",
+                                                               groups = "CONTIN")
+
+(GBM_DALEX_GPDP_INFMOR <- plot(GBM_DALEX_GroupedPartialDependencePlot_INFMOR,
+                              geom = "profiles"))
+(GBM_DALEX_GPDP_NCOMOR <- plot(GBM_DALEX_GroupedPartialDependencePlot_NCOMOR,
+                              geom = "profiles"))
+(GBM_DALEX_GPDP_CLTECH <- plot(GBM_DALEX_GroupedPartialDependencePlot_CLTECH,
+                              geom = "profiles"))
+(GBM_DALEX_GPDP_PERCAP <- plot(GBM_DALEX_GroupedPartialDependencePlot_PERCAP,
+                              geom = "profiles"))
+
+##################################
+# Formulating the partial dependence plots
+# for the final model - GBM
+# using the factor variables
+##################################
+GBM_DALEX_PartialDependencePlot_GENDER <- model_profile(GBM_DALEX,
+                                                        variable_type = 'categorical',
+                                                        variables = "GENDER")
+GBM_DALEX_PartialDependencePlot_CONTIN <- model_profile(GBM_DALEX,
+                                                        variable_type = 'categorical',
+                                                        variables = "CONTIN")
+
+(GBM_DALEX_PDP_GENDER <- plot(GBM_DALEX_PartialDependencePlot_GENDER,
+                               geom = "profiles"))
+(GBM_DALEX_PDP_CONTIN <- plot(GBM_DALEX_PartialDependencePlot_CONTIN,
+                               geom = "profiles"))
+
+```
+
+</details>
+|
+|
+####  1.3.9.3 Instance Level Exploration : Breakdown Plots
+|
+| **[A]** The decomposition of the **GBM: Stochastic Gradient Boosting** model’s prediction for the response variable <span style="color: #FF0000">LIFEXP</span>, into contributions that can be attributed to different explanatory variables were demonstrated using two illustrated instances:
+|      **[A.1]** Instance 1
+|             **[A.1.1]** <span style="color: #FF0000">COUNTRY=Philippines</span> (character)
+|             **[A.1.2]** <span style="color: #FF0000">INFMOR=2.944</span> (numeric)
+|             **[A.1.3]** <span style="color: #FF0000">NCOMOR=4.704</span> (numeric)
+|             **[A.1.4]** <span style="color: #FF0000">CONTIN=Asia</span> (factor)
+|             **[A.1.5]** <span style="color: #FF0000">GENDER=Female</span> (factor)
+|             **[A.1.6]** <span style="color: #FF0000">CLTECH=47.4</span> (numeric)
+|             **[A.1.7]** <span style="color: #FF0000">PERCAP=1.249</span> (numeric)
+|      **[A.2]** Instance 2
+|             **[A.2.1]** <span style="color: #FF0000">COUNTRY=Philippines</span> (character)
+|             **[A.2.2]** <span style="color: #FF0000">INFMOR=3.174</span> (numeric)
+|             **[A.2.3]** <span style="color: #FF0000">NCOMOR=5.951</span> (numeric)
+|             **[A.2.4]** <span style="color: #FF0000">CONTIN=Asia</span> (factor)
+|             **[A.2.5]** <span style="color: #FF0000">GENDER=Male</span> (factor)
+|             **[A.2.6]** <span style="color: #FF0000">CLTECH=47.4</span> (numeric)
+|             **[A.2.7]** <span style="color: #FF0000">PERCAP=1.249</span> (numeric)
+|
+| **[B]** Variable attributions for Instance 1 were described as follows:
+|      **[B.1]** Target response: <span style="color: #FF0000">LIFEXP=75.505</span> (numeric)
+|      **[B.2]** Predicted response: 75.616
+|      **[B.3]** Variable attributions conditioned on the previous predictor(s) are given below:
+|             **[B.3.1]** Average response: 72.475
+|             **[B.3.2]** <span style="color: #FF0000">GENDER=Female</span> (factor): +1.286
+|             **[B.3.3]** <span style="color: #FF0000">INFMOR=2.944</span> (numeric): +0.996
+|             **[B.3.4]** <span style="color: #FF0000">CONTIN=Asia</span> (factor): +0.629
+|             **[B.3.5]** <span style="color: #FF0000">PERCAP=1.249</span> (numeric): +0.866
+|             **[B.3.6]** <span style="color: #FF0000">NCOMOR=4.704</span> (numeric): -0.065
+|             **[B.3.7]** <span style="color: #FF0000">CLTECH=47.4</span> (numeric): -0.571
+|             **[B.3.8]** Predicted response: 75.616
+|
+| **[C]** Variable attributions for Instance 2 were described as follows:
+|      **[C.1]** Target response: <span style="color: #FF0000">LIFEXP=67.263</span> (numeric)
+|      **[C.2]** Predicted response: 68.103
+|      **[C.3]** Variable attributions conditioned on the previous predictor(s) are given below:
+|             **[C.3.1]** Average response: 72.475
+|             **[C.3.2]** <span style="color: #FF0000">NCOMOR=5.951</span> (numeric): -3.294
+|             **[C.3.3]** <span style="color: #FF0000">INFMOR=3.174</span> (numeric): -1.208
+|             **[C.3.4]** <span style="color: #FF0000">GENDER=Male</span> (factor): -0.972
+|             **[C.3.5]** <span style="color: #FF0000">CONTIN=Asia</span> (factor): +0.675
+|             **[C.3.6]** <span style="color: #FF0000">PERCAP=1.249</span> (numeric): +1.088
+|             **[C.3.7]** <span style="color: #FF0000">CLTECH=47.4</span> (numeric): -0.662
+|             **[C.3.8]** Predicted response: 68.103
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.9.3, warning=FALSE, message=FALSE}
+##################################
+# Formulating the sampled instances
+# for illustration
+##################################
+(Instance_1_Philippines_Female  <- PME[PME$COUNTRY=="Philippines" & PME$GENDER=="Female",
+                                   c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR","LIFEXP")])
+(Instance_2_Philippines_Male    <- PME[PME$COUNTRY=="Philippines" & PME$GENDER=="Male",
+                                   c("GENDER","CONTIN","INFMOR","PERCAP","CLTECH","NCOMOR","LIFEXP")])
+
+##################################
+# Obtaining the breakdown plots
+# for the individual instances
+##################################
+(Instance_1_GBM_BDP <- DALEX::predict_parts(explainer = GBM_DALEX,
+                                           new_observation = Instance_1_Philippines_Female[,c(1:6)],
+                                           type = "break_down"))
+plot(Instance_1_GBM_BDP)
+
+(Instance_2_GBM_BDP <- DALEX::predict_parts(explainer = GBM_DALEX,
+                                           new_observation = Instance_2_Philippines_Male[,c(1:6)],
+                                           type = "break_down"))
+plot(Instance_2_GBM_BDP)
+
+```
+
+</details>
+|
+|
+####  1.3.9.4 Instance Level Exploration : Shapley Additive Explanations
+|
+| **[A]** Using 25 random orderings of predictors, the average variable attributions for Instance 1, ranked from highest to lowest, were enumerated as follows:
+|      **[A.1]** <span style="color: #FF0000">GENDER=Female</span> (factor): +1.216
+|      **[A.2]** <span style="color: #FF0000">INFMOR=2.944</span> (numeric): +1.017
+|      **[A.3]** <span style="color: #FF0000">PERCAP=1.249</span> (numeric): +0.787
+|      **[A.4]** <span style="color: #FF0000">CONTIN=Asia</span> (factor): +0.734
+|      **[A.5]** <span style="color: #FF0000">CLTECH=47.4</span> (numeric): -0.419
+|      **[A.6]** <span style="color: #FF0000">NCOMOR=4.704</span> (numeric): -0.195
+|
+| **[B]** Using 25 random orderings of predictors, the average variable attributions for Instance 2,ranked from highest to lowest, were described as follows:
+|      **[B.1]** <span style="color: #FF0000">NCOMOR=5.951</span> (numeric): -2.957
+|      **[B.2]** <span style="color: #FF0000">INFMOR=3.174</span> (numeric): -1.654
+|      **[B.3]** <span style="color: #FF0000">GENDER=Male</span> (factor): -0.889
+|      **[B.4]** <span style="color: #FF0000">PERCAP=1.249</span> (numeric): +0.870
+|      **[B.5]** <span style="color: #FF0000">CONTIN=Asia</span> (factor): +0.768
+|      **[B.6]** <span style="color: #FF0000">CLTECH=47.4</span> (numeric): -0.508
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.9.4, warning=FALSE, message=FALSE}
+#################################
+# Obtaining the shapley additive explanations
+# for the individual instances
+#################################
+(Instance_1_GBM_SHAP <- DALEX::predict_parts(explainer = GBM_DALEX,
+                                           new_observation = Instance_1_Philippines_Female[,c(1:6)],
+                                           type = "shap",
+                                           B = 25))
+plot(Instance_1_GBM_SHAP)
+
+(Instance_2_GBM_SHAP <- DALEX::predict_parts(explainer = GBM_DALEX,
+                                           new_observation = Instance_2_Philippines_Male[,c(1:6)],
+                                           type = "shap",
+                                           B = 25))
+plot(Instance_2_GBM_SHAP)
+
+```
+
+</details>
+
+|
+|
+####  1.3.9.5 Instance Level Exploration : Ceteris Paribus Profiles
+|
+| **[A]** Assuming all other predictors remain unchanged, the effects of the individual predictors to the model predictions for Instance 1 were described as follows:
+|      **[A.1]** Decreasing <span style="color: #FF0000">INFMOR</span> (numeric) by 2 percent increases <span style="color: #FF0000">LIFEXP</span> (numeric) by 5 years
+|      **[A.2]** Decreasing <span style="color: #FF0000">PERCAP</span> (numeric) by USD1K did not have a considerable effect on <span style="color: #FF0000">LIFEXP</span> (numeric)
+|      **[A.3]** Increasing <span style="color: #FF0000">CLTECH</span> (numeric) by 50% increases <span style="color: #FF0000">LIFEXP</span> (numeric) by 2 years
+|      **[A.4]** Decreasing <span style="color: #FF0000">NCOMOR</span> (numeric) by 2 percent increases <span style="color: #FF0000">LIFEXP</span> (numeric) by 5 years
+|      **[A.5]** Shifting factor level from <span style="color: #FF0000">GENDER=Female</span> to <span style="color: #FF0000">GENDER=Male</span> decreases <span style="color: #FF0000">LIFEXP</span> (numeric) by 2 years
+|      **[A.6]** Shifting factor level from <span style="color: #FF0000">CONTIN=Asia</span> to <span style="color: #FF0000">CONTIN=Africa</span> decreases <span style="color: #FF0000">LIFEXP</span> (numeric) by 2 years
+|
+| **[B]** Assuming all other predictors remain unchanged, the effects of the individual predictors to the model predictions for Instance 2 were described as follows:
+|      **[B.1]** Decreasing <span style="color: #FF0000">INFMOR</span> (numeric) by 2 percent increases <span style="color: #FF0000">LIFEXP</span> (numeric) by 5 years
+|      **[B.2]** Decreasing <span style="color: #FF0000">PERCAP</span> (numeric) by USD1K did not have a considerable effect on <span style="color: #FF0000">LIFEXP</span> (numeric)
+|      **[B.3]** Increasing <span style="color: #FF0000">CLTECH</span> (numeric) by 50% increases <span style="color: #FF0000">LIFEXP</span> (numeric) by 2 years
+|      **[B.4]** Decreasing <span style="color: #FF0000">NCOMOR</span> (numeric) by 2 percent increases <span style="color: #FF0000">LIFEXP</span> (numeric) by 5 years
+|      **[B.5]** Shifting factor level from <span style="color: #FF0000">GENDER=Male</span> to <span style="color: #FF0000">GENDER=Female</span> increases <span style="color: #FF0000">LIFEXP</span> (numeric) by 2 years
+|      **[B.6]** Shifting factor level from <span style="color: #FF0000">CONTIN=Asia</span> to <span style="color: #FF0000">CONTIN=Africa</span> decreases <span style="color: #FF0000">LIFEXP</span> (numeric) by 2 years
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.9.5, warning=FALSE, message=FALSE}
+##################################
+# Obtaining the ceteris paribus profiles
+# for the individual instances
+##################################
+(Instance_1_GBM_CPP <- DALEX::predict_profile(explainer = GBM_DALEX,
+                                           new_observation = Instance_1_Philippines_Female[,c(1:6)]))
+plot(Instance_1_GBM_CPP,
+     variables = c("INFMOR","PERCAP","CLTECH","NCOMOR")) +
+  ggtitle("Ceteris-paribus profile", "") +
+  ylim(55, 80)
+
+plot(Instance_1_GBM_CPP,
+     variables = c("GENDER","CONTIN"),
+     variable_type = "categorical",
+     categorical_type = "bars") +
+  ggtitle("Ceteris-paribus profile", "")
+
+(Instance_2_GBM_CPP <- DALEX::predict_profile(explainer = GBM_DALEX,
+                                           new_observation = Instance_2_Philippines_Male[,c(1:6)]))
+plot(Instance_2_GBM_CPP,
+     variables = c("INFMOR","PERCAP","CLTECH","NCOMOR")) +
+  ggtitle("Ceteris-paribus profile", "") +
+  ylim(55, 80)
+
+plot(Instance_2_GBM_CPP,
+     variables = c("GENDER","CONTIN"),
+     variable_type = "categorical",
+     categorical_type = "bars") +
+  ggtitle("Ceteris-paribus profile", "")
+
+```
+
+</details>
+
+|
+|
+####  1.3.9.6 Instance Level Exploration : Local Fidelity Plots
+|
+| **[A]** The histograms of residuals for the entire dataset and for a selected set of 50 neighbors for Instance 1 were almost parallel and very close to each other suggesting that the model predictions were stable around this particular instance of interest.
+|
+| **[B]** The histograms of residuals for the entire dataset and for a selected set of 50 neighbors for Instance 2 were almost parallel and very close to each other suggesting that the model predictions were stable around this particular instance of interest.
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.9.6, warning=FALSE, message=FALSE}
+Instance_1_GBM_LFP <- predict_diagnostics(explainer = GBM_DALEX,
+                                         new_observation = Instance_1_Philippines_Female[,c(1:6)],
+                                         neighbours = 50)
+plot(Instance_1_GBM_LFP)
+
+Instance_2_GBM_LFP <- predict_diagnostics(explainer = GBM_DALEX,
+                                         new_observation = Instance_2_Philippines_Male[,c(1:6)],
+                                         neighbours = 50)
+plot(Instance_2_GBM_LFP)
+
+```
+
+</details>
+
+|
+|
+####  1.3.9.7 Instance Level Exploration : Local Stability Plots
+|
+| **[A]** The profiles obtained for the 5 nearest neighbors for Instance 1 were relatively close to each other, suggesting the stability of predictions. However, there were relatively more negative than positive residuals, which may have indicated a (local) positive bias of the predictions.
+|
+| **[B]** The profiles obtained for the 5 nearest neighbors for Instance 2 were relatively close to each other, suggesting the stability of predictions. However, there were relatively more negative than positive residuals, which may have indicated a (local) positive bias of the predictions.
+|
+|
+
+<details><summary><mark style="background-color: #000000;color: #FFFFFF">**Code Chunk | Output**</mark></summary>
+
+```{r section_1.3.9.7, warning=FALSE, message=FALSE}
+Instance_1_GBM_LFP <- predict_diagnostics(explainer = GBM_DALEX,
+                                          new_observation = Instance_1_Philippines_Female[,c(1:6)],
+                                          neighbours = 5,
+                                          variables = c("INFMOR","NCOMOR","CLTECH","PERCAP"))
+plot(Instance_1_GBM_LFP)
+
+Instance_1_GBM_LFP <- predict_diagnostics(explainer = GBM_DALEX,
+                                          new_observation = Instance_1_Philippines_Female[,c(1:6)],
+                                          neighbours = 5,
+                                          variables = c("GENDER","CONTIN"))
+plot(Instance_1_GBM_LFP)
+
+Instance_2_GBM_LFP <- predict_diagnostics(explainer = GBM_DALEX,
+                                          new_observation = Instance_2_Philippines_Male[,c(1:6)],
+                                          neighbours = 5,
+                                          variables = c("INFMOR","NCOMOR","CLTECH","PERCAP"))
+plot(Instance_2_GBM_LFP)
+
+Instance_2_GBM_LFP <- predict_diagnostics(explainer = GBM_DALEX,
+                                          new_observation = Instance_2_Philippines_Male[,c(1:6)],
+                                          neighbours = 5,
+                                          variables = c("GENDER","CONTIN"))
+plot(Instance_2_GBM_LFP)
+
+```
+
+</details>
+|
+|
+# **2. Summary** <a name="summary"></a>
+|
+| **A stochastic gradient boosted model provided a set of robust and reliable estimates of life expectancy, primarily characterized by healthcare access (infant mortality, non-communicable disease-related mortality), demographic (gender, continent) and socio-economic (access to clean cooking, GDP per capita) factors. As a black-box model, various model-agnostic methods were used to interpret the model predictions. The key drivers identified for high life expectancy levels ranked by feature importance with their conditioned effects indicated were given as follows:**
+|
+| **[1] Infant mortality (-)**
+|
+| **[2] Non-communicable disease-related mortality (-)**
+|
+| **[3] Belonging to the Non-African continent (+)**
+|
+| **[4] Belonging to the female gender (+)**
+|
+| **[5] Access to clean fuels and technologies for cooking (+)**
+|
+| **[6] Gross domestic product per capita (+)**
+|
+| **Overall, progressive economies tend to have higher life expectancy potentially influenced by a complex interplay of various factors. Developed countries typically invest heavily in healthcare infrastructure, ensuring that their populations have access to quality medical services. Adequate healthcare contributes to early diagnosis, effective treatment, and improved overall health outcomes. Similarly, stable economies lead to higher standards of living. Economic stability is linked to improved living conditions, better nutrition, and reduced exposure to environmental hazards, all of which contribute to increased life expectancy. Interestingly, gender differences in life expectancy were generally observed across countries favoring women. However, it is essential to recognize that causation is multifaceted and each country's unique circumstances might contribute differently to its life expectancy outcomes.**
+|
+| **[A]** From an initial dataset comprised of 394 observations and 22 predictors, an optimal subset of **364 observations and 6 predictors** representing healthcare access, demographic and socio-economic factors were determined after conducting data quality assessment and feature selection, excluding cases or variables noted with irregularities and applying preprocessing operations most suitable for the downstream analysis.
+|
+| **[B]** Multiple regression modelling algorithms with various hyperparameter combinations were formulated using **Stochastic Gradient Boosting**, **Cubist Regression**, **Neural Network**, **Random Forest**, **Linear Regression** and **Partial Least Squares Regression**. The best model with optimized hyperparameters from each algorithm were determined through internal resampling validation using **10-Fold Cross Validation** of performance metrics **Root Mean Square Error (RMSE)** and **R-Squared**. All candidate models were compared based on internal and external validation performance, including their residual distributions.
+|
+| **[C]** The final model selected among candidates used **Stochastic Gradient Boosting** with optimal hyperparameters: **total number of trees (n.trees=300)**, **maximum depth of each tree (interaction.depth=2)**, **learning rate (shrinkage=0.1)** and **minimum number of observations in the terminal node (n.minobsinnode=5)**. This model demonstrated the best externally validated RMSE and R-Squared (**RMSE=2.1007**, **R-Squared=0.9171**); no excessive overfitting comparing the external and internal validation metrics (**RMSE=2.0978**, **R-Squared=0.9288**); and stable residual distribution with lowest variation.
+|
+| **[D]** Owing to the black-box nature of the selected model, post-hoc exploration of the model results involved model agnostic methods including **Dataset-Level Exploration** using model-level global explanations (Permutated Mean Dropout Loss-Based Variable Importance, Partial Dependence Plots) and **Instance-Level Exploration** using prediction-level local explanations (Breakdown Plots, Shapley Additive Explanations, Ceteris Paribus Plots, Local Fidelity Plots, Local Stability Plots). These results helped provide dataset-level and instance-level insights on the importance, contribution and effect of the various predictors to model prediction.
+|
+| **The current results have limitations which can be further addressed by extending the study to include the following actions:**
+|
+| **[1]** Considering the detection and treatment of multivariate outliers to develop robust and reliable predictive models that accurately capture the underlying patterns in the data rather than noise or anomalies
+|
+| **[2]** Conducting sensitivity analysis to assess the impact of outliers on model predictions and performance metrics - whether removing outliers improves model accuracy without sacrificing generalizability
+|
+| **[3]** Accounting for potential non-linearity and interactions among independent variables to gain insights into their influence on model prediction
+|
+| **[4]** Applying training and test data splitting prior to data transformation or scaling to avoid data snooping or inadvertently using information from the testing set in the model training process
+|
+| **[5]** Exploring stacking model structures by leveraging the strengths of diverse learning algorithms and mitigating the weaknesses of individual models to produce more robust predictions
+|
+| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/images/summary_1.png)
+|
+| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/images/summary_2.png)
+|
+| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/images/summary_3.png)
+|
+| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/images/summary_4.png)
+|
+| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/images/summary_5.png)
+|
+| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/images/summary_6.png)
+|
+# **3. References**
+|
+| **[Book]** [Explanatory Model Analysis: Explore, Explain, and Examine Predictive Models With examples in R and Python](https://ema.drwhy.ai/) by Przemyslaw Biecek and Tomasz Burzykowski
+| **[Book]** [Explainable Machine Learning: A Guide for Making Black Box Models Explainable](https://christophm.github.io/interpretable-ml-book/) by Christoph Molnar
+| **[Book]** [Explainable AI: Interpreting, Explaining and Visualizing Deep Learning](https://link.springer.com/book/10.1007/978-3-030-28954-6) by Wojciech Samek, Gregoire Montavon, Andrea Vedaldi, Lars Kai Hansen and Klaus-Robert Muller
+| **[Book]** [Applied Predictive Modeling](http://appliedpredictivemodeling.com/) by Max Kuhn and Kjell Johnson
+| **[Book]** [The Elements of Statistical Learning](https://link.springer.com/book/10.1007/978-0-387-84858-7) by Trevor Hastie , Robert Tibshirani and Jerome Friedman
+| **[Book]** [Pattern Recognition and Neural Networks](https://www.cambridge.org/core/books/pattern-recognition-and-neural-networks/4E038249C9BAA06C8F4EE6F044D09C5C) by Brian Ripley
+| **[Book]** [Regression Modeling Strategies](https://link.springer.com/book/10.1007/978-1-4757-3462-1) by Frank Harrel
+| **[R Package]** [DALEX](https://cran.r-project.org/web/packages/DALEX/index.html) by Przemyslaw Biecek, Szymon Maksymiuk and Hubert Baniecki
+| **[R Package]** [iml](https://cran.r-project.org/web/packages/iml/index.html) by Christoph Molnar
+| **[R Package]** [ALEPlot](https://cran.r-project.org/web/packages/ALEPlot/index.html) by Dan Apley
+| **[R Package]** [randomForest](https://cran.r-project.org/web/packages/randomForest/index.html) by Leo Breiman, Adele Cutler, Andy Liaw and Matthew Wiener
+| **[R Package]** [auditor](https://cran.r-project.org/web/packages/auditor/index.html) by Alicja Gosiewska, Przemyslaw Biecek, Hubert Baniecki and Tomasz Mikołajczyk
+| **[R Package]** [fastshap](https://cran.r-project.org/web/packages/fastshap/index.html) by Brandon Greenwell
+| **[R Package]** [rms](https://cran.r-project.org/web/packages/rms/index.html) by Frank Harrell
+| **[R Package]** [EIX](https://cran.r-project.org/web/packages/EIX/index.html) by Szymon Maksymiuk, Ewelina Karbowiak and Przemyslaw Biecek
+| **[R Package]** [parsnip](https://cran.r-project.org/web/packages/parsnip/index.html) by Max Kuhn and Davis Vaughan 
+| **[R Package]** [h2o](https://cran.r-project.org/web/packages/h2o/index.html) by Tomas Fryda, Erin LeDell, Navdeep Gill, Spencer Aiello, Anqi Fu, Arno Candel, Cliff Click, Tom Kraljevic, Tomas Nykodym, Patrick Aboyoun, Michal Kurka, Michal Malohlava, Sebastien Poirier and Wendy Wong
+| **[R Package]** [tidymodels](https://cran.r-project.org/web/packages/tidymodels/index.html) by Max Kuhn and Hadley Wickham 
+| **[R Package]** [e1071](https://cran.r-project.org/web/packages/e1071/index.html) by David Meyer, Evgenia Dimitriadou, Kurt Hornik, Andreas Weingessel and Friedrich Leisch
+| **[R Package]** [lime](https://cran.r-project.org/web/packages/lime/index.html) by Emil Hvitfeldt, Thomas Lin Pedersen and Michael Benesty
+| **[R Package]** [ExplainPrediction](https://cran.r-project.org/web/packages/ExplainPrediction/index.html) by Marko Robnik-Sikonja
+| **[R Package]** [localModel](https://cran.r-project.org/web/packages/localModel/index.html) by Przemyslaw Biecek and Mateusz Staniak
+| **[R Package]** [skimr](https://cran.r-project.org/web/packages/skimr/skimr.pdf) by  Elin Waring
+| **[R Package]** [corrplot](https://cran.r-project.org/web/packages/corrplot/corrplot.pdf) by Taiyun Wei
+| **[R Package]** [lares](https://cran.rstudio.com/web/packages/lares/lares.pdf) by Bernardo Lares
+| **[R Package]** [minerva](https://cran.r-project.org/web/packages/minerva/minerva.pdf) by Michele Filosi
+| **[R Package]** [CORElearn](https://cran.r-project.org/web/packages/CORElearn/CORElearn.pdf) by Marko Robnik-Sikonja and Petr Savicky
+| **[R Package]** [caret](https://topepo.github.io/caret/index.html) by Max Kuhn
+| **[R Package]** [gbm](https://cran.r-project.org/web/packages/gbm/index.html) by Brandon Greenwell, Bradley Boehmke, Jay Cunningham and GBM Developers
+| **[R Package]** [randomForest](https://cran.r-project.org/web/packages/randomForest/randomForest.pdf) by Andy Liaw
+| **[R Package]** [nnet](https://cran.r-project.org/web/packages/nnet/nnet.pdf) by Brian Ripley
+| **[R Package]** [pls](https://cran.r-project.org/web/packages/pls/pls.pdf) by Kristian Hovde Liland
+| **[R Package]** [Cubist](https://cran.r-project.org/web/packages/Cubist/Cubist.pdf) by Max Kuhn
+| **[R Package]** [patchwork](https://cran.r-project.org/web/packages/patchwork/patchwork.pdf) by Thomas Lin Pedersen
+| **[Article]** [Life Expectancy](https://ourworldindata.org/life-expectancy) by Max Roser, Esteban Ortiz-Ospina and Hannah Ritchie
+| **[Article]** [Interpretation Methods for Black-Box Machine Learning Models in Insurance Rating-Type Applications](https://support.sas.com/resources/papers/proceedings20/5116-2020.pdf) by Gabe Taylor, Sunish Menon, Huimin Ru, Ray Wright, Xin Hunt and Ralph Abbey
+| **[Article]** [4 Model-Agnostic Interpretability Techniques for Complex Models ](https://blogs.sas.com/content/subconsciousmusings/2020/05/07/model-agnostic-interpretability/) by Funda Gunes
+| **[Article]** [How Can We Provide Post-Hoc Explanations for Black-Box AI Models? ](https://aisingapore.github.io/ai-practitioner-handbook/book/6-modelling/post-hoc-explanation.html) by Joy Lin
+| **[Article]** [Explaining black-box models using attribute importance, PDPs, and LIME ](https://domino.ai/blog/explaining-black-box-models-using-attribute-importance-pdps-and-lime) by Nikolay Manchev
+| **[Article]** [An Introduction to Explainable AI with Shapley Values ](https://shap.readthedocs.io/en/latest/example_notebooks/overviews/An%20introduction%20to%20explainable%20AI%20with%20Shapley%20values.html) by SHAP Team
+| **[Article]** [A Gentle Introduction to SHAP Values in R ](https://www.r-bloggers.com/2019/03/a-gentle-introduction-to-shap-values-in-r/) by Pablo Casas
+| **[Article]** [SHAP Values with Examples Applied to a Multi-Classification Problem ](https://harpomaxx.github.io/post/shap-values/) byHarpo Maxx
+| **[Article]** [SHAP Values - Interpret Predictions Of ML Models using Game-Theoretic Approach ](https://coderzcolumn.com/tutorials/machine-learning/shap-explain-machine-learning-model-predictions-using-game-theoretic-approach) by Sunny Solanki
+| **[Article]** [How to Interpret Machine Learning (ML) Models with SHAP Values ](https://www.mage.ai/blog/how-to-interpret-explain-machine-learning-models-using-shap-values) by Xiaoyou Wang
+| **[Article]** [Partial Dependence and Individual Conditional Expectation plots ](https://scikit-learn.org/stable/modules/partial_dependence.html) by Sci-Kit Learn Team
+| **[Article]** [Interpret Model Predictions with Partial Dependence and Individual Conditional Expectation plots ](https://blogs.sas.com/content/subconsciousmusings/2018/06/12/interpret-model-predictions-with-partial-dependence-and-individual-conditional-expectation-plots/#:~:text=A%20partial%20dependence%20%28PD%29%20plot%20depicts%20the%20functional,the%20probability%20of%20flu%20increases%20linearly%20with%20fever.) by Ilknur Kaynar Kabul
+| **[Article]** [Correlation in R: Pearson and Spearman Correlation Matrix](https://www.guru99.com/r-pearson-spearman-correlation.html) by Daniel Johnson
+| **[Article]** [Correlation (Pearson, Kendall, Spearman)](https://www.statisticssolutions.com/free-resources/directory-of-statistical-analyses/correlation-pearson-kendall-spearman/) by Statistics Solutions Team
+| **[Article]** [A Comparison of the Pearson and Spearman Correlation Methods](https://support.minitab.com/en-us/minitab/21/help-and-how-to/statistics/basic-statistics/supporting-topics/correlation-and-covariance/a-comparison-of-the-pearson-and-spearman-correlation-methods/#:~:text=The%20Pearson%20and%20Spearman%20correlation%20coefficients%20can%20range,correlation%20coefficient%20is%20also%20%2B1%20in%20this%20case.) by Minitab Support Team
+| **[Article]** [How to Perform Lowess Smoothing in R (Step-by-Step)](https://www.statology.org/lowess-smoothing-r/) by Statology Team
+| **[Article]** [Maximal Information Coefficient](https://www.r-bloggers.com/2014/09/maximal-information-coefficient-part-ii/) by R Bloggers Team
+| **[Article]** [Methods for Forecasts of Continuous Variables ](https://www.cawcr.gov.au/projects/verification/#Methods_for_foreasts_of_continuous_variables) by WWRP/WGNE Joint Working Group on Forecast Verification Research Team
+| **[Article]** [Generalized Boosting Model](https://support.bccvl.org.au/support/solutions/articles/6000083212-generalized-boosting-model) by BCCVL Team
+| **[Article]** [An Introduction to Partial Least Squares](https://www.statology.org/partial-least-squares/) by Statology Team
+| **[Article]** [Random Forest](https://support.bccvl.org.au/support/solutions/articles/6000083217-random-forest) by BCCVL Team
+| **[Article]** [Artificial Neural Network](https://support.bccvl.org.au/support/solutions/articles/6000083200-artificial-neural-network) by BCCVL Team
+| **[Article]** [Cubist Regression Models](https://cran.r-project.org/web/packages/Cubist/vignettes/cubist.html) by Max Kuhn
+| **[Publication]** [Determinants of Life Expectancy at Birth: A Longitudinal Study on OECD Countries](https://link.springer.com/article/10.1007/s10754-022-09338-5) by Paolo Roffia, Alessandro Bucciol and Sara Hashlamoun 
+| **[Publication]** [Robust Locally Weighted Regression and Smoothing Scatterplots](https://www.tandfonline.com/doi/abs/10.1080/01621459.1979.10481038) by William Cleveland (Journal of the American Statistical Association)
+| **[Publication]** [Mathematical Contributions to the Theory of Evolution: Regression, Heredity and Panmixia](https://royalsocietypublishing.org/doi/10.1098/rsta.1896.0007) by Karl Pearson (Royal Society)
+| **[Publication]** [The Proof and Measurement of Association between Two Things](https://www.jstor.org/stable/1412159?origin=crossref) by Charles Spearman (The American Journal of Psychology)
+| **[Publication]** [Detecting Novel Associations in Large Data Sets](https://www.science.org/doi/10.1126/science.1205438) by David Reshef, Yakir Reshef, Hilary Finucane, Sharon Grossman, Gilean Mcvean, Peter Turnbaugh, Eric Lander, Michael Mitzenmacher and Pardis Sabeti (Science)
+| **[Publication]** [Stochastic Gradient Boosting](https://www.sciencedirect.com/science/article/abs/pii/S0167947301000652) by Jerome Friedman (Computational Statistics and Data Analysis)
+| **[Publication]** [Random Forest](https://link.springer.com/article/10.1023/A:1010933404324) by Leo Breiman (Machine Learning)
+| **[Publication]** [The Collinearity Problem in Linear Regression. The Partial Least Squares (PLS) Approach to Generalized Inverses](https://epubs.siam.org/doi/10.1137/0905052) by Svante Wold, Axel Ruhe, Herman Wold, and William Dunn (Society for Industrial and Applied Mathematics)
+| **[Publication]** [Learning With Continuous Classes ](https://www.semanticscholar.org/paper/Learning-With-Continuous-Classes-Quinlan/ead572634c6f7253bf187a3e9a7dc87ae2e34258) by Ross Quinlan (Proceedings of the 5th Australian Joint Conference On Artificial Intelligence)
+| **[Publication]** [A Survey of Methods for Explaining Black Box Models](https://dl.acm.org/doi/10.1145/3236009) by Riccardo Guidotti, Anna Monreale, Salvatore Ruggieri, Franco Turini, Fosca Giannotti and Dino Pedreschi (ACM Computing Surveys)
+| **[Publication]** [iml: An R package for Interpretable Machine Learning](https://doi.org/10.21105/joss.00786) by Christoph Molnar (Journal of Open Source Software)
+| **[Publication]** [All Models Are Wrong, but Many Are Useful: Learning a Variable’s Importance by Studying an Entire Class of Prediction Models Simultaneously](https://jmlr.org/papers/volume20/18-760/18-760.pdf) by Aaron Fisher, Cynthia Rudin and Francesca Dominici (Journal of Machine Learning Research)
+| **[Publication]** [Greedy Function Approximation: A Gradient Boosting Machine](https://www.semanticscholar.org/paper/Greedy-function-approximation%3A-A-gradient-boosting-Friedman/1679beddda3a183714d380e944fe6bf586c083cd) by Jerome Friedman (Annals of Statistics)
+| **[Publication]** [Peeking Inside the Black Box: Visualizing Statistical Learning With Plots of Individual Conditional Expectation](https://www.tandfonline.com/doi/full/10.1080/10618600.2014.907095) by Alex Goldstein, Adam Kapelner, Justin Bleich and Emil Pitkin (Journal of Computational and Graphical Statistics)
+| **[Publication]** [An Efficient Explanation of Individual Classifications Using Game Theory](https://dl.acm.org/doi/10.5555/1756006.1756007) by Erik Strumbelj and Igor Kononenko (Journal of Machine Learning Research)
+| **[Publication]** [Explaining Classifications For Individual Instances](https://ieeexplore.ieee.org/document/4407709) by Marco Robnik-Sikonja and Igor Kononenko (IEEE Transactions on Knowledge and Data Engineering)
+|
+|
+|
+|
