@@ -2948,6 +2948,8 @@ plot(Instance_2_GBM_LFP)
 |
 | **[5]** Exploring stacking model structures by leveraging the strengths of diverse learning algorithms and mitigating the weaknesses of individual models to produce more robust predictions
 |
+| ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/images/summary_0.png)
+|
 | ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/images/summary_1.png)
 |
 | ![](D:/Github_Codes/ProjectPortfolio/Portfolio_Project_35/images/summary_2.png)
